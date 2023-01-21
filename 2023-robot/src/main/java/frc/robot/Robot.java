@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
   //private final MotorControllerGroup rightDrive = new MotorControllerGroup(rightFrontDrive, rightRearDrive);
   private final Joystick m_leftStick = new Joystick(0);
   private final Joystick m_rightStick = new Joystick(1);
-  private final DifferentialDrive drive = new DifferentialDrive(leftDrive, rightDrive);
+  private final DifferentialDrive drive = new DifferentialDrive(leftFrontDrive, rightFrontDrive);
   private SparkMaxPIDController m_pidController;
   private SparkMaxPIDController m_pidControllerR;
   private RelativeEncoder m_encoder;
@@ -55,9 +55,10 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    leftDrive.setInverted(true);
+    leftFrontDrive.setInverted(true);
+    leftRearDrive.setInverted(true);
     m_pidController = leftFrontDrive.getPIDController();
-
+    m_pidControllerR = rightFrontDrive.getPIDController();
     // Encoder object created to display position values
     m_encoder = leftFrontDrive.getEncoder();
     m_encoderR = rightFrontDrive.getEncoder();
