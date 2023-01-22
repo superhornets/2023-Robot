@@ -42,9 +42,10 @@ public class Robot extends TimedRobot {
   private RelativeEncoder m_encoderR;
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
   private /*final*/ double ROTATIONS_PER_INCH = .5694;
-  private double distance = 60;
+  private double distance = -24;
   private boolean isMoving = false;
   private double currentPos = 0;
+  private double currentPosR = 0;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -67,8 +68,8 @@ public class Robot extends TimedRobot {
     kD = 1; 
     kIz = 0; 
     kFF = 0; 
-    kMaxOutput = 1; 
-    kMinOutput = -1;
+    kMaxOutput = .25; 
+    kMinOutput = -.25;
 
     // set PID coefficients
     m_pidController.setP(kP);
@@ -105,7 +106,8 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+  }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
@@ -156,6 +158,7 @@ public class Robot extends TimedRobot {
     double rotations = SmartDashboard.getNumber("Set Rotations", 0);
     double ROTATIONS_PER_INCH = SmartDashboard.getNumber("rotations per inch", .5694);
     double distance = SmartDashboard.getNumber("Distance", 0);
+    SmartDashboard.putNumber("encoder", m_encoder.getPosition());
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
     if((p != kP)) { m_pidController.setP(p); kP = p;  m_pidControllerR.setP(p); }
@@ -172,19 +175,29 @@ public class Robot extends TimedRobot {
      //// m_pidController.setReference(speeds.left, com.revrobotics.CANSparkMax.ControlType.kVelocity);
      // m_pidControllerR.setReference(speeds.right, com.revrobotics.CANSparkMax.ControlType.kVelocity);
     //}
-    if(m_leftStick.getRawButton(3)){
+    if(m_leftStick.getRawButton(3) && !isMoving){
       currentPos=m_encoder.getPosition();
+      currentPosR = m_encoderR.getPosition();
       isMoving = true;
     }
     if(m_encoder.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH && m_encoder.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH){
       isMoving = false;
-      currentPos = m_encoder.getPosition();
-      m_pidController.setReference((currentPos),com.revrobotics.CANSparkMax.ControlType.kPosition);
+      //currentPos = m_encoder.getPosition();
+      //currentPosR = m_encoderR.getPosition();
+
+      //m_pidController.setReference((currentPos),com.revrobotics.CANSparkMax.ControlType.kPosition);
+      //m_pidController.setReference((currentPosR),com.revrobotics.CANSparkMax.ControlType.kPosition);
+
     }
     if(isMoving){
       m_pidController.setReference((currentPos+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kPosition);
+      m_pidControllerR.setReference((currentPosR+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kPosition);
+
     }
+    SmartDashboard.putBoolean("isMoving", isMoving);
+    
   }
+
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {}
