@@ -169,19 +169,26 @@ public class Robot extends TimedRobot {
     if((max != kMaxOutput) || (min != kMinOutput)) { 
       m_pidController.setOutputRange(min, max); {}
       kMinOutput = min; kMaxOutput = max; m_pidControllerR.setOutputRange(min, max); }
-    //if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
-      //drive.arcadeDrive(d, rotations);
-     // var speeds = drive.arcadeDriveIK(m_leftStick.getY(), m_leftStick.getX(), true);
-     //// m_pidController.setReference(speeds.left, com.revrobotics.CANSparkMax.ControlType.kVelocity);
-     // m_pidControllerR.setReference(speeds.right, com.revrobotics.CANSparkMax.ControlType.kVelocity);
-    //}
-    if(m_leftStick.getRawButton(3) && !isMoving){
+    if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
+      //drive.arcadeDrive(m_leftStick.getY(), m_leftStick.getX());
+      var speeds = drive.arcadeDriveIK(m_leftStick.getY(), m_leftStick.getX(), true);
+      //m_pidController.setReference(speeds.left, com.revrobotics.CANSparkMax.ControlType.kVelocity);
+      //m_pidControllerR.setReference(speeds.right, com.revrobotics.CANSparkMax.ControlType.kVelocity);
+      SmartDashboard.putNumber("left", speeds.left);
+      SmartDashboard.putNumber("right", speeds.right);
+    }
+    SmartDashboard.putNumber("velocity", m_encoder.getVelocity());
+    SmartDashboard.putNumber("left stick", m_leftStick.getY());
+    
+    //if(m_rightStick.getRawButton(1)){
+      //drive.arcadeDrive(m_rightStick.getY()*-.5,m_rightStick.getX()*.5);}
+    /*if(m_leftStick.getRawButton(3) && !isMoving){
       currentPos=m_encoder.getPosition();
       currentPosR = m_encoderR.getPosition();
       isMoving = true;
     }
     if(m_encoder.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH && m_encoder.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH){
-      isMoving = false;
+      //isMoving = false;
       //currentPos = m_encoder.getPosition();
       //currentPosR = m_encoderR.getPosition();
 
@@ -193,6 +200,9 @@ public class Robot extends TimedRobot {
       m_pidController.setReference((currentPos+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kPosition);
       m_pidControllerR.setReference((currentPosR+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kPosition);
 
+    }*/
+    if (m_leftStick.getRawButton(2)){
+      isMoving = false;
     }
     SmartDashboard.putBoolean("isMoving", isMoving);
     
