@@ -196,7 +196,7 @@ public class Robot extends TimedRobot {
       m_pidControllerR.setReference((currentPosR+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kPosition);
 
     }
-    SmartDashboard.putBoolean("isMoving", isMoving);
+    SmartDashboard.putBoolean("isMoving", isMoving);*/
     
     double armSpeed = m_rightStick.getRawAxis(1);
     pickerUpper.moveArm(armSpeed);

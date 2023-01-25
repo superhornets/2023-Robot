@@ -11,7 +11,10 @@ public class PickerUpper {
     private final DigitalInput m_armLimitUp = new DigitalInput(1);
 
     public void moveArm(double speed) {
-        if(speed > 0) {
+        speed = speed * 0.1;
+        m_arm.set(speed);
+        System.out.println(speed);
+        /* if(speed > 0) {
             if(m_armLimitDown.get()) {
                 m_arm.set(0);
             } else {
@@ -23,7 +26,7 @@ public class PickerUpper {
             } else {
                 m_arm.set(speed);
             }
-        }
+        }*/
 
     }
 
