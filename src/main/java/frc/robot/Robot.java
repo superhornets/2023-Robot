@@ -169,13 +169,14 @@ public class Robot extends TimedRobot {
     if((max != kMaxOutput) || (min != kMinOutput)) { 
       m_pidController.setOutputRange(min, max); {}
       kMinOutput = min; kMaxOutput = max; m_pidControllerR.setOutputRange(min, max); }
+      drive.arcadeDrive(-m_leftStick.getY()*.75, m_leftStick.getX()*.75);
     //if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
       //drive.arcadeDrive(d, rotations);
      // var speeds = drive.arcadeDriveIK(m_leftStick.getY(), m_leftStick.getX(), true);
      //// m_pidController.setReference(speeds.left, com.revrobotics.CANSparkMax.ControlType.kVelocity);
      // m_pidControllerR.setReference(speeds.right, com.revrobotics.CANSparkMax.ControlType.kVelocity);
     //}
-    if(m_leftStick.getRawButton(3) && !isMoving){
+    /*if(m_leftStick.getRawButton(3) && !isMoving){
       currentPos=m_encoder.getPosition();
       currentPosR = m_encoderR.getPosition();
       isMoving = true;
@@ -195,7 +196,7 @@ public class Robot extends TimedRobot {
 
     }
     SmartDashboard.putBoolean("isMoving", isMoving);
-    
+   */ 
   }
 
   /** This function is called once when the robot is disabled. */
