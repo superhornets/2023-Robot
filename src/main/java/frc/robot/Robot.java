@@ -68,8 +68,8 @@ public class Robot extends TimedRobot {
     kD = 1; 
     kIz = 0; 
     kFF = 0; 
-    kMaxOutput = .25; 
-    kMinOutput = -.25;
+    kMaxOutput = .5; 
+    kMinOutput = -.5;
 
     // set PID coefficients
     m_pidController.setP(kP);
