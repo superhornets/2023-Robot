@@ -200,6 +200,9 @@ public class Robot extends TimedRobot {
     
     double armSpeed = m_rightStick.getRawAxis(1);
     pickerUpper.moveArm(armSpeed);
+  
+    double towerSpeed = m_rightStick.getRawAxis(2);
+    pickerUpper.moveTower(towerSpeed);
   }
 
   /** This function is called once when the robot is disabled. */

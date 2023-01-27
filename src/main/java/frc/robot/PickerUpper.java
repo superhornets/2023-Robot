@@ -10,6 +10,10 @@ public class PickerUpper {
     private final DigitalInput m_armLimitDown = new DigitalInput(0);
     private final DigitalInput m_armLimitUp = new DigitalInput(1);
 
+    private final CANSparkMax m_tower = new CANSparkMax(6, null);
+    private final DigitalInput m_towerLimitRight = new DigitalInput(2);
+    private final DigitalInput m_towerLimitLeft = new DigitalInput(3);
+
     public void moveArm(double speed) {
         speed = speed * 0.1;
         m_arm.set(speed);
@@ -30,8 +34,26 @@ public class PickerUpper {
 
     }
 
-    public void left(double angle) {}
-    public void right(double angle) {}
+    public void moveTower(double speed) {
+        speed = speed * 0.1;
+        m_tower.set(speed);
+        if(speed > 0) {
+            if(m_towerLimitRight.get()) {
+                m_tower.set(0);
+            } else {
+                m_tower.set(speed);
+            
+            }
+        } else{
+            if(m_towerLimitLeft.get()) {
+                m_tower.set(0);
+            } else {
+                m_tower.set(speed);
+            }
+        }
+
+    }
+    
     
     public void extend(double speed) {}
     public void retract(double speed) {}
