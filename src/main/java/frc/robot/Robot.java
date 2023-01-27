@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
   private SparkMaxPIDController m_pidControllerR;
   private RelativeEncoder m_encoder;
   private RelativeEncoder m_encoderR;
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
   private /*final*/ double ROTATIONS_PER_INCH = .5694;
   private double distance = -24;
   private boolean isMoving = false;
@@ -63,13 +63,19 @@ public class Robot extends TimedRobot {
     // Encoder object created to display position values
     m_encoder = leftFrontDrive.getEncoder();
     m_encoderR = rightFrontDrive.getEncoder();
-    kP = 0.1; 
-    kI = 1e-4;
-    kD = 1; 
+    kP = 5e-5; 
+    kI = 1e-6;
+    kD = 0; 
     kIz = 0; 
-    kFF = 0; 
+    kFF = 0.000156;
+    maxRPM = 5700;
+    maxVel = 2000; // rpm
+    maxAcc = 1500;
     kMaxOutput = .5; 
     kMinOutput = -.5;
+    leftRearDrive.follow(leftFrontDrive);
+    rightRearDrive.follow(rightFrontDrive);
+    
 
     // set PID coefficients
     m_pidController.setP(kP);
@@ -78,6 +84,10 @@ public class Robot extends TimedRobot {
     m_pidController.setIZone(kIz);
     m_pidController.setFF(kFF);
     m_pidController.setOutputRange(kMinOutput, kMaxOutput);
+    m_pidController.setSmartMotionMaxAccel(maxAcc, 0);
+    m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
+    m_pidControllerR.setSmartMotionMaxVelocity(maxVel, 0);
+    m_pidControllerR.setSmartMotionMaxAccel(maxAcc, 0);
     m_pidControllerR.setP(kP);
     m_pidControllerR.setI(kI);
     m_pidControllerR.setD(kD);
@@ -96,6 +106,15 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Set Rotations", 0);
     SmartDashboard.putNumber("Rotations per inch", ROTATIONS_PER_INCH);
     SmartDashboard.putNumber("Distance", distance);
+
+
+    SmartDashboard.putNumber("Max Velocity", maxVel);
+    SmartDashboard.putNumber("Min Velocity", minVel);
+    SmartDashboard.putNumber("Max Acceleration", maxAcc);
+    SmartDashboard.putNumber("Allowed Closed Loop Error", allowedErr);
+    SmartDashboard.putNumber("Set Position", 0);
+    SmartDashboard.putNumber("Set Velocity", 0);
+
   }
 
   /**
@@ -158,6 +177,11 @@ public class Robot extends TimedRobot {
     double rotations = SmartDashboard.getNumber("Set Rotations", 0);
     double ROTATIONS_PER_INCH = SmartDashboard.getNumber("rotations per inch", .5694);
     double distance = SmartDashboard.getNumber("Distance", 0);
+
+    double maxV = SmartDashboard.getNumber("Max Velocity", 0);
+    double minV = SmartDashboard.getNumber("Min Velocity", 0);
+    double maxA = SmartDashboard.getNumber("Max Acceleration", 0);
+    double allE = SmartDashboard.getNumber("Allowed Closed Loop Error", 0);
     SmartDashboard.putNumber("encoder", m_encoder.getPosition());
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
@@ -167,40 +191,57 @@ public class Robot extends TimedRobot {
     if((iz != kIz)) { m_pidController.setIZone(iz); kIz = iz; m_pidControllerR.setIZone(iz); }
     if((ff != kFF)) { m_pidController.setFF(ff); kFF = ff; m_pidControllerR.setFF(ff);}
     if((max != kMaxOutput) || (min != kMinOutput)) { 
-      m_pidController.setOutputRange(min, max); {}
+      m_pidController.setOutputRange(min, max); 
       kMinOutput = min; kMaxOutput = max; m_pidControllerR.setOutputRange(min, max); }
-    if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
+
+    if((maxV != maxVel)) { m_pidController.setSmartMotionMaxVelocity(maxV,0); maxVel = maxV; m_pidControllerR.setSmartMotionMaxVelocity(maxV,0);}
+    if((minV != minVel)) { m_pidController.setSmartMotionMinOutputVelocity(minV,0); minVel = minV; m_pidControllerR.setSmartMotionMinOutputVelocity(minV,0);}
+    if((maxA != maxAcc)) { m_pidController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; m_pidControllerR.setSmartMotionMaxAccel(maxA,0);}
+    if((allE != allowedErr)) { m_pidController.setSmartMotionAllowedClosedLoopError(allE,0); allowedErr = allE; m_pidController.setSmartMotionAllowedClosedLoopError(allE,0);}
+  
+    /*if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
       //drive.arcadeDrive(m_leftStick.getY(), m_leftStick.getX());
-      var speeds = drive.arcadeDriveIK(m_leftStick.getY(), m_leftStick.getX(), true);
-      //m_pidController.setReference(speeds.left, com.revrobotics.CANSparkMax.ControlType.kVelocity);
-      //m_pidControllerR.setReference(speeds.right, com.revrobotics.CANSparkMax.ControlType.kVelocity);
+      var speeds = DifferentialDrive.arcadeDriveIK(m_leftStick.getY(), m_leftStick.getX(), true);
+      //m_pidController.setReference(speeds.left, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
+      //m_pidControllerR.setReference(speeds.right, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
       SmartDashboard.putNumber("left", speeds.left);
       SmartDashboard.putNumber("right", speeds.right);
-    }
+    }*/
     SmartDashboard.putNumber("velocity", m_encoder.getVelocity());
     SmartDashboard.putNumber("left stick", m_leftStick.getY());
-    
+    SmartDashboard.putNumber("current left", leftFrontDrive.getOutputCurrent());
+    SmartDashboard.putNumber("current right", rightFrontDrive.getOutputCurrent());
+    SmartDashboard.putNumber("current left r", leftRearDrive.getOutputCurrent());
+    SmartDashboard.putNumber("current right r", rightRearDrive.getOutputCurrent());
+
+
     //if(m_rightStick.getRawButton(1)){
-      //drive.arcadeDrive(m_rightStick.getY()*-.5,m_rightStick.getX()*.5);}
-    /*if(m_leftStick.getRawButton(3) && !isMoving){
+    drive.arcadeDrive(m_rightStick.getY()*-.5,m_rightStick.getX()*.5);
+    //}
+    if(m_leftStick.getRawButton(3) && !isMoving){
       currentPos=m_encoder.getPosition();
       currentPosR = m_encoderR.getPosition();
       isMoving = true;
     }
-    if(m_encoder.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH && m_encoder.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH){
-      //isMoving = false;
-      //currentPos = m_encoder.getPosition();
-      //currentPosR = m_encoderR.getPosition();
+    /*if(m_encoder.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH && m_encoder.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH){
+      isMoving = false;
+      currentPos = m_encoder.getPosition();
+      currentPosR = m_encoderR.getPosition();
 
-      //m_pidController.setReference((currentPos),com.revrobotics.CANSparkMax.ControlType.kPosition);
-      //m_pidController.setReference((currentPosR),com.revrobotics.CANSparkMax.ControlType.kPosition);
-
-    }
-    if(isMoving){
-      m_pidController.setReference((currentPos+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kPosition);
-      m_pidControllerR.setReference((currentPosR+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kPosition);
+      m_pidController.setReference((0),com.revrobotics.CANSparkMax.ControlType.kVelocity);
+      m_pidController.setReference((0),com.revrobotics.CANSparkMax.ControlType.kVelocity);
 
     }*/
+    if(isMoving){
+      m_pidController.setReference((currentPos+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
+      m_pidControllerR.setReference((currentPosR+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
+      System.out.println("left front: "+ leftFrontDrive.get());
+      System.out.println("left rear: "+ leftRearDrive.get());
+      System.out.println("right front: "+ rightFrontDrive.get());
+      System.out.println("right rear: "+ leftRearDrive.get());
+    
+
+    }
     if (m_leftStick.getRawButton(2)){
       isMoving = false;
     }
