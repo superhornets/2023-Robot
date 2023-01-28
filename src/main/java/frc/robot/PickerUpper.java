@@ -1,9 +1,12 @@
 package frc.robot;
 
+import java.net.ConnectException;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class PickerUpper {
 
     private final CANSparkMax m_arm = new CANSparkMax(5, MotorType.kBrushless);
@@ -13,6 +16,10 @@ public class PickerUpper {
     private final CANSparkMax m_tower = new CANSparkMax(6, MotorType.kBrushless);
     private final DigitalInput m_towerLimitRight = new DigitalInput(2);
     private final DigitalInput m_towerLimitLeft = new DigitalInput(3);
+
+    private final CANSparkMax m_grabber = new CANSparkMax(7, MotorType.kBrushless);
+    private final DigitalInput m_grabberLimitOpen = new DigitalInput(4);
+    private final DigitalInput m_grabberLimitClosed = new DigitalInput(5);
 
     public void moveArm(double speed) {
         speed = speed * 0.1;
@@ -58,8 +65,29 @@ public class PickerUpper {
     public void extend(double speed) {}
     public void retract(double speed) {}
 
-    public void open(double angle) {}
-    public void closeCone() {}
-    public void closeCube() {}
-}
+    public void open() {
+        if(m_grabberLimitOpen.get()) {
+            m_grabber.set(0);
+        } else {
+            m_grabber.set(0.5);
+        }
 
+    }
+    public void closeCone() {
+        if(m_grabberLimitClosed.get()) {
+            m_grabber.set(0);
+        } else{
+            if(m_grabber.getOutputCurrent() > 40) {
+                m_grabber.set(0);
+            } else{
+                m_grabber.set(0.5);
+            }
+        }
+    }
+    public void closeCube() {}
+
+    public void periodic() {
+        double grabberCurrent = m_grabber.getOutputCurrent();
+        SmartDashboard.putNumber("Grabber Current", grabberCurrent);
+    }
+}
