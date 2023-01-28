@@ -16,8 +16,6 @@ public class PickerUpper {
 
     public void moveArm(double speed) {
         speed = speed * 0.1;
-        m_arm.set(speed);
-        System.out.println(speed);
         if(speed > 0) {
             if(m_armLimitDown.get()) {
                 m_arm.set(0);
