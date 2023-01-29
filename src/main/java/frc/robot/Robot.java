@@ -35,18 +35,19 @@ public class Robot extends TimedRobot {
   //private final MotorControllerGroup rightDrive = new MotorControllerGroup(rightFrontDrive, rightRearDrive);
   private final Joystick m_leftStick = new Joystick(0);
   private final Joystick m_rightStick = new Joystick(1);
-  private final DifferentialDrive drive = new DifferentialDrive(leftFrontDrive, rightFrontDrive);
+  //private final DifferentialDrive drive = new DifferentialDrive(leftFrontDrive, rightFrontDrive);
   private SparkMaxPIDController m_pidController;
   private SparkMaxPIDController m_pidControllerR;
   private RelativeEncoder m_encoder;
   private RelativeEncoder m_encoderR;
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
   private /*final*/ double ROTATIONS_PER_INCH = .5694;
-  private double distance = -24;
+  private double distance = 24;
   private boolean isMoving = false;
   private double currentPos = 0;
   private double currentPosR = 0;
-
+  private int driveSpeed = 2800;
+  private boolean isAutoDriving = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -75,7 +76,8 @@ public class Robot extends TimedRobot {
     kMinOutput = -.5;
     leftRearDrive.follow(leftFrontDrive);
     rightRearDrive.follow(rightFrontDrive);
-    
+    //currentPos = m_encoder.getPosition();
+    //currentPosR = m_encoderR.getPosition();
 
     // set PID coefficients
     m_pidController.setP(kP);
@@ -199,47 +201,53 @@ public class Robot extends TimedRobot {
     if((maxA != maxAcc)) { m_pidController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; m_pidControllerR.setSmartMotionMaxAccel(maxA,0);}
     if((allE != allowedErr)) { m_pidController.setSmartMotionAllowedClosedLoopError(allE,0); allowedErr = allE; m_pidController.setSmartMotionAllowedClosedLoopError(allE,0);}
   
-    /*if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
+    if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
       //drive.arcadeDrive(m_leftStick.getY(), m_leftStick.getX());
       var speeds = DifferentialDrive.arcadeDriveIK(m_leftStick.getY(), m_leftStick.getX(), true);
-      //m_pidController.setReference(speeds.left, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
-      //m_pidControllerR.setReference(speeds.right, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
+      m_pidController.setReference(speeds.left*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
+      m_pidControllerR.setReference(speeds.right*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
       SmartDashboard.putNumber("left", speeds.left);
       SmartDashboard.putNumber("right", speeds.right);
-    }*/
-    SmartDashboard.putNumber("velocity", m_encoder.getVelocity());
-    SmartDashboard.putNumber("left stick", m_leftStick.getY());
-    SmartDashboard.putNumber("current left", leftFrontDrive.getOutputCurrent());
-    SmartDashboard.putNumber("current right", rightFrontDrive.getOutputCurrent());
-    SmartDashboard.putNumber("current left r", leftRearDrive.getOutputCurrent());
-    SmartDashboard.putNumber("current right r", rightRearDrive.getOutputCurrent());
-
-
-    //if(m_rightStick.getRawButton(1)){
-    drive.arcadeDrive(m_rightStick.getY()*-.5,m_rightStick.getX()*.5);
-    //}
-    if(m_leftStick.getRawButton(3) && !isMoving){
+      currentPos=m_encoder.getPosition();
+      currentPosR = m_encoderR.getPosition();
+    }
+    else if(m_leftStick.getRawButton(3) && !isMoving){
       currentPos=m_encoder.getPosition();
       currentPosR = m_encoderR.getPosition();
       isMoving = true;
     }
-    /*if(m_encoder.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH && m_encoder.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH){
+    else if(!isMoving){
+      //m_pidController.setReference(0, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
+     // m_pidControllerR.setReference(0, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
+     m_pidController.setReference((currentPos),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
+     m_pidControllerR.setReference((currentPosR),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
+      
+    }
+    SmartDashboard.putNumber("velocity", m_encoder.getVelocity());
+    SmartDashboard.putNumber("left stick", m_leftStick.getY());
+    //SmartDashboard.putNumber("current left", leftFrontDrive.getOutputCurrent());
+    //SmartDashboard.putNumber("current right", rightFrontDrive.getOutputCurrent());
+    //SmartDashboard.putNumber("current left r", leftRearDrive.getOutputCurrent());
+    //SmartDashboard.putNumber("current right r", rightRearDrive.getOutputCurrent());
+
+
+    //if(m_rightStick.getRawButton(1)){
+    //drive.arcadeDrive(m_rightStick.getY()*-.5,m_rightStick.getX()*.5);
+    //}
+    
+    if((m_encoder.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH && m_encoder.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH) && isMoving){
       isMoving = false;
       currentPos = m_encoder.getPosition();
       currentPosR = m_encoderR.getPosition();
-
-      m_pidController.setReference((0),com.revrobotics.CANSparkMax.ControlType.kVelocity);
-      m_pidController.setReference((0),com.revrobotics.CANSparkMax.ControlType.kVelocity);
-
-    }*/
+    }
     if(isMoving){
       m_pidController.setReference((currentPos+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
       m_pidControllerR.setReference((currentPosR+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
-      System.out.println("left front: "+ leftFrontDrive.get());
-      System.out.println("left rear: "+ leftRearDrive.get());
-      System.out.println("right front: "+ rightFrontDrive.get());
-      System.out.println("right rear: "+ leftRearDrive.get());
-    
+      //System.out.println("left front: "+ leftFrontDrive.get());
+      //System.out.println("left rear: "+ leftRearDrive.get());
+      //System.out.println("right front: "+ rightFrontDrive.get());
+      //System.out.println("right rear: "+ leftRearDrive.get());
+
 
     }
     if (m_leftStick.getRawButton(2)){
