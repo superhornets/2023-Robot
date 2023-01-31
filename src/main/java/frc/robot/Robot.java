@@ -46,6 +46,7 @@ public class Robot extends TimedRobot {
   private boolean isMoving = false;
   private double currentPos = 0;
   private double currentPosR = 0;
+  private PickerUpper pickerUpper = new PickerUpper();
   private int driveSpeed = 2800;
   private boolean isAutoDriving = false;
   /**
@@ -255,6 +256,11 @@ public class Robot extends TimedRobot {
     }
     SmartDashboard.putBoolean("isMoving", isMoving);
     
+    double armSpeed = m_rightStick.getRawAxis(1);
+    pickerUpper.moveArm(armSpeed);
+  
+    double towerSpeed = m_rightStick.getRawAxis(2);
+    pickerUpper.moveTower(towerSpeed);
   }
 
   /** This function is called once when the robot is disabled. */
