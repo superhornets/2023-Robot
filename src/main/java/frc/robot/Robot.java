@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
     //drive.arcadeDrive(m_rightStick.getY()*-.5,m_rightStick.getX()*.5);
     //}
     
-    if((m_encoder.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH && m_encoder.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH) && isMoving){
+    if((m_encoder.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH+currentPos && m_encoder.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH+currentPos) && isMoving && (m_encoderR.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH+currentPosR && m_encoderR.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH+currentPosR)){
       isMoving = false;
       currentPos = m_encoder.getPosition();
       currentPosR = m_encoderR.getPosition();
