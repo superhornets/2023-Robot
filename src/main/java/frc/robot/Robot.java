@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
   private double currentPos = 0;
   private double currentPosR = 0;
   private PickerUpper pickerUpper = new PickerUpper();
-  private int driveSpeed = 3800;
+  private int driveSpeed = 4800;
   private boolean isAutoDriving = false;
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -167,7 +167,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     currentPos=m_encoder.getPosition();
-    currentPosR = m_encoderR.getPosition(); 
+    currentPosR = m_encoderR.getPosition();
+    isMoving = false; 
   }
 
   /** This function is called periodically during operator control. */
@@ -223,8 +224,8 @@ public class Robot extends TimedRobot {
     else if(!isMoving){
       //m_pidController.setReference(0, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
      // m_pidControllerR.setReference(0, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
-     m_pidController.setReference((currentPos),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
-     m_pidControllerR.setReference((currentPosR),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
+     m_pidController.setReference((0),com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
+     m_pidControllerR.setReference((0),com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
       
     }
     SmartDashboard.putNumber("velocity", m_encoder.getVelocity());
