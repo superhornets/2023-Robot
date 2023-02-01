@@ -66,15 +66,15 @@ public class Robot extends TimedRobot {
     m_encoder = leftFrontDrive.getEncoder();
     m_encoderR = rightFrontDrive.getEncoder();
     kP = 5e-5; 
-    kI = 1e-6;
+    kI = 8e-7;
     kD = 0; 
     kIz = 0; 
     kFF = 0;
     maxRPM = 5700;
     maxVel = 2000; // rpm
     maxAcc = 1500;
-    kMaxOutput = .5; 
-    kMinOutput = -.5;
+    kMaxOutput = 1; 
+    kMinOutput = -1;
     leftRearDrive.follow(leftFrontDrive);
     rightRearDrive.follow(rightFrontDrive);
     //currentPos = m_encoder.getPosition();
@@ -165,7 +165,10 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    currentPos=m_encoder.getPosition();
+    currentPosR = m_encoderR.getPosition(); 
+  }
 
   /** This function is called periodically during operator control. */
   @Override
