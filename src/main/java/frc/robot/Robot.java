@@ -58,8 +58,8 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    rightFrontDrive.setInverted(true);
-    rightRearDrive.setInverted(true);
+    leftFrontDrive.setInverted(true);
+    //leftRearDrive.setInverted(true);
     m_pidController = leftFrontDrive.getPIDController();
     m_pidControllerR = rightFrontDrive.getPIDController();
     // Encoder object created to display position values
