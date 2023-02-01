@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
   private double currentPos = 0;
   private double currentPosR = 0;
   private PickerUpper pickerUpper = new PickerUpper();
-  private int driveSpeed = 2800;
+  private int driveSpeed = 3800;
   private boolean isAutoDriving = false;
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -58,8 +58,8 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    leftFrontDrive.setInverted(true);
-    leftRearDrive.setInverted(true);
+    rightFrontDrive.setInverted(true);
+    rightRearDrive.setInverted(true);
     m_pidController = leftFrontDrive.getPIDController();
     m_pidControllerR = rightFrontDrive.getPIDController();
     // Encoder object created to display position values
@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
     kI = 1e-6;
     kD = 0; 
     kIz = 0; 
-    kFF = 0.000156;
+    kFF = 0;
     maxRPM = 5700;
     maxVel = 2000; // rpm
     maxAcc = 1500;
