@@ -50,6 +50,8 @@ public class Robot extends TimedRobot {
   private int driveSpeed = 4800;*/
   private boolean isAutoDriving = false;
   private Drive Drive = new Drive();
+  private double angle = 0;
+  private boolean isTurning = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -81,6 +83,7 @@ public class Robot extends TimedRobot {
     //currentPos = m_encoder.getPosition();
     //currentPosR = m_encoderR.getPosition();*/
     Drive.driveInit();
+    Drive.NavXInit();
     // set PID coefficients
     /*m_pidController.setP(kP);
     m_pidController.setI(kI);
@@ -109,7 +112,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Min Output", kMinOutput);
     SmartDashboard.putNumber("Set Rotations", 0);
     SmartDashboard.putNumber("Rotations per inch", ROTATIONS_PER_INCH);
-   */ SmartDashboard.putNumber("Distance", distance);/*
+   */ SmartDashboard.putNumber("Distance", distance);
+      SmartDashboard.putNumber("angle", angle);/*
 
 
     SmartDashboard.putNumber("Max Velocity", maxVel);
@@ -186,7 +190,8 @@ public class Robot extends TimedRobot {
     double min = SmartDashboard.getNumber("Min Output", 0);
     double rotations = SmartDashboard.getNumber("Set Rotations", 0);
     double ROTATIONS_PER_INCH = SmartDashboard.getNumber("rotations per inch", .5694);
-    */double distance = SmartDashboard.getNumber("Distance", 0);/*
+    */double distance = SmartDashboard.getNumber("Distance", 0);
+      double angle = SmartDashboard.getNumber("angle", 0);/*
 
     double maxV = SmartDashboard.getNumber("Max Velocity", 0);
     double minV = SmartDashboard.getNumber("Min Velocity", 0);
@@ -229,8 +234,10 @@ public class Robot extends TimedRobot {
      // m_pidControllerR.setReference(0, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
       Drive.holdSpeed(0);
     }
-
-    if(!Drive.isDriving()){
+    if(isAutoDriving){
+      Drive.driveTo(distance);
+    }
+    if(!Drive.isDriving(distance)){
       isAutoDriving = false;
     }
     //SmartDashboard.putNumber("velocity", m_encoder.getVelocity());
@@ -270,6 +277,17 @@ public class Robot extends TimedRobot {
   
     double towerSpeed = m_rightStick.getRawAxis(2);
     pickerUpper.moveTower(towerSpeed);
+
+    if(m_leftStick.getRawButton(2)){
+      Drive.turnTo(angle);
+      isTurning = true;
+    }
+    if(isTurning){
+      Drive.turnTo(angle);
+      if(Drive.isTurning(angle)){
+        isTurning=false;
+      }
+    }
   }
 
   /** This function is called once when the robot is disabled. */

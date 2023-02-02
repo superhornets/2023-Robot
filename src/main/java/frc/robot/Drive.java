@@ -1,4 +1,6 @@
 package frc.robot;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -8,6 +10,11 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
+
+
+
 
 public class Drive {
     private final CANSparkMax leftFrontDrive = new CANSparkMax(1, MotorType.kBrushless);
@@ -27,6 +34,15 @@ public class Drive {
     private PickerUpper pickerUpper = new PickerUpper();
     private int driveSpeed = 4800;
     private boolean isAutoDriving = false;
+    private boolean rotateToAngle = false;
+    private double currentRotationRate = 0;
+    AHRS ahrs;
+    double rotateToAngleRate;
+    PIDController turnController;
+    final double kPT = 0.03;
+    final double kIT = 0.00;
+    final double kDT = 0.00;
+    final double kFT = 0.00;
     
     public void driveInit(){
         m_pidController.setP(kP);
@@ -63,6 +79,9 @@ public class Drive {
         kMinOutput = -1;
         leftRearDrive.follow(leftFrontDrive);
         rightRearDrive.follow(rightFrontDrive);
+
+        //turn to angle init
+
     }
     public void setPos(){
         currentPos=m_encoder.getPosition();
@@ -72,7 +91,45 @@ public class Drive {
         setPos();
         isMoving = false;
     }
-    public boolean isDriving(){
+    public void NavXInit (){
+        try {
+            /***********************************************************************
+             * navX-MXP: - Communication via RoboRIO MXP (SPI, I2C) and USB. - See
+             * http://navx-mxp.kauailabs.com/guidance/selecting-an-interface.
+             * 
+             * navX-Micro: - Communication via I2C (RoboRIO MXP or Onboard) and USB. - See
+             * http://navx-micro.kauailabs.com/guidance/selecting-an-interface.
+             * 
+             * VMX-pi: - Communication via USB. - See
+             * https://vmx-pi.kauailabs.com/installation/roborio-installation/
+             * 
+             * Multiple navX-model devices on a single robot are supported.
+             ************************************************************************/
+            ahrs = new AHRS(SPI.Port.kMXP);
+          } catch (RuntimeException ex) {
+            //DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+          }
+          turnController = new PIDController(kP, kI, kD);
+          turnController.enableContinuousInput(-180.0f, 180.0f);
+      
+    }
+    public void resetNavX(){
+        ahrs.reset();
+    }
+    public double wrapAngle(double angle){
+        if(angle >= -180 && angle <= 180){
+            return angle;
+        }
+        else if(angle < -180){
+            angle = (360 + angle);
+            return wrapAngle(angle);
+        }
+        else{
+            angle = (-360 + angle);
+            return wrapAngle(angle);
+        }
+    }
+    public boolean isDriving(double distance){
         if((m_encoder.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH+currentPos && m_encoder.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH+currentPos) && isMoving && (m_encoderR.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH+currentPosR && m_encoderR.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH+currentPosR)){
             return true;
         }
@@ -80,12 +137,18 @@ public class Drive {
             return false;
         }
     }
+    public boolean isTurning(double angle) {
+        if(wrapAngle(ahrs.getAngle()) <= angle + .5 && wrapAngle(ahrs.getAngle()) >= angle - .5){
+            return true;
+        }
+        else{return false;}
+    }
     public void driveTo(double distance) {
         if(!isMoving){
             isMoving=true;
             setPos();
         }
-        if(isDriving()){
+        if(isDriving(distance)){
             isMoving = false;
             setPos();
         }
@@ -96,7 +159,18 @@ public class Drive {
         m_pidController.setReference((speed),com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         m_pidControllerR.setReference((speed),com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
     }
-    public void turnTo(double angle) {}
+    public void turnTo(double angle) {
+        if(!rotateToAngle){
+            turnController.setSetpoint(angle);
+            rotateToAngle = true;
+        }
+        currentRotationRate = MathUtil.clamp(turnController.calculate(wrapAngle(ahrs.getAngle())), -1.0, 1.0);
+        if(!isTurning(angle)){
+            arcade(0, currentRotationRate);
+        }
+        else{rotateToAngle = false;}
+
+    }
 
     public void arcade(double forwardSpeed, double turnSpeed) {
         var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed, true);
