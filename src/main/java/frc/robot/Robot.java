@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -52,6 +53,7 @@ public class Robot extends TimedRobot {
   private Drive Drive = new Drive();
   private double angle = 0;
   private boolean isTurning = false;
+  private boolean holdMode = true;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -113,7 +115,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Set Rotations", 0);
     SmartDashboard.putNumber("Rotations per inch", ROTATIONS_PER_INCH);
    */ SmartDashboard.putNumber("Distance", distance);
-      SmartDashboard.putNumber("angle", angle);/*
+      SmartDashboard.putNumber("angle", angle);
+      SmartDashboard.putBoolean("hold Position", holdMode);/*
 
 
     SmartDashboard.putNumber("Max Velocity", maxVel);
@@ -192,7 +195,8 @@ public class Robot extends TimedRobot {
     double rotations = SmartDashboard.getNumber("Set Rotations", 0);
     double ROTATIONS_PER_INCH = SmartDashboard.getNumber("rotations per inch", .5694);
     */double distance = SmartDashboard.getNumber("Distance", 0);
-      double angle = SmartDashboard.getNumber("angle", 0);/*
+      double angle = SmartDashboard.getNumber("angle", 0);
+      boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);/*
 
     double maxV = SmartDashboard.getNumber("Max Velocity", 0);
     double minV = SmartDashboard.getNumber("Min Velocity", 0);
@@ -234,8 +238,14 @@ public class Robot extends TimedRobot {
     else if(!isAutoDriving){
       //m_pidController.setReference(0, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
      // m_pidControllerR.setReference(0, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
+     if(holdMode){
+      Drive.holdPosition();
+     } 
+     else{
       Drive.holdSpeed(0);
       Drive.setPos();
+     }
+      
     }
     if(isAutoDriving){
       if(Drive.driveTo(distance)){
@@ -250,6 +260,14 @@ public class Robot extends TimedRobot {
     }
     if(m_leftStick.getRawButton(5)){
       Drive.stopRotation();
+      isTurning = false;
+    }
+    if(m_leftStick.getRawButton(6)){
+        holdMode = false;
+    } 
+      
+    if(m_leftStick.getRawButton(7)){
+      holdMode = true;
     }
     //SmartDashboard.putNumber("velocity", m_encoder.getVelocity());
     //SmartDashboard.putNumber("left stick", m_leftStick.getY());
@@ -294,10 +312,12 @@ public class Robot extends TimedRobot {
       isTurning = true;
     }
     if(isTurning){
-      Drive.turnTo(angle);
-      if(Drive.isTurning(angle)){
-        isTurning=false;
+      if(Drive.turnTo(angle)){
+        isTurning = false;
       }
+      /*if(Drive.isTurning(angle)){
+        isTurning=false;
+      }*/
     }
     if(m_leftStick.getRawButton(4)){
       Drive.resetNavX();

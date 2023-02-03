@@ -38,7 +38,7 @@ public class Drive {
     AHRS ahrs;
     double rotateToAngleRate;
     PIDController turnController;
-    final double kPT = 0.03;
+    final double kPT = 0.015;
     final double kIT = 0.00;
     final double kDT = 0.00;
     final double kFT = 0.00;
@@ -112,7 +112,7 @@ public class Drive {
           } catch (RuntimeException ex) {
             //DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
           }
-          turnController = new PIDController(kP, kI, kD);
+          turnController = new PIDController(kPT, kIT, kDT);
           turnController.enableContinuousInput(-180.0f, 180.0f);
       
     }
@@ -143,7 +143,7 @@ public class Drive {
         }
     }
     public boolean isTurning(double angle) {
-        if(wrapAngle(ahrs.getAngle()) <= angle + .5 && wrapAngle(ahrs.getAngle()) >= angle - .5){
+        if(wrapAngle(ahrs.getAngle()) <= angle + 3 && wrapAngle(ahrs.getAngle()) >= angle - 3){
             return true;
         }
         else{return false;}
@@ -167,16 +167,27 @@ public class Drive {
         m_pidController.setReference((speed),com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         m_pidControllerR.setReference((speed),com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
     }
-    public void turnTo(double angle) {
+    public void holdPosition(){
+        //setPos();
+        m_pidController.setReference((currentPos),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
+        m_pidControllerR.setReference((currentPosR),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
+    }
+    public boolean turnTo(double angle) {
+        angle = wrapAngle(angle);
         if(!rotateToAngle){
             turnController.setSetpoint(angle);
             rotateToAngle = true;
         }
-        currentRotationRate = MathUtil.clamp(turnController.calculate(wrapAngle(ahrs.getAngle())), -1.0, 1.0);
-        if(!isTurning(angle)){
+        currentRotationRate = MathUtil.clamp(turnController.calculate(wrapAngle(ahrs.getAngle())), -.5, .5);
+        if(!isTurning(angle) && (currentRotationRate < .05 || currentRotationRate > -.05)){
             arcade(0, currentRotationRate);
+            return false;
         }
-        else{rotateToAngle = false;}
+        else{
+            rotateToAngle = false;
+            return true;
+            }
+
 
     }
     public void stopRotation(){
