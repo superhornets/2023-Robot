@@ -135,6 +135,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    //Drive.SmartDashboardPrintout(distance);
   }
 
   /**
@@ -228,17 +229,27 @@ public class Robot extends TimedRobot {
     else if(m_leftStick.getRawButton(3) && !isAutoDriving){
       Drive.driveTo(distance);
       isAutoDriving = true;
+      //System.out.println("button 3");
     }
     else if(!isAutoDriving){
       //m_pidController.setReference(0, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
      // m_pidControllerR.setReference(0, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
       Drive.holdSpeed(0);
+      Drive.setPos();
     }
     if(isAutoDriving){
-      Drive.driveTo(distance);
+      if(Drive.driveTo(distance)){
+        isAutoDriving = false;
+      }
+    
+      /*if(Drive.isDriving(distance)){
+        isAutoDriving = false;
+        System.out.println("is driving true 2");
+
+      }*/
     }
-    if(!Drive.isDriving(distance)){
-      isAutoDriving = false;
+    if(m_leftStick.getRawButton(5)){
+      Drive.stopRotation();
     }
     //SmartDashboard.putNumber("velocity", m_encoder.getVelocity());
     //SmartDashboard.putNumber("left stick", m_leftStick.getY());
@@ -288,8 +299,12 @@ public class Robot extends TimedRobot {
         isTurning=false;
       }
     }
+    if(m_leftStick.getRawButton(4)){
+      Drive.resetNavX();
+    }
+    SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
   }
-
+  
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {}

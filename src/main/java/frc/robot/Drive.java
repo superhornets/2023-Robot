@@ -31,8 +31,7 @@ public class Drive {
     public boolean isMoving = false;
     private double currentPos = 0;
     private double currentPosR = 0;
-    private PickerUpper pickerUpper = new PickerUpper();
-    private int driveSpeed = 4800;
+        private int driveSpeed = 4800;
     private boolean isAutoDriving = false;
     private boolean rotateToAngle = false;
     private double currentRotationRate = 0;
@@ -45,6 +44,20 @@ public class Drive {
     final double kFT = 0.00;
     
     public void driveInit(){
+        kP = 5e-5; 
+        kI = 8e-7;
+        kD = 0; 
+        kIz = 0; 
+        kFF = 0;
+        maxRPM = 5700;
+        maxVel = 2000; // rpm
+        maxAcc = 1500;
+        kMaxOutput = 1; 
+        kMinOutput = -1;
+        leftRearDrive.follow(leftFrontDrive);
+        rightRearDrive.follow(rightFrontDrive);
+        m_pidController = leftFrontDrive.getPIDController();
+        m_pidControllerR = rightFrontDrive.getPIDController();
         m_pidController.setP(kP);
         m_pidController.setI(kI);
         m_pidController.setD(kD);
@@ -62,23 +75,12 @@ public class Drive {
         m_pidControllerR.setFF(kFF);
         m_pidControllerR.setOutputRange(kMinOutput, kMaxOutput);
         leftFrontDrive.setInverted(true);
-        m_pidController = leftFrontDrive.getPIDController();
-        m_pidControllerR = rightFrontDrive.getPIDController();
+        System.out.println("drive init");
+        
         // Encoder object created to display position values
         m_encoder = leftFrontDrive.getEncoder();
         m_encoderR = rightFrontDrive.getEncoder();
-        kP = 5e-5; 
-        kI = 8e-7;
-        kD = 0; 
-        kIz = 0; 
-        kFF = 0;
-        maxRPM = 5700;
-        maxVel = 2000; // rpm
-        maxAcc = 1500;
-        kMaxOutput = 1; 
-        kMinOutput = -1;
-        leftRearDrive.follow(leftFrontDrive);
-        rightRearDrive.follow(rightFrontDrive);
+
 
         //turn to angle init
 
@@ -90,6 +92,7 @@ public class Drive {
     public void teleopInitDrive(){
         setPos();
         isMoving = false;
+        System.out.println("teleop init");
     }
     public void NavXInit (){
         try {
@@ -131,9 +134,11 @@ public class Drive {
     }
     public boolean isDriving(double distance){
         if((m_encoder.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH+currentPos && m_encoder.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH+currentPos) && isMoving && (m_encoderR.getPosition() <= (distance+.5)*ROTATIONS_PER_INCH+currentPosR && m_encoderR.getPosition() >= (distance-.5)*ROTATIONS_PER_INCH+currentPosR)){
+            //System.out.println("is driving: true");
             return true;
         }
         else{
+            //System.out.println("is driving: false " + distance*ROTATIONS_PER_INCH+currentPos);
             return false;
         }
     }
@@ -143,18 +148,21 @@ public class Drive {
         }
         else{return false;}
     }
-    public void driveTo(double distance) {
+    public boolean driveTo(double distance) {
         if(!isMoving){
             isMoving=true;
-            setPos();
-        }
-        if(isDriving(distance)){
-            isMoving = false;
-            setPos();
+            //setPos();
+            
         }
         m_pidController.setReference((currentPos+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
         m_pidControllerR.setReference((currentPosR+distance*ROTATIONS_PER_INCH),com.revrobotics.CANSparkMax.ControlType.kSmartMotion);
-    }
+        if(isDriving(distance)){
+            isMoving = false;
+            return true;
+            //System.out.println("is driving true");
+        }
+        else{return false;}
+        }
     public void holdSpeed(double speed){
         m_pidController.setReference((speed),com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         m_pidControllerR.setReference((speed),com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
@@ -171,15 +179,26 @@ public class Drive {
         else{rotateToAngle = false;}
 
     }
-
+    public void stopRotation(){
+        rotateToAngle = false;
+    }
     public void arcade(double forwardSpeed, double turnSpeed) {
         var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed, true);
-      m_pidController.setReference(speeds.left*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
-      m_pidControllerR.setReference(speeds.right*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
-      //SmartDashboard.putNumber("left", speeds.left);
-      //SmartDashboard.putNumber("right", speeds.right);
-      setPos();
+        m_pidController.setReference(speeds.left*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
+        m_pidControllerR.setReference(speeds.right*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
+        //SmartDashboard.putNumber("left", speeds.left);
+        //SmartDashboard.putNumber("right", speeds.right);
+        setPos();
+        //System.out.println("arcade");
     }
 
     public void level() {}
+
+    public void SmartDashboardPrintout(double distance){
+        SmartDashboard.putNumber("angle", ahrs.getAngle());
+        SmartDashboard.putBoolean("isMoving", isMoving);
+        SmartDashboard.putNumber("currentPos", currentPos);
+        SmartDashboard.putNumber("currentPosR", currentPosR);
+        SmartDashboard.putBoolean("isDrving", isDriving(distance));
+    }
 }
