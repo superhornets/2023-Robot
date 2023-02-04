@@ -54,6 +54,7 @@ public class Robot extends TimedRobot {
   private double angle = 0;
   private boolean isTurning = false;
   private boolean holdMode = true;
+  private boolean isAutoLeveling = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -138,7 +139,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    //Drive.SmartDashboardPrintout(distance);
+    Drive.SmartDashboardPrintout(distance);
+    SmartDashboard.putNumber("leftStick", m_leftStick.getY());
   }
 
   /**
@@ -230,6 +232,12 @@ public class Robot extends TimedRobot {
       currentPosR = m_encoderR.getPosition();*/
       Drive.arcade(m_leftStick.getY(), m_leftStick.getX());
     }
+    else if(isAutoLeveling){
+      if(Drive.level()){
+        isAutoLeveling = false;
+        System.out.println("stopped leveling");
+      }
+    }
     else if(m_leftStick.getRawButton(3) && !isAutoDriving){
       Drive.driveTo(distance);
       isAutoDriving = true;
@@ -279,6 +287,13 @@ public class Robot extends TimedRobot {
     }
     if(m_leftStick.getRawButton(4)){
       Drive.resetNavX();
+    }
+    if(m_leftStick.getRawButton(11)){
+      isAutoLeveling = true;
+      Drive.levelInit();
+    }
+    if(m_leftStick.getRawButton(10)){
+      isAutoLeveling = false;
     }
     //SmartDashboard.putNumber("velocity", m_encoder.getVelocity());
     //SmartDashboard.putNumber("left stick", m_leftStick.getY());

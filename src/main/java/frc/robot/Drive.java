@@ -2,6 +2,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -10,6 +11,9 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import org.ejml.interfaces.linsol.LinearSolver;
+
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 
@@ -38,10 +42,12 @@ public class Drive {
     AHRS ahrs;
     double rotateToAngleRate;
     PIDController turnController;
+    private double flatAngle = 0;
     final double kPT = 0.02;
     final double kIT = 0.00;
     final double kDT = 0.00;
     final double kFT = 0.00;
+    int levelStage = 0;
     
     public void driveInit(){
         kP = 5e-5; 
@@ -114,10 +120,13 @@ public class Drive {
           }
           turnController = new PIDController(kPT, kIT, kDT);
           turnController.enableContinuousInput(-180.0f, 180.0f);
-      
+          ahrs.calibrate();
+          flatAngle = ahrs.getRoll();
     }
     public void resetNavX(){
         ahrs.reset();
+        flatAngle = ahrs.getRoll();
+
     }
     public double wrapAngle(double angle){
         if(angle >= -180 && angle <= 180){
@@ -209,14 +218,80 @@ public class Drive {
         setPos();
         //System.out.println("arcade");
     }
+    public void levelInit(){
+        levelStage = 0;
+    }
+    public boolean level() {
+        
+        double time = 0;
+        if(levelStage == 0){
+            arcade(.6, 0);
+            if(ahrs.getRoll() > 0){
+                levelStage = 1;
+                System.out.println("stage 0");
+            }
+        }
+        else if(levelStage == 1){
+            arcade(.4, 0);
+            if(ahrs.getRoll()<0){
+                levelStage = 2;
+                time = Timer.getFPGATimestamp();
+                System.out.println("stage 1");
 
-    public void level() {}
+            }
+        }
+        else if (levelStage == 2){
+            setPos();
+            holdPosition();
+            if(Timer.getFPGATimestamp() - time > .25){
+                if(ahrs.getRoll() <=0 && ahrs.getRoll()>=-5){
+                    levelStage = 4;
+                    setPos();
+                }
+                else if(ahrs.getRoll()> 0){
+                    levelStage = 1;
+                }
+                else if(ahrs.getRoll()<-7){
+                    levelStage = 3;
+                }
+                System.out.println("stage 2");
+
+            }
+        }
+        else if(levelStage == 3){
+            arcade(-.4, 0);
+            if(ahrs.getRoll()>-7){
+                levelStage = 2;
+                time = Timer.getFPGATimestamp();
+                System.out.println("stage 3");
+
+            }
+        }
+        else if (levelStage == 4){
+            holdPosition();  
+            System.out.println("stage 4");
+  
+        }
+        
+        if(levelStage == 4){
+            return true;
+        }
+        else{
+            return false;
+        }
+        
+    }
 
     public void SmartDashboardPrintout(double distance){
-        SmartDashboard.putNumber("angle", ahrs.getAngle());
-        SmartDashboard.putBoolean("isMoving", isMoving);
-        SmartDashboard.putNumber("currentPos", currentPos);
-        SmartDashboard.putNumber("currentPosR", currentPosR);
-        SmartDashboard.putBoolean("isDrving", isDriving(distance));
+        //SmartDashboard.putNumber("angle", ahrs.getAngle());
+        //SmartDashboard.putBoolean("isMoving", isMoving);
+        //SmartDashboard.putNumber("currentPos", currentPos);
+        //SmartDashboard.putNumber("currentPosR", currentPosR);
+        //SmartDashboard.putBoolean("isDrving", isDriving(distance));
+        SmartDashboard.putNumber("roll", ahrs.getRoll()-flatAngle);
+        SmartDashboard.putNumber("yaw", ahrs.getYaw());
+
+        SmartDashboard.putNumber("pitch", ahrs.getPitch());
+
     }
 }
