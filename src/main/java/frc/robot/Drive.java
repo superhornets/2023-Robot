@@ -232,7 +232,7 @@ public class Drive {
             }
         }
         else if(levelStage == 1){
-            arcade(.4, 0);
+            arcade(.35, 0);
             if(ahrs.getRoll()<0){
                 levelStage = 2;
                 time = Timer.getFPGATimestamp();
@@ -243,7 +243,7 @@ public class Drive {
         else if (levelStage == 2){
             setPos();
             holdPosition();
-            if(Timer.getFPGATimestamp() - time > .25){
+            if(Timer.getFPGATimestamp() - time > .5){
                 if(ahrs.getRoll() <=0 && ahrs.getRoll()>=-5){
                     levelStage = 4;
                     setPos();
@@ -251,8 +251,9 @@ public class Drive {
                 else if(ahrs.getRoll()> 0){
                     levelStage = 1;
                 }
-                else if(ahrs.getRoll()<-7){
+                else if(ahrs.getRoll()<-6){
                     levelStage = 3;
+                    System.out.println("Going to stage 3");
                 }
                 System.out.println("stage 2");
 
@@ -260,7 +261,7 @@ public class Drive {
         }
         else if(levelStage == 3){
             arcade(-.4, 0);
-            if(ahrs.getRoll()>-7){
+            if(ahrs.getRoll()>-6){
                 levelStage = 2;
                 time = Timer.getFPGATimestamp();
                 System.out.println("stage 3");
