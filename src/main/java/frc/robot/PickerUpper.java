@@ -1,9 +1,11 @@
 package frc.robot;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class PickerUpper {
 
     private final CANSparkMax m_arm = new CANSparkMax(5, MotorType.kBrushless);
@@ -13,6 +15,9 @@ public class PickerUpper {
     private final CANSparkMax m_tower = new CANSparkMax(6, MotorType.kBrushless);
     private final DigitalInput m_towerLimitRight = new DigitalInput(2);
     private final DigitalInput m_towerLimitLeft = new DigitalInput(3);
+    private final RelativeEncoder m_towerEncoder = m_tower.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, 42);
+
+
 
     public void moveArm(double speed) {
         speed = speed * 0.1;
@@ -61,5 +66,10 @@ public class PickerUpper {
     public void open(double angle) {}
     public void closeCone() {}
     public void closeCube() {}
+
+
+    public void SmartDashboardPrintout(){
+        SmartDashboard.putNumber("tower posison", m_towerEncoder.getPosition());
+    }
 }
 
