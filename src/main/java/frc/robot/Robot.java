@@ -241,9 +241,17 @@ public class Robot extends TimedRobot {
      if(holdMode){
       Drive.holdPosition();
      } 
+     else if(isTurning){
+      if(Drive.turnTo(angle)){
+        isTurning = false;
+      }
+      /*if(Drive.isTurning(angle)){
+        isTurning=false;
+      }*/
+    }
+
      else{
       Drive.holdSpeed(0);
-      Drive.setPos();
      }
       
     }
@@ -268,6 +276,9 @@ public class Robot extends TimedRobot {
       
     if(m_leftStick.getRawButton(7)){
       holdMode = true;
+    }
+    if(m_leftStick.getRawButton(4)){
+      Drive.resetNavX();
     }
     //SmartDashboard.putNumber("velocity", m_encoder.getVelocity());
     //SmartDashboard.putNumber("left stick", m_leftStick.getY());
@@ -311,17 +322,7 @@ public class Robot extends TimedRobot {
       Drive.turnTo(angle);
       isTurning = true;
     }
-    if(isTurning){
-      if(Drive.turnTo(angle)){
-        isTurning = false;
-      }
-      /*if(Drive.isTurning(angle)){
-        isTurning=false;
-      }*/
-    }
-    if(m_leftStick.getRawButton(4)){
-      Drive.resetNavX();
-    }
+    
     SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
   }
   

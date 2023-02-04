@@ -38,7 +38,7 @@ public class Drive {
     AHRS ahrs;
     double rotateToAngleRate;
     PIDController turnController;
-    final double kPT = 0.015;
+    final double kPT = 0.02;
     final double kIT = 0.00;
     final double kDT = 0.00;
     final double kFT = 0.00;
@@ -164,6 +164,7 @@ public class Drive {
         else{return false;}
         }
     public void holdSpeed(double speed){
+        setPos();
         m_pidController.setReference((speed),com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         m_pidControllerR.setReference((speed),com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
     }
@@ -179,12 +180,18 @@ public class Drive {
             rotateToAngle = true;
         }
         currentRotationRate = MathUtil.clamp(turnController.calculate(wrapAngle(ahrs.getAngle())), -.5, .5);
-        if(!isTurning(angle) && (currentRotationRate < .05 || currentRotationRate > -.05)){
+        if(!isTurning(angle) /*&& !(currentRotationRate < .01 && currentRotationRate > -.01)*/){
+            arcade(0, currentRotationRate);
+            return false;
+        }
+        else if(!(currentRotationRate < .01 && currentRotationRate > -.01)){
             arcade(0, currentRotationRate);
             return false;
         }
         else{
             rotateToAngle = false;
+            setPos();
+            holdPosition();
             return true;
             }
 
