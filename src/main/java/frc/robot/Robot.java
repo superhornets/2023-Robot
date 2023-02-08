@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
   private SparkMaxPIDController m_pidControllerR;
   private RelativeEncoder m_encoder;
   private RelativeEncoder m_encoderR;
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
+  private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
   private /*final*/ double ROTATIONS_PER_INCH = .5694;
   private double distance = 24;
   private boolean isMoving = false;
@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    pickerUpper.armInit();
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -257,6 +258,12 @@ public class Robot extends TimedRobot {
     }
     if (m_leftStick.getRawButton(2)){
       isMoving = false;
+    }
+    if (m_rightStick.getRawButton(1)){
+      pickerUpper.closeCone();
+    }
+    else if (m_rightStick.getRawButton(2)){
+      pickerUpper.open();
     }
     SmartDashboard.putBoolean("isMoving", isMoving);
     
