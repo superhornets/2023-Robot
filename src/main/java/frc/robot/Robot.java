@@ -26,6 +26,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
+  private static final String kStraightAuto = "Straight auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private final Joystick m_leftStick = new Joystick(0);
@@ -66,7 +67,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    Drive.SmartDashboardPrintout(distance);
+    Drive.SmartDashboardPrintout();
     SmartDashboard.putNumber("leftStick", m_leftStick.getY());
   }
 
@@ -124,6 +125,27 @@ public class Robot extends TimedRobot {
         else{
           Drive.holdPosition();
         }
+      case kStraightAuto:
+        if(autoStage == 0){
+          Drive.driveOverInit();
+          autoStage = 1;
+        }
+        else if(autoStage == 1){
+          if(Drive.driveOverChargingStation()){
+            Drive.levelInit();
+            autoStage = 2;
+          }
+        }
+        else if(autoStage == 2){
+          if(Drive.level()){
+            autoStage = 3;
+            Drive.setPos();
+          }
+        }
+        else if(autoStage == 3){
+          Drive.holdPosition();
+        }
+
         
       case kDefaultAuto:
       default:
