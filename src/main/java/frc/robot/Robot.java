@@ -125,29 +125,33 @@ public class Robot extends TimedRobot {
         else{
           Drive.holdPosition();
         }
-      case kStraightAuto:
+      case kDefaultAuto:
         if(autoStage == 0){
           Drive.driveOverInit();
           autoStage = 1;
         }
         else if(autoStage == 1){
           if(Drive.driveOverChargingStation()){
-            Drive.levelInit();
             autoStage = 2;
           }
         }
         else if(autoStage == 2){
-          if(Drive.level()){
+          if(Drive.turnTo(180)){
             autoStage = 3;
-            Drive.setPos();
           }
         }
         else if(autoStage == 3){
+          if(Drive.level()){
+            autoStage = 4;
+            Drive.setPos();
+          }
+        }
+        else if(autoStage == 4){
           Drive.holdPosition();
         }
 
         
-      case kDefaultAuto:
+      case kStraightAuto:
       default:
         // Put default auto code here
         break;

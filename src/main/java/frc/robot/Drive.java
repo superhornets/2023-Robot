@@ -53,7 +53,7 @@ public class Drive {
     int driveStage = 0;
 
     //vision
-    PhotonCamera camera = new PhotonCamera("photonvision");
+    PhotonCamera camera = new PhotonCamera("OV5647");
 
     
     public void driveInit(){
@@ -232,7 +232,7 @@ public class Drive {
         
         double time = 0;
         if(levelStage == 0){
-            arcade(.6, 0);
+            arcade(.7, 0);
             if(ahrs.getRoll() > 0){
                 levelStage = 1;
                 System.out.println("stage 0");
@@ -299,12 +299,12 @@ public class Drive {
         if(hasTargets){
             PhotonTrackedTarget target = result.getBestTarget();
             if(target.getFiducialId() == 4){
-            distance = 39.4*target.getBestCameraToTarget().getX();
+            distance = target.getBestCameraToTarget().getX();
             }
         }
         if(driveStage == 0){
-            arcade(-.4, 0);
-            if(distance == 168){
+            arcade(.8, 0);
+            if(distance >= 4){
                 driveStage = 1;
             }
             return false;
