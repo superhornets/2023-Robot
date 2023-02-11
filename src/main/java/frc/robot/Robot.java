@@ -26,6 +26,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
+  private static final String kBrokenArmAuto = "Broken Arm";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private final Joystick m_leftStick = new Joystick(0);
@@ -55,6 +56,7 @@ public class Robot extends TimedRobot {
     pickerUpper.armInit();
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.addOption("Broken Arm", kBrokenArmAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     Drive.driveInit();
     Drive.NavXInit();
@@ -132,7 +134,40 @@ public class Robot extends TimedRobot {
         else{
           Drive.holdPosition();
         }
-        
+      case kBrokenArmAuto:
+        if (autoStage == 0){
+          // Back up
+          if(Drive.driveTo(-24)){
+            autoStage = 1;
+          }
+        }
+        else if(autoStage == 1){
+          // Forward
+          if(Drive.driveTo(36)){
+            autoStage = 2;
+          }
+        }
+        if (autoStage == 2){
+          // Back up
+          if(Drive.driveTo(-24)){
+            autoStage = 3;
+          }
+          // ;)
+        }
+        else if(autoStage == 3){
+          // Turn 180 degrees (FIX ANGLE, NO 0)
+          if(Drive.turnTo(0)){
+            autoStage = 4;
+          }
+        }
+        // Forward until hit game piece
+        // Turn 180 degrees in place
+        // Move to node
+        // Forward
+        // Back up
+        // Turn "A bit"
+        // Forward
+        break; 
       case kDefaultAuto:
       default:
         // Put default auto code here
