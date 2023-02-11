@@ -219,17 +219,12 @@ public class Robot extends TimedRobot {
     if(m_leftStick.getRawButton(10)){
       isAutoLeveling = false;
     }
-<<<<<<< HEAD
     if (m_rightStick.getRawButton(1)){
       pickerUpper.closeCone();
     }
     else if (m_rightStick.getRawButton(2)){
       pickerUpper.open();
-    }
-    SmartDashboard.putBoolean("isMoving", isMoving);
-=======
->>>>>>> origin/drive-to-distance
-    
+    }    
     double armSpeed = m_rightStick.getRawAxis(1);
     pickerUpper.moveArm(armSpeed);
   
