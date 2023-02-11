@@ -3,8 +3,11 @@ package frc.robot;
 import java.net.ConnectException;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.RelativeEncoder;
@@ -12,6 +15,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 public class PickerUpper {
 
     private final CANSparkMax m_arm = new CANSparkMax(5, MotorType.kBrushless);
@@ -21,6 +25,9 @@ public class PickerUpper {
     private final CANSparkMax m_tower = new CANSparkMax(6, MotorType.kBrushless);
     private final DigitalInput m_towerLimitRight = new DigitalInput(2);
     private final DigitalInput m_towerLimitLeft = new DigitalInput(3);
+    private final RelativeEncoder m_towerEncoder = m_tower.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, 42);
+
+
 
     private final CANSparkMax m_grabber = new CANSparkMax(7, MotorType.kBrushless);
     private final DigitalInput m_grabberLimitOpen = new DigitalInput(4);
@@ -113,6 +120,11 @@ public class PickerUpper {
     public void extend(double speed) {}
     public void retract(double speed) {}
 
+
+    public void SmartDashboardPrintout(){
+        SmartDashboard.putNumber("tower posison", m_towerEncoder.getPosition());
+    }
+ 
     public void open() {
         /*if(m_grabberLimitOpen.get()) {
             m_grabber.set(0);

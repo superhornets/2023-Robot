@@ -74,7 +74,8 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {
+  public void robotPeriodic() { 
+    pickerUpper.SmartDashboardPrintout();
     Drive.SmartDashboardPrintout();
     SmartDashboard.putNumber("leftStick", m_leftStick.getY());
   }
