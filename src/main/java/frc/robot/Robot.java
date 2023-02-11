@@ -31,6 +31,13 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private final Joystick m_leftStick = new Joystick(0);
   private final Joystick m_rightStick = new Joystick(1);
+  //private final DifferentialDrive drive = new DifferentialDrive(leftFrontDrive, rightFrontDrive);
+  private SparkMaxPIDController m_pidController;
+  private SparkMaxPIDController m_pidControllerR;
+  private RelativeEncoder m_encoder;
+  private RelativeEncoder m_encoderR;
+  private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
+  private /*final*/ double ROTATIONS_PER_INCH = .5694;
   private double distance = 24;
   private PickerUpper pickerUpper = new PickerUpper();
   private boolean isAutoDriving = false;
@@ -46,6 +53,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    pickerUpper.armInit();
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -237,7 +245,12 @@ public class Robot extends TimedRobot {
     if(m_leftStick.getRawButton(10)){
       isAutoLeveling = false;
     }
-    
+    if (m_rightStick.getRawButton(1)){
+      pickerUpper.closeCone();
+    }
+    else if (m_rightStick.getRawButton(2)){
+      pickerUpper.open();
+    }    
     double armSpeed = m_rightStick.getRawAxis(1);
     pickerUpper.moveArm(armSpeed);
   
