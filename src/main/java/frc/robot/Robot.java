@@ -41,7 +41,8 @@ public class Robot extends TimedRobot {
   private double distance = 24;
   private PickerUpper pickerUpper = new PickerUpper();
   private boolean isAutoDriving = false;
-  private Drive Drive = new Drive();
+  private Drive drive = new Drive();
+  private Auto auto = new Auto(drive, pickerUpper);
   private double angle = 0;
   private boolean isTurning = false;
   private boolean holdMode = true;
@@ -57,8 +58,8 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    Drive.driveInit();
-    Drive.NavXInit();
+    drive.driveInit();
+    drive.NavXInit();
     
     SmartDashboard.putNumber("Distance", distance);
     SmartDashboard.putNumber("angle", angle);
@@ -76,7 +77,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() { 
     pickerUpper.SmartDashboardPrintout();
-    Drive.SmartDashboardPrintout();
+    drive.SmartDashboardPrintout();
     SmartDashboard.putNumber("leftStick", m_leftStick.getY());
   }
 
@@ -105,58 +106,58 @@ public class Robot extends TimedRobot {
       case kCustomAuto:
         // Put custom auto code here
         if (autoStage == 0){
-          if(Drive.driveTo(-168)){
+          if(drive.driveTo(-168)){
             autoStage = 1;
           }
         }
         else if(autoStage == 1){
-          if(Drive.turnTo(-90)){
+          if(drive.turnTo(-90)){
             autoStage = 2;
           }
         }
         else if(autoStage == 2){
-          if(Drive.driveTo(54)){
+          if(drive.driveTo(54)){
             autoStage = 3;
           }
         }
         else if(autoStage == 3){
-          if(Drive.turnTo(0)){
+          if(drive.turnTo(0)){
             autoStage = 4;
-            Drive.levelInit();
+            drive.levelInit();
           }
         }
         else if(autoStage == 4){
-          if(Drive.level()){
+          if(drive.level()){
             autoStage = 5;
-            Drive.setPos();
+            drive.setPos();
           }
         }
         else{
-          Drive.holdPosition();
+          drive.holdPosition();
         }
       case kDefaultAuto:
         if(autoStage == 0){
-          Drive.driveOverInit();
+          drive.driveOverInit();
           autoStage = 1;
         }
         else if(autoStage == 1){
-          if(Drive.driveOverChargingStation()){
+          if(drive.driveOverChargingStation()){
             autoStage = 2;
           }
         }
         else if(autoStage == 2){
-          if(Drive.turnTo(180)){
+          if(drive.turnTo(180)){
             autoStage = 3;
           }
         }
         else if(autoStage == 3){
-          if(Drive.level()){
+          if(drive.level()){
             autoStage = 4;
-            Drive.setPos();
+            drive.setPos();
           }
         }
         else if(autoStage == 4){
-          Drive.holdPosition();
+          drive.holdPosition();
         }
 
         
@@ -173,7 +174,7 @@ public class Robot extends TimedRobot {
     /*currentPos=m_encoder.getPosition();
     currentPosR = m_encoderR.getPosition();
     isMoving = false; */
-    Drive.teleopInitDrive();
+    drive.teleopInitDrive();
   }
 
   /** This function is called periodically during operator control. */
@@ -185,37 +186,37 @@ public class Robot extends TimedRobot {
 
     if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
 
-      Drive.arcade(m_leftStick.getY(), m_leftStick.getX());
+      drive.arcade(m_leftStick.getY(), m_leftStick.getX());
     }
     else if(isAutoLeveling){
-      if(Drive.level()){
+      if(drive.level()){
         isAutoLeveling = false;
         System.out.println("stopped leveling");
       }
     }
     else if(m_leftStick.getRawButton(3) && !isAutoDriving){
-      Drive.driveTo(distance);
+      drive.driveTo(distance);
       isAutoDriving = true;
       //System.out.println("button 3");
     }
     else if(!isAutoDriving){
       if(holdMode){
-      Drive.holdPosition();
+      drive.holdPosition();
      } 
      else if(isTurning){
-      if(Drive.turnTo(angle)){
+      if(drive.turnTo(angle)){
         isTurning = false;
       }
       
     }
 
      else{
-      Drive.holdSpeed(0);
+      drive.holdSpeed(0);
      }
       
     }
     if(isAutoDriving){
-      if(Drive.driveTo(distance)){
+      if(drive.driveTo(distance)){
         isAutoDriving = false;
       }
     
@@ -226,7 +227,7 @@ public class Robot extends TimedRobot {
       }*/
     }
     if(m_leftStick.getRawButton(5)){
-      Drive.stopRotation();
+      drive.stopRotation();
       isTurning = false;
     }
     if(m_leftStick.getRawButton(6)){
@@ -237,11 +238,11 @@ public class Robot extends TimedRobot {
       holdMode = true;
     }
     if(m_leftStick.getRawButton(4)){
-      Drive.resetNavX();
+      drive.resetNavX();
     }
     if(m_leftStick.getRawButton(11)){
       isAutoLeveling = true;
-      Drive.levelInit();
+      drive.levelInit();
     }
     if(m_leftStick.getRawButton(10)){
       isAutoLeveling = false;
@@ -259,7 +260,7 @@ public class Robot extends TimedRobot {
     pickerUpper.moveTower(towerSpeed);
 
     if(m_leftStick.getRawButton(2)){
-      Drive.turnTo(angle);
+      drive.turnTo(angle);
       isTurning = true;
     }
     

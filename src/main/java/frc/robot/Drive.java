@@ -1,6 +1,7 @@
 package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -11,6 +12,9 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import java.lang.reflect.Array;
+import java.util.List;
 
 import org.ejml.interfaces.linsol.LinearSolver;
 import org.photonvision.PhotonCamera;
@@ -337,5 +341,40 @@ public class Drive {
             SmartDashboard.putNumber("distance Y", target.getBestCameraToTarget().getY());
             SmartDashboard.putNumber("distance Z", target.getBestCameraToTarget().getZ());
         }
+    }
+    public boolean checkForTarget(int targetID) {
+        var result = camera.getLatestResult();
+        boolean hasTargets = result.hasTargets();
+        if(hasTargets){
+            PhotonTrackedTarget target = result.getBestTarget();
+            if(targetID == 0){
+                return true;
+            }
+            else{
+                if(targetID == target.getFiducialId()){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+
+            }
+        }
+        else{
+            return false;
+        }
+
+    }
+    public Transform3d targetValues() {
+        var result = camera.getLatestResult();
+        boolean hasTargets = result.hasTargets();
+
+            PhotonTrackedTarget target = result.getBestTarget();
+            Transform3d targetVal = target.getBestCameraToTarget();
+            return targetVal;
+
+
+
+   
     }
 }

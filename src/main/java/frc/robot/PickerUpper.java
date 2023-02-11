@@ -115,7 +115,9 @@ public class PickerUpper {
         }
         m_tower.set(speed);
     }
-    
+    public boolean setTurret() {
+        return false;
+    }
     
     public void extend(double speed) {}
     public void retract(double speed) {}
@@ -152,5 +154,20 @@ public class PickerUpper {
     public void periodic() {
         double grabberCurrent = m_grabber.getOutputCurrent();
         SmartDashboard.putNumber("Grabber Current", grabberCurrent);
+    }
+
+    public boolean placePiece(int target){
+        if(Drive.checkForTarget(0)){
+            double x = Drive.targetValues().getX();
+            double y = Drive.targetValues().getY();
+            double z = Drive.targetValues().getZ();
+        }
+        
+
+        
+
+
+
+        return false;
     }
 }
