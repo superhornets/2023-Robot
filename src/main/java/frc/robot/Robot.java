@@ -55,7 +55,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    pickerUpper.armInit();
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -261,18 +260,18 @@ public class Robot extends TimedRobot {
       isMoving = false;
     }
     if (m_rightStick.getRawButton(1)){
-      pickerUpper.closeCone();
+      pickerUpper.grabber.closeCone();
     }
     else if (m_rightStick.getRawButton(2)){
-      pickerUpper.open();
+      pickerUpper.grabber.open();
     }
     SmartDashboard.putBoolean("isMoving", isMoving);
     
     double armSpeed = m_rightStick.getRawAxis(1);
-    pickerUpper.moveArm(armSpeed);
+    pickerUpper.arm.moveArm(armSpeed);
   
     double towerSpeed = m_rightStick.getRawAxis(2);
-    pickerUpper.moveTower(towerSpeed);
+    pickerUpper.tower.moveTower(towerSpeed);
   }
 
   /** This function is called once when the robot is disabled. */
