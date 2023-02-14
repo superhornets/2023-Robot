@@ -134,6 +134,8 @@ public class Robot extends TimedRobot {
         else{
           Drive.holdPosition();
         }
+
+
       case kBrokenArmAuto:
         if (autoStage == 0){
           // Back up
@@ -143,7 +145,7 @@ public class Robot extends TimedRobot {
         }
         else if(autoStage == 1){
           // Forward
-          if(Drive.driveTo(36)){
+          if(Drive.driveTo(30)){
             autoStage = 2;
           }
         }
@@ -152,21 +154,58 @@ public class Robot extends TimedRobot {
           if(Drive.driveTo(-24)){
             autoStage = 3;
           }
-          // ;)
         }
+          // ;)
+        
         else if(autoStage == 3){
-          // Turn 180 degrees (FIX ANGLE, NO 0)
-          if(Drive.turnTo(0)){
+          // Turn 180 degrees
+          if(Drive.turnTo(180)){
             autoStage = 4;
           }
         }
-        // Forward until hit game piece
-        // Turn 180 degrees in place
-        // Move to node
-        // Forward
-        // Back up
-        // Turn "A bit"
-        // Forward
+        else if(autoStage == 4){
+          // Forward until hit game piece
+          if(Drive.driveTo(144)){
+            autoStage = 5;
+          }
+        }
+        else if(autoStage == 5){
+          // Turn 180 degrees in place
+          if(Drive.turnTo(180)){
+            autoStage = 6;
+          }
+        }
+        else if(autoStage == 6){
+          // Move to node
+          if(Drive.driveTo(144)){
+            autoStage = 7;
+          }
+        }
+
+        else if(autoStage == 7){
+          // Forward
+          if(Drive.driveTo(24)){
+            autoStage = 8;
+          }
+        }
+        else if(autoStage == 8){
+          // Back up
+          if(Drive.driveTo(-24)){
+            autoStage = 9;
+          }
+        }
+        else if(autoStage == 9){
+          // Turn "A bit"
+          if(Drive.turnTo(20)){
+            autoStage = 10;
+          }
+        }
+        else if(autoStage == 10){
+          // Forward
+          if(Drive.driveTo(6)){
+            autoStage = 11;
+          }
+        }
         break; 
       case kDefaultAuto:
       default:
@@ -174,6 +213,7 @@ public class Robot extends TimedRobot {
         break;
     }
   }
+
 
   /** This function is called once when teleop is enabled. */
   @Override
