@@ -365,6 +365,13 @@ public class Drive {
         }
 
     }
+    public int targetID(){
+        var result = camera.getLatestResult();
+        PhotonTrackedTarget target = result.getBestTarget();
+        int ID = target.getFiducialId();
+        return ID;
+
+    }
     public Transform3d targetValues() {
         var result = camera.getLatestResult();
         boolean hasTargets = result.hasTargets();
