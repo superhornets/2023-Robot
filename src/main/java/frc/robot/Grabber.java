@@ -11,7 +11,7 @@ public class Grabber {
     private final DigitalInput m_grabberLimitOpen = new DigitalInput(4);
     private final DigitalInput m_grabberLimitClosed = new DigitalInput(5);
 
-    public void extend(double speed) {}
+    public boolean extend(double speed) {return false;}
     public void retract(double speed) {}
 
  

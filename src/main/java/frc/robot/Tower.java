@@ -66,5 +66,12 @@ public class Tower {
         else if (speed == 0) {
             m_pidController.setReference(currentPos, ControlType.kSmartMotion);  
         }
-    }   
+    }  
+    public boolean setTurret(double angle) {
+        return false;
+    }
+    public boolean setArm(double position) {
+        return false;
+        
+    }
 }

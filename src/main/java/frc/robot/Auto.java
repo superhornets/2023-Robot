@@ -124,7 +124,7 @@ public class Auto {
         }
         //Stage 4: move the arm
         else if(placeStage == 4){
-            if(pickerUpper.setArm(armAngle)){
+            if(pickerUpper.tower.setArm(armAngle)){
                 placeStage = 5;
             }
         }
@@ -151,7 +151,7 @@ public class Auto {
         }
         //Stage 7: set turret position
         else if(placeStage == 7){
-            if(pickerUpper.setTurret(armAngle)){
+            if(pickerUpper.tower.setTurret(armAngle)){
                 placeStage = 8;
             }
         }
@@ -170,7 +170,7 @@ public class Auto {
         }
         //Stage 9: extend
         else if(placeStage == 9){
-            if(pickerUpper.extend(extensonLength)){
+            if(pickerUpper.grabber.extend(extensonLength)){
                 placeStage = 10;
             }
         }
