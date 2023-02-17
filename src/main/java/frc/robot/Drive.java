@@ -1,6 +1,7 @@
 package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -12,7 +13,12 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import java.lang.reflect.Array;
+import java.util.List;
+
 import org.ejml.interfaces.linsol.LinearSolver;
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
@@ -48,6 +54,11 @@ public class Drive {
     final double kDT = 0.00;
     final double kFT = 0.00;
     int levelStage = 0;
+    int driveStage = 0;
+
+    //vision
+    PhotonCamera camera = new PhotonCamera("OV5647");
+
     
     public void driveInit(){
         kP = 5e-5; 
@@ -225,7 +236,7 @@ public class Drive {
         
         double time = 0;
         if(levelStage == 0){
-            arcade(.6, 0);
+            arcade(.7, 0);
             if(ahrs.getRoll() > 0){
                 levelStage = 1;
                 System.out.println("stage 0");
@@ -282,17 +293,95 @@ public class Drive {
         }
         
     }
-
-    public void SmartDashboardPrintout(double distance){
+    public void driveOverInit(){
+        driveStage = 0;
+    }
+    public boolean driveOverChargingStation(){
+        double distance = 0;
+        var result = camera.getLatestResult();
+        boolean hasTargets = result.hasTargets();
+        if(hasTargets){
+            PhotonTrackedTarget target = result.getBestTarget();
+            if(target.getFiducialId() == 4){
+            distance = target.getBestCameraToTarget().getX();
+            }
+        }
+        if(driveStage == 0){
+            arcade(.8, 0);
+            if(distance >= 4){
+                driveStage = 1;
+            }
+            return false;
+        }
+        else if(driveStage == 1){
+            holdPosition();
+            return true;
+        }
+        else{
+            return false;
+        }
+        
+    }
+    public void SmartDashboardPrintout(/*double distance*/){
         //SmartDashboard.putNumber("angle", ahrs.getAngle());
         //SmartDashboard.putBoolean("isMoving", isMoving);
         //SmartDashboard.putNumber("currentPos", currentPos);
         //SmartDashboard.putNumber("currentPosR", currentPosR);
         //SmartDashboard.putBoolean("isDrving", isDriving(distance));
-        SmartDashboard.putNumber("roll", ahrs.getRoll()-flatAngle);
-        SmartDashboard.putNumber("yaw", ahrs.getYaw());
+        //SmartDashboard.putNumber("roll", ahrs.getRoll()-flatAngle);
+        //SmartDashboard.putNumber("yaw", ahrs.getYaw());
 
-        SmartDashboard.putNumber("pitch", ahrs.getPitch());
+        //SmartDashboard.putNumber("pitch", ahrs.getPitch());
+        var result = camera.getLatestResult();
+        boolean hasTargets = result.hasTargets();
+        if(hasTargets){
+            PhotonTrackedTarget target = result.getBestTarget();
+            SmartDashboard.putNumber("aprilTag", target.getFiducialId());
+            SmartDashboard.putNumber("distance X", target.getBestCameraToTarget().getX());
+            SmartDashboard.putNumber("distance Y", target.getBestCameraToTarget().getY());
+            SmartDashboard.putNumber("distance Z", target.getBestCameraToTarget().getZ());
+        }
+    }
+    public boolean checkForTarget(int targetID) {
+        var result = camera.getLatestResult();
+        boolean hasTargets = result.hasTargets();
+        if(hasTargets){
+            PhotonTrackedTarget target = result.getBestTarget();
+            if(targetID == 0){
+                return true;
+            }
+            else{
+                if(targetID == target.getFiducialId()){
+                    return true;
+                }
+                else{
+                    return false;
+                }
 
+            }
+        }
+        else{
+            return false;
+        }
+
+    }
+    public int targetID(){
+        var result = camera.getLatestResult();
+        PhotonTrackedTarget target = result.getBestTarget();
+        int ID = target.getFiducialId();
+        return ID;
+
+    }
+    public Transform3d targetValues() {
+        var result = camera.getLatestResult();
+        boolean hasTargets = result.hasTargets();
+
+            PhotonTrackedTarget target = result.getBestTarget();
+            Transform3d targetVal = target.getBestCameraToTarget();
+            return targetVal;
+
+
+
+   
     }
 }
