@@ -142,19 +142,19 @@ public class Robot extends TimedRobot {
       case kBrokenArmAuto:
         if (autoStage == 0){
           // Back up
-          if(Drive.driveTo(-24)){
+          if(drive.driveTo(-24)){
             autoStage = 1;
           }
         }
         else if(autoStage == 1){
           // Forward
-          if(Drive.driveTo(30)){
+          if(drive.driveTo(30)){
             autoStage = 2;
           }
         }
         if (autoStage == 2){
           // Back up
-          if(Drive.driveTo(-24)){
+          if(drive.driveTo(-24)){
             autoStage = 3;
           }
         }
@@ -162,50 +162,50 @@ public class Robot extends TimedRobot {
         
         else if(autoStage == 3){
           // Turn 180 degrees
-          if(Drive.turnTo(180)){
+          if(drive.turnTo(180)){
             autoStage = 4;
           }
         }
         else if(autoStage == 4){
           // Forward until hit game piece
-          if(Drive.driveTo(144)){
+          if(drive.driveTo(144)){
             autoStage = 5;
           }
         }
         else if(autoStage == 5){
           // Turn 180 degrees in place
-          if(Drive.turnTo(180)){
+          if(drive.turnTo(180)){
             autoStage = 6;
           }
         }
         else if(autoStage == 6){
           // Move to node
-          if(Drive.driveTo(144)){
+          if(drive.driveTo(144)){
             autoStage = 7;
           }
         }
 
         else if(autoStage == 7){
           // Forward
-          if(Drive.driveTo(24)){
+          if(drive.driveTo(24)){
             autoStage = 8;
           }
         }
         else if(autoStage == 8){
           // Back up
-          if(Drive.driveTo(-24)){
+          if(drive.driveTo(-24)){
             autoStage = 9;
           }
         }
         else if(autoStage == 9){
           // Turn "A bit"
-          if(Drive.turnTo(20)){
+          if(drive.turnTo(20)){
             autoStage = 10;
           }
         }
         else if(autoStage == 10){
           // Forward
-          if(Drive.driveTo(6)){
+          if(drive.driveTo(6)){
             autoStage = 11;
           }
         }
