@@ -16,6 +16,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.REVPhysicsSim;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -257,11 +258,18 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    Drive.simulationInit();
+    pickerUpper.simulationInit();
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override 
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    // Rev simulation only supports .setReverence() using ControlType.kVelocity and ControlType.kVoltage
+    // For details see https://docs.revrobotics.com/sparkmax/software-resources/spark-max-api-information#version-2022.1.0
+    REVPhysicsSim.getInstance().run();
+  }
 }
 
 //:)

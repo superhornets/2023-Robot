@@ -1,6 +1,7 @@
 package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -11,6 +12,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.REVPhysicsSim;
 
 import org.ejml.interfaces.linsol.LinearSolver;
 
@@ -91,6 +93,13 @@ public class Drive {
         //turn to angle init
 
     }
+
+    public void simulationInit() {
+        // Rev simulation does not support follower motors
+        REVPhysicsSim.getInstance().addSparkMax(leftFrontDrive, DCMotor.getNEO(2));
+        REVPhysicsSim.getInstance().addSparkMax(rightFrontDrive, DCMotor.getNEO(2));
+    }
+
     public void setPos(){
         currentPos=m_encoder.getPosition();
         currentPosR = m_encoderR.getPosition();

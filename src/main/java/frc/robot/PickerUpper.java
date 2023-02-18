@@ -3,7 +3,10 @@ package frc.robot;
 import java.net.ConnectException;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,7 +37,11 @@ public class PickerUpper {
     private RelativeEncoder m_encoder;
     private int driveSpeed = 4800;
 
-
+    public void simulationInit() {
+        REVPhysicsSim.getInstance().addSparkMax(m_arm, DCMotor.getNEO(1));
+        REVPhysicsSim.getInstance().addSparkMax(m_tower, DCMotor.getNEO(1));
+        REVPhysicsSim.getInstance().addSparkMax(m_grabber, DCMotor.getNeo550(1));
+    }
 
 
     public void armInit(){
