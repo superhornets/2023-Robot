@@ -342,8 +342,9 @@ public class Robot extends TimedRobot {
         if(pickerUpper.tower.setTowerPosition(quadrant) == true) {
           isRotatingToQuadrant = false;
         } 
-        */
+        
       }
+      */
     }
 
     SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
