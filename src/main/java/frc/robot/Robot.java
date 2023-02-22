@@ -47,6 +47,8 @@ public class Robot extends TimedRobot {
   private boolean holdMode = true;
   private boolean isAutoLeveling = false;
   private int autoStage = 0;
+  private String quadrant = "a";
+  private boolean isRotatingToQuadrant = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -308,11 +310,42 @@ public class Robot extends TimedRobot {
     double towerSpeed = m_rightStick.getRawAxis(2);
     pickerUpper.tower.moveTower(towerSpeed);
 
-    if(m_leftStick.getRawButton(2)){
+    if(m_leftStick.getRawButton(2)) {
       Drive.turnTo(angle);
       isTurning = true;
     }
     
+    if (m_rightStick.getRawButton(11)) {
+      pickerUpper.tower.setZero();
+    }
+    if (m_rightStick.isConnected()) {
+      if (isRotatingToQuadrant == false) {
+        if(m_rightStick.getPOV() == 0) {
+          quadrant = "a";
+          isRotatingToQuadrant = true;
+        } 
+        else if(m_rightStick.getPOV() == 90) {
+          quadrant = "b";
+          isRotatingToQuadrant = true;
+        }
+        else if(m_rightStick.getPOV() == 270) {
+          quadrant = "c";
+          isRotatingToQuadrant = true;
+        }
+        else if(m_rightStick.getPOV() == 180) {
+          quadrant = "d";
+          isRotatingToQuadrant = true;
+        }
+      }
+      /* 
+      else {
+        if(pickerUpper.tower.setTowerPosition(quadrant) == true) {
+          isRotatingToQuadrant = false;
+        } 
+        */
+      }
+    }
+
     SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
   }
   

@@ -17,6 +17,7 @@ public class Tower {
     private final RelativeEncoder m_towerEncoder = m_tower.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, 42);
     private double position = 0;
     private final int GEAR_RATIO = 60;
+    private double zeroPos = 0;
 
     private SparkMaxPIDController m_pidController;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;
@@ -70,7 +71,10 @@ public class Tower {
         }
     }   
 
+    public void setZero(){
+        zeroPos =  m_encoder.getPosition()*360 / GEAR_RATIO;
 
+    }
 
 
 
@@ -83,20 +87,20 @@ public class Tower {
     public boolean setTowerPosition(String quadrant){
         
         if (quadrant == "a"){
-            m_pidController.setReference(0, ControlType.kSmartMotion);
+            m_pidController.setReference(0 + zeroPos, ControlType.kSmartMotion);
         }
         else if (quadrant == "b"){
-            m_pidController.setReference(90, ControlType.kSmartMotion);
+            m_pidController.setReference(90 + zeroPos, ControlType.kSmartMotion);
         }
         else if (quadrant == "c"){
-            m_pidController.setReference(-90, ControlType.kSmartMotion);
+            m_pidController.setReference(-90 + zeroPos, ControlType.kSmartMotion);
         }
         else if (quadrant == "d"){
-            if (position > 0){
-                m_pidController.setReference(180, ControlType.kSmartMotion);
+            if (position > 0 + zeroPos){
+                m_pidController.setReference(180 + zeroPos, ControlType.kSmartMotion);
             }
             else {
-                m_pidController.setReference(-180, ControlType.kSmartMotion);
+                m_pidController.setReference(-180 + zeroPos, ControlType.kSmartMotion);
             }
         }
         return false;
