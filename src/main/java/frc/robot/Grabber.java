@@ -8,12 +8,23 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Grabber {
 
     private final CANSparkMax m_grabber = new CANSparkMax(7, MotorType.kBrushless);
+    private final CANSparkMax extender = new CANSparkMax(8, MotorType.kBrushless);
     private final DigitalInput m_grabberLimitOpen = new DigitalInput(4);
     private final DigitalInput m_grabberLimitClosed = new DigitalInput(5);
 
-    public boolean extend(double speed) {return false;}
-    public void retract(double speed) {}
+    public void extend(double speed) {
+        extender.set(speed);
+    }
+    public void retract(double speed) {
+        extender.set(-speed);
+    }
 
+    public boolean extendToPos(double Pos){
+        return false;
+    }
+    public boolean retractToPos(double Pos){
+        return false;
+    }
  
     public void open() {
         /*if(m_grabberLimitOpen.get()) {

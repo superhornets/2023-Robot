@@ -339,6 +339,12 @@ public class Robot extends TimedRobot {
       drive.turnTo(angle);
       isTurning = true;
     }
+    if(m_rightStick.getRawButton(7)){
+      pickerUpper.grabber.extend(.1);
+    }
+    else if(m_rightStick.getRawButton(8)){
+      pickerUpper.grabber.extend(-.1);
+    }
     
     SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
   }
