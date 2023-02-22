@@ -263,25 +263,25 @@ public class Robot extends TimedRobot {
 
       drive.arcade(m_leftStick.getY(), m_leftStick.getX());
     }
-    else if(isAutoLeveling){
+    /*else if(isAutoLeveling){
       if(drive.level()){
         isAutoLeveling = false;
         System.out.println("stopped leveling");
       }
-    }
-    else if(m_leftStick.getRawButton(3) && !isAutoDriving){
+    }*/
+    /*else if(m_leftStick.getRawButton(3) && !isAutoDriving){
       drive.driveTo(distance);
       isAutoDriving = true;
       //System.out.println("button 3");
-    }
+    }*/
     else if(!isAutoDriving){
       if(holdMode){
       drive.holdPosition();
      } 
-     else if(isTurning){
+     /*else if(isTurning){
       if(drive.turnTo(angle)){
         isTurning = false;
-      }
+      }*/
       
     }
 
@@ -289,18 +289,18 @@ public class Robot extends TimedRobot {
       drive.holdSpeed(0);
      }
       
-    }
-    if(isAutoDriving){
+    //}
+    /*if(isAutoDriving){
       if(drive.driveTo(distance)){
         isAutoDriving = false;
       }
     
-      /*if(Drive.isDriving(distance)){
+      if(Drive.isDriving(distance)){
         isAutoDriving = false;
         System.out.println("is driving true 2");
 
-      }*/
-    }
+      }
+    }*/
     if(m_leftStick.getRawButton(5)){
       drive.stopRotation();
       isTurning = false;
@@ -315,13 +315,13 @@ public class Robot extends TimedRobot {
     if(m_leftStick.getRawButton(4)){
       drive.resetNavX();
     }
-    if(m_leftStick.getRawButton(11)){
+    /*if(m_leftStick.getRawButton(11)){
       isAutoLeveling = true;
       drive.levelInit();
     }
     if(m_leftStick.getRawButton(10)){
       isAutoLeveling = false;
-    }
+    }*/
     if (m_rightStick.getRawButton(1)){
       pickerUpper.grabber.closeCone();
     }
@@ -335,15 +335,18 @@ public class Robot extends TimedRobot {
     double towerSpeed = m_rightStick.getRawAxis(2);
     pickerUpper.tower.moveTower(towerSpeed);
 
-    if(m_leftStick.getRawButton(2)){
+    /*if(m_leftStick.getRawButton(2)){
       drive.turnTo(angle);
       isTurning = true;
-    }
+    }*/
     if(m_rightStick.getRawButton(7)){
       pickerUpper.grabber.extend(.1);
     }
     else if(m_rightStick.getRawButton(8)){
       pickerUpper.grabber.extend(-.1);
+    }
+    else{
+      pickerUpper.grabber.extend(0);
     }
     
     SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
