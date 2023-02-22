@@ -170,7 +170,7 @@ public class Auto {
         }
         //Stage 9: extend
         else if(placeStage == 9){
-            if(pickerUpper.grabber.extend(extensonLength)){
+            if(pickerUpper.grabber.extendToPos(extensonLength)){
                 placeStage = 10;
             }
         }
