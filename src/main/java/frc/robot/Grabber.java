@@ -33,7 +33,7 @@ public class Grabber {
             if(m_grabber.getOutputCurrent() > 5) {
                 m_grabber.set(0);
             } else{
-            m_grabber.set(0.1);}
+            m_grabber.set(0.2);}
         //}
 
     }
@@ -44,7 +44,7 @@ public class Grabber {
             if(m_grabber.getOutputCurrent() > 5) {
                 m_grabber.set(0);
             } else{
-                m_grabber.set(-0.1);
+                m_grabber.set(-0.2);
             //}
         }
     }

@@ -259,7 +259,7 @@ public class Robot extends TimedRobot {
     double angle = SmartDashboard.getNumber("angle", 0);
     boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
 
-    if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
+    if(m_leftStick.getX() > .07 || m_leftStick.getX() < -.07 || m_leftStick.getY() > .07 || m_leftStick.getY() < -.07){
 
       drive.arcade(m_leftStick.getY(), m_leftStick.getX());
     }
@@ -340,10 +340,10 @@ public class Robot extends TimedRobot {
       isTurning = true;
     }*/
     if(m_rightStick.getRawButton(7)){
-      pickerUpper.grabber.extend(.1);
+      pickerUpper.grabber.extend(.2);
     }
     else if(m_rightStick.getRawButton(8)){
-      pickerUpper.grabber.extend(-.1);
+      pickerUpper.grabber.extend(-.2);
     }
     else{
       pickerUpper.grabber.extend(0);
