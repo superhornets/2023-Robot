@@ -27,6 +27,7 @@ public class Tower {
 
     public Tower(){
         m_pidController = m_tower.getPIDController();
+        m_tower.setInverted(true);
         m_encoder = m_tower.getEncoder();
         kP = 5e-5; 
         kI = 8e-7;
@@ -70,7 +71,6 @@ public class Tower {
             m_pidController.setReference(currentPos, ControlType.kSmartMotion);  
         }
     }  
-    /*
     public boolean setTurret(double angle) {
         return false;
     }
@@ -78,7 +78,6 @@ public class Tower {
         return false;
         
     }   
-    */
     public void setZero(){
         zeroPos =  m_encoder.getPosition()*360 / GEAR_RATIO;
 

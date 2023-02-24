@@ -82,6 +82,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     drive.SmartDashboardPrintout();
     SmartDashboard.putNumber("leftStick", m_leftStick.getY());
+    pickerUpper.SmartDashboardPrintout();
   }
 
   /**
