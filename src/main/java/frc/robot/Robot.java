@@ -345,6 +345,12 @@ public class Robot extends TimedRobot {
     else if(m_rightStick.getRawButton(8)){
       pickerUpper.grabber.extend(-.1);
     }
+    else if(m_rightStick.getRawButton(9)){
+      pickerUpper.grabber.extendToPos(5);
+    }
+    else if(m_rightStick.getRawButton(10)){
+      pickerUpper.grabber.extend(-5);
+    }
     else{
       pickerUpper.grabber.extend(0);
     }
