@@ -14,6 +14,8 @@ public class Arm {
     private double currentPos = 0;
     private RelativeEncoder m_encoder;
     private int driveSpeed = 4800;
+    private final double STARTING_ANGLE = 0;
+    private final double flatAngle = 90-STARTING_ANGLE;
 
     private final CANSparkMax m_arm = new CANSparkMax(5, MotorType.kBrushless);
     private final DigitalInput m_armLimitDown = new DigitalInput(0);
