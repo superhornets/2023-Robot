@@ -49,6 +49,8 @@ public class Robot extends TimedRobot {
   private boolean holdMode = true;
   private boolean isAutoLeveling = false;
   private int autoStage = 0;
+  private String quadrant = "a";
+  private boolean isRotatingToQuadrant = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -349,6 +351,46 @@ public class Robot extends TimedRobot {
       pickerUpper.grabber.extend(0);
     }
     
+    if (m_rightStick.getRawButton(11)) {
+      pickerUpper.tower.setZero();
+    }
+    if (m_rightStick.isConnected()) {
+      if (isRotatingToQuadrant == false) {
+        if(m_rightStick.getPOV() == 0) {
+         // quadrant = "a";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("a");
+        } 
+        else if(m_rightStick.getPOV() == 90) {
+         // quadrant = "b";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("b");
+        }
+        else if(m_rightStick.getPOV() == 180) {
+         // quadrant = "c";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("c");
+        }
+        else if(m_rightStick.getPOV() == 270) {
+         // quadrant = "d";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("d");
+        }
+      }
+      /* 
+      else {
+        if(pickerUpper.tower.setTowerPosition(quadrant) == true) {
+          isRotatingToQuadrant = false;
+        } 
+        
+      }
+      */
+
+      if(m_rightStick.getX() < -0.2 || m_rightStick.getX() > 0.2){
+        pickerUpper.tower.moveTower(m_rightStick.getX());
+      }
+    }
+
     SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
   }
   
