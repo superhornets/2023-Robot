@@ -78,30 +78,33 @@ public class Tower {
 
 
 
-    public void updatePosition(){
-        position = m_encoder.getPosition()*360 / GEAR_RATIO;
+    public double getPosition(){
+        return m_encoder.getPosition()*360 / GEAR_RATIO + zeroPos;
 
     }
 
+    private double degreesToRotations(double degrees){
+        return degrees / 360 * GEAR_RATIO;
+    }
     
     public boolean setTowerPosition(String quadrant){
         
         if (quadrant == "a"){
-            m_pidController.setReference(0 + zeroPos, ControlType.kSmartMotion);
+            m_pidController.setReference(degreesToRotations(0 + zeroPos), ControlType.kSmartMotion);
         }
         else if (quadrant == "b"){
-            m_pidController.setReference(90 + zeroPos, ControlType.kSmartMotion);
+            m_pidController.setReference(degreesToRotations(90 + zeroPos), ControlType.kSmartMotion);
         }
         else if (quadrant == "c"){
-            m_pidController.setReference(-90 + zeroPos, ControlType.kSmartMotion);
-        }
-        else if (quadrant == "d"){
-            if (position > 0 + zeroPos){
-                m_pidController.setReference(180 + zeroPos, ControlType.kSmartMotion);
+            if (getPosition() > 0){
+                m_pidController.setReference(degreesToRotations(180 + zeroPos), ControlType.kSmartMotion);
             }
             else {
-                m_pidController.setReference(-180 + zeroPos, ControlType.kSmartMotion);
+                m_pidController.setReference(degreesToRotations(-180 + zeroPos), ControlType.kSmartMotion);
             }
+        }
+        else if (quadrant == "d"){
+            m_pidController.setReference(degreesToRotations(-90 + zeroPos), ControlType.kSmartMotion);
         }
         return false;
     }

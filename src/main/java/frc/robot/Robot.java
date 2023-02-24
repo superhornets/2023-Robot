@@ -321,20 +321,24 @@ public class Robot extends TimedRobot {
     if (m_rightStick.isConnected()) {
       if (isRotatingToQuadrant == false) {
         if(m_rightStick.getPOV() == 0) {
-          quadrant = "a";
-          isRotatingToQuadrant = true;
+         // quadrant = "a";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("a");
         } 
         else if(m_rightStick.getPOV() == 90) {
-          quadrant = "b";
-          isRotatingToQuadrant = true;
-        }
-        else if(m_rightStick.getPOV() == 270) {
-          quadrant = "c";
-          isRotatingToQuadrant = true;
+         // quadrant = "b";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("b");
         }
         else if(m_rightStick.getPOV() == 180) {
-          quadrant = "d";
-          isRotatingToQuadrant = true;
+         // quadrant = "c";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("c");
+        }
+        else if(m_rightStick.getPOV() == 270) {
+         // quadrant = "d";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("d");
         }
       }
       /* 
@@ -345,6 +349,10 @@ public class Robot extends TimedRobot {
         
       }
       */
+
+      if(m_rightStick.getX() < -0.2 || m_rightStick.getX() > 0.2){
+        pickerUpper.tower.moveTower(m_rightStick.getX());
+      }
     }
 
     SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
