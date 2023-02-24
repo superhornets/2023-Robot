@@ -20,6 +20,13 @@ public class Arm {
     private final CANSparkMax m_arm = new CANSparkMax(5, MotorType.kBrushless);
     private final DigitalInput m_armLimitDown = new DigitalInput(0);
     private final DigitalInput m_armLimitUp = new DigitalInput(1);
+    private Tower tower;
+    private Grabber grabber;
+
+    private double currentAngle = STARTING_ANGLE;
+    private final double ARM_LENGTH = 0;
+    private final double EXTENDER_GEAR_RATIO = 150;
+    private final double TOWER_HEIGHT = 0;
 
     public Arm(){
         m_pidController=m_arm.getPIDController();
@@ -43,7 +50,12 @@ public class Arm {
         m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
         currentPos = m_encoder.getPosition();
     }
-
+    public void updatePosition(){
+    }
+    public void setPickerUpper(Tower tower, Grabber grabber){
+        this.tower = tower;
+        this.grabber = grabber;
+    }
     public void moveArm(double speed) {
         speed = speed * 0.2;
         if(speed == 0) {
@@ -69,6 +81,30 @@ public class Arm {
             //}
         }
     
+    }
+    public boolean isAtHeightLimit(){
+        currentAngle = m_encoder.getPosition()*2;
+        if(currentAngle < flatAngle){
+            return false;
+        }
+        else if(armYDistance() < 78 && armYDistance() > 76){
+            return true;
+        }
+        else{
+            return false;
+        }
+        
+
+    }
+
+    public double armXDistance(){
+        double armX = (grabber.returnExtension()+ARM_LENGTH) * Math.sin(currentAngle+STARTING_ANGLE);
+        return armX;
+    }
+
+    public double armYDistance(){
+        double armY = ((grabber.returnExtension()+ARM_LENGTH) * Math.cos(currentAngle+STARTING_ANGLE-90))+TOWER_HEIGHT;
+        return armY;
     }
 }
 

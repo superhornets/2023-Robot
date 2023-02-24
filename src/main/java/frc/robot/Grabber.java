@@ -94,4 +94,7 @@ public class Grabber {
         double grabberCurrent = m_grabber.getOutputCurrent();
         SmartDashboard.putNumber("Grabber Current", grabberCurrent);
     }
+    public double returnExtension(){
+        return m_encoder.getPosition()*GEAR_RATIO;
+    }
 }

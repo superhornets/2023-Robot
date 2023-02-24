@@ -19,6 +19,7 @@ public class Tower {
     private final int GEAR_RATIO = 60;
     private double zeroPos = 0;
 
+
     private SparkMaxPIDController m_pidController;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;
     private double currentPos = 0;
@@ -104,5 +105,8 @@ public class Tower {
             }
         }
         return false;
+    }
+    public double returnAngle(){
+        return position;
     }
 }
