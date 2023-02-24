@@ -15,7 +15,10 @@ public class Tower {
     private final DigitalInput m_towerLimitRight = new DigitalInput(2);
     private final DigitalInput m_towerLimitLeft = new DigitalInput(3);
     private final RelativeEncoder m_towerEncoder = m_tower.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, 42);
-    
+    private double position = 0;
+    private final int GEAR_RATIO = 60;
+    private double zeroPos = 0;
+
     private SparkMaxPIDController m_pidController;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;
     private double currentPos = 0;
@@ -67,11 +70,50 @@ public class Tower {
             m_pidController.setReference(currentPos, ControlType.kSmartMotion);  
         }
     }  
+    /*
     public boolean setTurret(double angle) {
         return false;
     }
     public boolean setArm(double position) {
         return false;
         
+    }   
+    */
+    public void setZero(){
+        zeroPos =  m_encoder.getPosition()*360 / GEAR_RATIO;
+
+    }
+
+
+
+    public double getPosition(){
+        return m_encoder.getPosition()*360 / GEAR_RATIO + zeroPos;
+
+    }
+
+    private double degreesToRotations(double degrees){
+        return degrees / 360 * GEAR_RATIO;
+    }
+    
+    public boolean setTowerPosition(String quadrant){
+        
+        if (quadrant == "a"){
+            m_pidController.setReference(degreesToRotations(0 + zeroPos), ControlType.kSmartMotion);
+        }
+        else if (quadrant == "b"){
+            m_pidController.setReference(degreesToRotations(90 + zeroPos), ControlType.kSmartMotion);
+        }
+        else if (quadrant == "c"){
+            if (getPosition() > 0){
+                m_pidController.setReference(degreesToRotations(180 + zeroPos), ControlType.kSmartMotion);
+            }
+            else {
+                m_pidController.setReference(degreesToRotations(-180 + zeroPos), ControlType.kSmartMotion);
+            }
+        }
+        else if (quadrant == "d"){
+            m_pidController.setReference(degreesToRotations(-90 + zeroPos), ControlType.kSmartMotion);
+        }
+        return false;
     }
 }
