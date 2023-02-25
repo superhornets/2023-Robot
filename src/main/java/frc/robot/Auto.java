@@ -4,17 +4,17 @@ package frc.robot;
 public class Auto {
     private Drive drive;
     private PickerUpper pickerUpper;
-    private final double FRONT_LENGTH = 0;
-    private final double SIDE_LENGTH = 0;
-    private final double ARM_LENGTH = 0;
-    private final double EXTENSON_LENGTH = 0;
+    private final double FRONT_LENGTH = 22.25;
+    private final double SIDE_LENGTH = 11.75;
+    private final double ARM_LENGTH = 46.5;
+    private final double EXTENSON_LENGTH = 15;
     private final double FRONT_ANGLE_RANGE = 0;
     private final double SIDE_ANGLE_RANGE = 0;
-    private final double ROBOT_ARM_HEIGHT = 0;
-    private final double TARGET_HEIGHT = 0;
+    private final double ROBOT_ARM_HEIGHT = 50.5;
+    private final double TARGET_HEIGHT = 23.5;
     private final double ARM_HEIGHT = 0;
-    private final double EXTRA_ANGLE = 0;
-    private final double METERS_TO_INCHES = 0;
+    private final double EXTRA_ANGLE = 5;
+    private final double METERS_TO_INCHES = 39.37;
 
 
     private double targetX = 0;
@@ -117,7 +117,7 @@ public class Auto {
         }
         //Stage 3: calculate the arm angle
         else if(placeStage == 3){
-            armAngle = Math.atan((targetX+x)/(ARM_HEIGHT-(TARGET_HEIGHT+targetY)));
+            armAngle = Math.atan((targetX+x)/(ROBOT_ARM_HEIGHT-(TARGET_HEIGHT+targetY)));
             armAngle = Math.toDegrees(armAngle);
             armAngle += EXTRA_ANGLE;
             placeStage = 4;

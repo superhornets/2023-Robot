@@ -36,9 +36,9 @@ public class Arm {
     private Grabber grabber;
 
     private double currentAngle = STARTING_ANGLE;
-    private final double ARM_LENGTH = 0;
+    private final double ARM_LENGTH = 46.25;
     private final double EXTENDER_GEAR_RATIO = 150;
-    private final double TOWER_HEIGHT = 0;
+    private final double TOWER_HEIGHT = 50.5;
 
 
     public Arm(){
