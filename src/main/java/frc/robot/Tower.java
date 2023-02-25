@@ -14,10 +14,8 @@ public class Tower {
     private final CANSparkMax m_tower = new CANSparkMax(6, MotorType.kBrushless);
     private final DigitalInput m_towerLimitRight = new DigitalInput(2);
     private final DigitalInput m_towerLimitLeft = new DigitalInput(3);
-    private final RelativeEncoder m_towerEncoder = m_tower.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, 42);
     private double position = 0;
     private final int GEAR_RATIO = 60;
-    private double zeroPos = 0;
 
     private SparkMaxPIDController m_pidController;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;
@@ -46,13 +44,13 @@ public class Tower {
         m_pidController.setOutputRange(kMinOutput, kMaxOutput);
         m_pidController.setSmartMotionMaxAccel(maxAcc, 0);
         m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
-        currentPos = m_encoder.getPosition();
+        currentPos = getPosition();
     }
 
     
     
      public void SmartDashboardPrintout(){
-         SmartDashboard.putNumber("tower position", m_towerEncoder.getPosition());
+         SmartDashboard.putNumber("tower position", getPosition());
      }
 
     public void moveTower(double speed) {
@@ -60,12 +58,12 @@ public class Tower {
        
         if(speed > 0) {
             m_pidController.setReference(speed*driveSpeed, ControlType.kSmartVelocity);
-                currentPos = m_encoder.getPosition();
+                currentPos = getPosition();
         }
 
         else if (speed < 0) {
             m_pidController.setReference(speed*driveSpeed, ControlType.kSmartVelocity);
-            currentPos = m_encoder.getPosition();
+            currentPos = getPosition();
         }
         else if (speed == 0) {
             m_pidController.setReference(currentPos, ControlType.kSmartMotion);  
@@ -74,7 +72,7 @@ public class Tower {
     public boolean moveTowerTo(double angle) {
         m_pidController.setReference(angle, ControlType.kSmartMotion);
 
-        double error = angle - m_encoder.getPosition();
+        double error = angle - getPosition();
         return Math.abs(error) < 3;
     }
     public boolean setArm(double position) {
@@ -90,12 +88,15 @@ public class Tower {
 
 
     public double getPosition(){
-        return m_encoder.getPosition()*360 / GEAR_RATIO + zeroPos;
-
+        return rotationsToDegrees(m_encoder.getPosition());
     }
 
     private double degreesToRotations(double degrees){
         return degrees / 360 * GEAR_RATIO;
+    }
+
+    private double rotationsToDegrees(double rotations){
+        return rotations / GEAR_RATIO * 360;
     }
     
     public boolean moveTowerToQuadrant(String quadrant){
