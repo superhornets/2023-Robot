@@ -28,14 +28,15 @@ public class Tower {
 
     public Tower(){
         m_pidController = m_tower.getPIDController();
+        m_tower.setInverted(true);
         m_encoder = m_tower.getEncoder();
         kP = 5e-5; 
         kI = 8e-7;
         kD = 0; 
         kIz = 0; 
         kFF = 0;
-        maxVel = 2000; // rpm
-        maxAcc = 1500;
+        maxVel = 1000; // rpm
+        maxAcc = 500;
         kMaxOutput = 1; 
         kMinOutput = -1;
         m_pidController.setP(kP);
@@ -56,7 +57,7 @@ public class Tower {
      }
 
     public void moveTower(double speed) {
-        speed = speed * 0.2;
+        speed = speed * 0.1;
        
         if(speed > 0) {
             m_pidController.setReference(speed*driveSpeed, ControlType.kSmartVelocity);
@@ -70,8 +71,14 @@ public class Tower {
         else if (speed == 0) {
             m_pidController.setReference(currentPos, ControlType.kSmartMotion);  
         }
+    }  
+    public boolean setTurret(double angle) {
+        return false;
+    }
+    public boolean setArm(double position) {
+        return false;
+        
     }   
-
     public void setZero(){
         zeroPos =  m_encoder.getPosition()*360 / GEAR_RATIO;
 
@@ -79,30 +86,33 @@ public class Tower {
 
 
 
-    public void updatePosition(){
-        position = m_encoder.getPosition()*360 / GEAR_RATIO;
+    public double getPosition(){
+        return m_encoder.getPosition()*360 / GEAR_RATIO + zeroPos;
 
     }
 
+    private double degreesToRotations(double degrees){
+        return degrees / 360 * GEAR_RATIO;
+    }
     
     public boolean setTowerPosition(String quadrant){
         
         if (quadrant == "a"){
-            m_pidController.setReference(0 + zeroPos, ControlType.kSmartMotion);
+            m_pidController.setReference(degreesToRotations(0 + zeroPos), ControlType.kSmartMotion);
         }
         else if (quadrant == "b"){
-            m_pidController.setReference(90 + zeroPos, ControlType.kSmartMotion);
+            m_pidController.setReference(degreesToRotations(90 + zeroPos), ControlType.kSmartMotion);
         }
         else if (quadrant == "c"){
-            m_pidController.setReference(-90 + zeroPos, ControlType.kSmartMotion);
-        }
-        else if (quadrant == "d"){
-            if (position > 0 + zeroPos){
-                m_pidController.setReference(180 + zeroPos, ControlType.kSmartMotion);
+            if (getPosition() > 0){
+                m_pidController.setReference(degreesToRotations(180 + zeroPos), ControlType.kSmartMotion);
             }
             else {
-                m_pidController.setReference(-180 + zeroPos, ControlType.kSmartMotion);
+                m_pidController.setReference(degreesToRotations(-180 + zeroPos), ControlType.kSmartMotion);
             }
+        }
+        else if (quadrant == "d"){
+            m_pidController.setReference(degreesToRotations(-90 + zeroPos), ControlType.kSmartMotion);
         }
         return false;
     }

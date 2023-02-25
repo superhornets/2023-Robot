@@ -68,7 +68,7 @@ public class Drive {
         kFF = 0;
         maxRPM = 5700;
         maxVel = 2000; // rpm
-        maxAcc = 1500;
+        maxAcc = 1000;
         kMaxOutput = 1; 
         kMinOutput = -1;
         leftRearDrive.follow(leftFrontDrive);
@@ -221,6 +221,16 @@ public class Drive {
         rotateToAngle = false;
     }
     public void arcade(double forwardSpeed, double turnSpeed) {
+        if(turnSpeed > .3){
+            m_pidController.setSmartMotionMaxAccel(500, 0);
+            m_pidControllerR.setSmartMotionMaxAccel(500, 0);
+
+        }
+        else{
+            m_pidController.setSmartMotionMaxAccel(1000, 0);
+            m_pidControllerR.setSmartMotionMaxAccel(1000, 0);
+
+        }
         var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed, true);
         m_pidController.setReference(speeds.left*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         m_pidControllerR.setReference(speeds.right*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);

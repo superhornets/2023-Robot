@@ -22,6 +22,8 @@ public class Grabber {
     private RelativeEncoder m_encoder;
     private int driveSpeed = 5000;
     private final double GEAR_RATIO = 38.1;
+    private double grabberSpeed = .4;
+
 
     public Grabber(){
         m_pidController = extender.getPIDController();
@@ -44,6 +46,11 @@ public class Grabber {
         m_pidController.setSmartMotionMaxAccel(maxAcc, 0);
         m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
         currentPos = m_encoder.getPosition();
+    }
+    public void grabberSmartDashboard() {
+
+        grabberSpeed = SmartDashboard.getNumber("grabber speed", grabberSpeed);
+        //SmartDashboard.putNumber("grabber speed", grabberSpeed);
 
     }
 
@@ -62,33 +69,42 @@ public class Grabber {
         }
 
     }
-    public boolean retractToPos(double Pos){
+
+    public boolean retractToPos(double Pos) {
         return false;
     }
- 
+
     public void open() {
-        /*if(m_grabberLimitOpen.get()) {
+        /*
+         * if(m_grabberLimitOpen.get()) {
+         * m_grabber.set(0);
+         * } else {
+         */
+        if (m_grabber.getOutputCurrent() > 5) {
             m_grabber.set(0);
-        } else {*/
-            if(m_grabber.getOutputCurrent() > 5) {
-                m_grabber.set(0);
-            } else{
-            m_grabber.set(0.1);}
-        //}
+        } else {
+            m_grabber.set(grabberSpeed);
+        }
+        // }
 
     }
+
     public void closeCone() {
-        /*if(m_grabberLimitClosed.get()) {
+        /*
+         * if(m_grabberLimitClosed.get()) {
+         * m_grabber.set(0);
+         * } else{
+         */
+        if (m_grabber.getOutputCurrent() > 5) {
             m_grabber.set(0);
-        } else{*/
-            if(m_grabber.getOutputCurrent() > 5) {
-                m_grabber.set(0);
-            } else{
-                m_grabber.set(-0.1);
-            //}
+        } else {
+            m_grabber.set(-grabberSpeed);
+            // }
         }
     }
-    public void closeCube() {}
+
+    public void closeCube() {
+    }
 
     public void periodic() {
         double grabberCurrent = m_grabber.getOutputCurrent();

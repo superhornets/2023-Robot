@@ -51,6 +51,7 @@ public class Robot extends TimedRobot {
   private int autoStage = 0;
   private String quadrant = "a";
   private boolean isRotatingToQuadrant = false;
+  private double extenderSpeed = 1;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -67,6 +68,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Distance", distance);
     SmartDashboard.putNumber("angle", angle);
     SmartDashboard.putBoolean("hold Position", holdMode);
+    SmartDashboard.putNumber("tower encoder", pickerUpper.tower.getPosition());
+
 
   }
 
@@ -82,6 +85,10 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     drive.SmartDashboardPrintout();
     SmartDashboard.putNumber("leftStick", m_leftStick.getY());
+    pickerUpper.SmartDashboardPrintout();
+    extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
+    //SmartDashboard.putNumber("extender speed", extenderSpeed);
+    
   }
 
   /**
@@ -259,10 +266,9 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     double distance = SmartDashboard.getNumber("Distance", 0);
     double angle = SmartDashboard.getNumber("angle", 0);
-    boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
+    //boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
 
-    //Drive code
-    if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
+    if(m_leftStick.getX() > .07 || m_leftStick.getX() < -.07 || m_leftStick.getY() > .07 || m_leftStick.getY() < -.07){
 
       drive.arcade(m_leftStick.getY(), m_leftStick.getX());
     }
@@ -273,7 +279,24 @@ public class Robot extends TimedRobot {
     }
     else{
       drive.holdSpeed(0);
-    }
+     }
+      
+    //}
+    /*if(isAutoDriving){
+      if(drive.driveTo(distance)){
+        isAutoDriving = false;
+      }
+    
+      if(Drive.isDriving(distance)){
+        isAutoDriving = false;
+        System.out.println("is driving true 2");
+
+      }
+    }*/
+    /*if(m_leftStick.getRawButton(5)){
+      drive.stopRotation();
+      isTurning = false;
+    }*/
     if(m_leftStick.getRawButton(6)){
         holdMode = false;
     } 
@@ -342,10 +365,10 @@ public class Robot extends TimedRobot {
     
     //Extender code
     if(m_rightStick.getRawButton(7)){
-      pickerUpper.grabber.extend(.1);
+      pickerUpper.grabber.extend(extenderSpeed);
     }
     else if(m_rightStick.getRawButton(8)){
-      pickerUpper.grabber.extend(-.1);
+      pickerUpper.grabber.extend(-extenderSpeed);
     }
     else if(m_rightStick.getRawButton(9)){
       pickerUpper.grabber.extendToPos(5);
@@ -368,20 +391,24 @@ public class Robot extends TimedRobot {
     if (m_rightStick.isConnected()) {
       if (isRotatingToQuadrant == false) {
         if(m_rightStick.getPOV() == 0) {
-          quadrant = "a";
-          isRotatingToQuadrant = true;
+         // quadrant = "a";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("a");
         } 
         else if(m_rightStick.getPOV() == 90) {
-          quadrant = "b";
-          isRotatingToQuadrant = true;
-        }
-        else if(m_rightStick.getPOV() == 270) {
-          quadrant = "c";
-          isRotatingToQuadrant = true;
+         // quadrant = "b";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("b");
         }
         else if(m_rightStick.getPOV() == 180) {
-          quadrant = "d";
-          isRotatingToQuadrant = true;
+         // quadrant = "c";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("c");
+        }
+        else if(m_rightStick.getPOV() == 270) {
+         // quadrant = "d";
+         // isRotatingToQuadrant = true;
+          pickerUpper.tower.setTowerPosition("d");
         }
       }
       /* 
@@ -392,6 +419,10 @@ public class Robot extends TimedRobot {
         
       }
       */
+
+      if(m_rightStick.getX() < -0.2 || m_rightStick.getX() > 0.2){
+        pickerUpper.tower.moveTower(m_rightStick.getX());
+      }
     }
 
     SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
