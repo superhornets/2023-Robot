@@ -82,8 +82,9 @@ public class Tower {
         
     }   
     public void setZero(){
-        zeroPos =  m_encoder.getPosition()*360 / GEAR_RATIO;
-
+        m_encoder.setPosition(0);
+        currentPos = 0;
+        moveTowerTo(currentPos);
     }
 
 

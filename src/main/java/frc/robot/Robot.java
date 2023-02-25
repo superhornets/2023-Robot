@@ -68,7 +68,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Distance", distance);
     SmartDashboard.putNumber("angle", angle);
     SmartDashboard.putBoolean("hold Position", holdMode);
-    SmartDashboard.putNumber("tower encoder", pickerUpper.tower.getPosition());
 
 
   }
