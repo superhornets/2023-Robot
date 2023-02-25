@@ -34,8 +34,8 @@ public class Tower {
         kD = 0; 
         kIz = 0; 
         kFF = 0;
-        maxVel = 2000; // rpm
-        maxAcc = 1500;
+        maxVel = 1000; // rpm
+        maxAcc = 500;
         kMaxOutput = 1; 
         kMinOutput = -1;
         m_pidController.setP(kP);
@@ -56,7 +56,7 @@ public class Tower {
      }
 
     public void moveTower(double speed) {
-        speed = speed * 0.2;
+        speed = speed * 0.1;
        
         if(speed > 0) {
             m_pidController.setReference(speed*driveSpeed, ControlType.kSmartVelocity);
