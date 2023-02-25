@@ -21,7 +21,7 @@ public class Grabber {
     private double currentPos = 0;
     private RelativeEncoder m_encoder;
     private int driveSpeed = 5000;
-    private final double GEAR_RATIO = 150;
+    private final double GEAR_RATIO = 38.1;
 
     public Grabber(){
         m_pidController = extender.getPIDController();

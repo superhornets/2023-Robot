@@ -15,15 +15,17 @@ public class Arm {
     private int driveSpeed = 4800;
     private final double STARTING_ANGLE = 0;
     private double flatAngle = 90-STARTING_ANGLE;
-    
-    private final double LEFT_FRONT_ANGLE = 0;
-    private final double RIGHT_FRONT_ANGLE = 0;
-    private final double LEFT_REAR_ANGLE = 0;
-    private final double RIGHT_REAR_ANGLE = 0;
-    private final double FRONT_LIMIT = 0;
-    private final double LEFT_LIMIT = 0;
-    private final double RIGHT_LIMIT = 0;
-    private final double REAR_LIMIT = 0;
+
+
+    private final double EXTENSION_LIMIT = 15;
+    private final double LEFT_FRONT_ANGLE = -27.84;
+    private final double RIGHT_FRONT_ANGLE = 27.84;
+    private final double LEFT_REAR_ANGLE = -131.78;
+    private final double RIGHT_REAR_ANGLE = 131.78;
+    private final double FRONT_LIMIT = 22.25+EXTENSION_LIMIT;
+    private final double LEFT_LIMIT = 11.75+EXTENSION_LIMIT;
+    private final double RIGHT_LIMIT = 11.75+EXTENSION_LIMIT;
+    private final double REAR_LIMIT = 10.5+EXTENSION_LIMIT;
 
 
 
