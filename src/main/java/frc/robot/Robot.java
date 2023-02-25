@@ -51,6 +51,8 @@ public class Robot extends TimedRobot {
   private int autoStage = 0;
   private String quadrant = "a";
   private boolean isRotatingToQuadrant = false;
+  private double extenderSpeed = .2;
+  private double grabberSpeed = .2;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -67,6 +69,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Distance", distance);
     SmartDashboard.putNumber("angle", angle);
     SmartDashboard.putBoolean("hold Position", holdMode);
+    SmartDashboard.putNumber("tower encoder", pickerUpper.tower.getPosition());
+
 
   }
 
@@ -83,6 +87,9 @@ public class Robot extends TimedRobot {
     drive.SmartDashboardPrintout();
     SmartDashboard.putNumber("leftStick", m_leftStick.getY());
     pickerUpper.SmartDashboardPrintout();
+    extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
+    //SmartDashboard.putNumber("extender speed", extenderSpeed);
+    
   }
 
   /**
@@ -260,7 +267,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     double distance = SmartDashboard.getNumber("Distance", 0);
     double angle = SmartDashboard.getNumber("angle", 0);
-    boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
+    //boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
 
     if(m_leftStick.getX() > .07 || m_leftStick.getX() < -.07 || m_leftStick.getY() > .07 || m_leftStick.getY() < -.07){
 
@@ -304,10 +311,10 @@ public class Robot extends TimedRobot {
 
       }
     }*/
-    if(m_leftStick.getRawButton(5)){
+    /*if(m_leftStick.getRawButton(5)){
       drive.stopRotation();
       isTurning = false;
-    }
+    }*/
     if(m_leftStick.getRawButton(6)){
         holdMode = false;
     } 
@@ -335,7 +342,7 @@ public class Robot extends TimedRobot {
     double armSpeed = m_rightStick.getRawAxis(1);
     pickerUpper.arm.moveArm(armSpeed);
   
-    double towerSpeed = m_rightStick.getRawAxis(2);
+    double towerSpeed = m_rightStick.getRawAxis(0);
     pickerUpper.tower.moveTower(towerSpeed);
 
     /*if(m_leftStick.getRawButton(2)){
@@ -343,10 +350,10 @@ public class Robot extends TimedRobot {
       isTurning = true;
     }*/
     if(m_rightStick.getRawButton(7)){
-      pickerUpper.grabber.extend(.2);
+      pickerUpper.grabber.extend(extenderSpeed);
     }
     else if(m_rightStick.getRawButton(8)){
-      pickerUpper.grabber.extend(-.2);
+      pickerUpper.grabber.extend(-extenderSpeed);
     }
     else{
       pickerUpper.grabber.extend(0);
