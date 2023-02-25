@@ -261,69 +261,32 @@ public class Robot extends TimedRobot {
     double angle = SmartDashboard.getNumber("angle", 0);
     boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
 
+    //Drive code
     if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
 
       drive.arcade(m_leftStick.getY(), m_leftStick.getX());
     }
-    /*else if(isAutoLeveling){
-      if(drive.level()){
-        isAutoLeveling = false;
-        System.out.println("stopped leveling");
-      }
-    }*/
-    /*else if(m_leftStick.getRawButton(3) && !isAutoDriving){
-      drive.driveTo(distance);
-      isAutoDriving = true;
-      //System.out.println("button 3");
-    }*/
     else if(!isAutoDriving){
       if(holdMode){
       drive.holdPosition();
-     } 
-     /*else if(isTurning){
-      if(drive.turnTo(angle)){
-        isTurning = false;
-      }*/
-      
+      } 
     }
-
-     else{
+    else{
       drive.holdSpeed(0);
-     }
-      
-    //}
-    /*if(isAutoDriving){
-      if(drive.driveTo(distance)){
-        isAutoDriving = false;
-      }
-    
-      if(Drive.isDriving(distance)){
-        isAutoDriving = false;
-        System.out.println("is driving true 2");
-
-      }
-    }*/
-    if(m_leftStick.getRawButton(5)){
-      drive.stopRotation();
-      isTurning = false;
     }
     if(m_leftStick.getRawButton(6)){
         holdMode = false;
     } 
-      
     if(m_leftStick.getRawButton(7)){
       holdMode = true;
     }
     if(m_leftStick.getRawButton(4)){
       drive.resetNavX();
     }
-    /*if(m_leftStick.getRawButton(11)){
-      isAutoLeveling = true;
-      drive.levelInit();
-    }
-    if(m_leftStick.getRawButton(10)){
-      isAutoLeveling = false;
-    }*/
+
+
+
+    //Grabber code
     if (m_rightStick.getRawButton(1)){
       pickerUpper.grabber.closeCone();
     }
@@ -331,16 +294,53 @@ public class Robot extends TimedRobot {
       pickerUpper.grabber.open();
     }
     
+    if(pickerUpper.arm.isOverExtentionLimit() || pickerUpper.arm.isOverHeightLimit()){
+      if(pickerUpper.grabber.returnExtension() > 0){
+        pickerUpper.grabber.extend(-.1);
+      }
+      else{
+        pickerUpper.arm.moveArm(-.1);
+      }
+    }
+    else if(pickerUpper.arm.isAtExtentionLimit()){
+      double towerSpeed = m_rightStick.getRawAxis(2);
+      if(Math.abs(pickerUpper.tower.returnAngle()+45)%90>45){
+        if(towerSpeed > 0){
+          pickerUpper.tower.moveTower(towerSpeed);
+        }
+      }
+      else{
+        if(towerSpeed < 0){
+          pickerUpper.tower.moveTower(towerSpeed);
+        }
+      }
+      if(m_rightStick.getRawButton(8)){
+        pickerUpper.grabber.extend(-.1);
+      }
+      if(m_rightStick.getRawAxis(1) < 0){
+        double armSpeed = m_rightStick.getRawAxis(1);
+        pickerUpper.arm.moveArm(armSpeed);
+      }
+
+    }
+    else if(pickerUpper.arm.isAtHeightLimit()){
+      if(m_rightStick.getRawButton(8)){
+        pickerUpper.grabber.extend(-.1);
+      }
+      if(m_rightStick.getRawAxis(1) < 0){
+        double armSpeed = m_rightStick.getRawAxis(1);
+        pickerUpper.arm.moveArm(armSpeed);
+      }
+      double towerSpeed = m_rightStick.getRawAxis(2);
+      pickerUpper.tower.moveTower(towerSpeed);
+    }
+    else{
+    //Arm code
     double armSpeed = m_rightStick.getRawAxis(1);
     pickerUpper.arm.moveArm(armSpeed);
   
-    double towerSpeed = m_rightStick.getRawAxis(2);
-    pickerUpper.tower.moveTower(towerSpeed);
-
-   /* if(m_leftStick.getRawButton(2)) {
-      Drive.turnTo(angle);
-      isTurning = true;
-    }*/
+    
+    //Extender code
     if(m_rightStick.getRawButton(7)){
       pickerUpper.grabber.extend(.1);
     }
@@ -351,12 +351,17 @@ public class Robot extends TimedRobot {
       pickerUpper.grabber.extendToPos(5);
     }
     else if(m_rightStick.getRawButton(10)){
-      pickerUpper.grabber.extend(-5);
+      pickerUpper.grabber.extendToPos(-5);
     }
     else{
       pickerUpper.grabber.extend(0);
     }
     
+  }
+    //Tower Code
+    double towerSpeed = m_rightStick.getRawAxis(2);
+    pickerUpper.tower.moveTower(towerSpeed);
+
     if (m_rightStick.getRawButton(11)) {
       pickerUpper.tower.setZero();
     }

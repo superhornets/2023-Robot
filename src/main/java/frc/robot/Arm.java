@@ -1,5 +1,4 @@
 package frc.robot;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -15,7 +14,18 @@ public class Arm {
     private RelativeEncoder m_encoder;
     private int driveSpeed = 4800;
     private final double STARTING_ANGLE = 0;
-    private final double flatAngle = 90-STARTING_ANGLE;
+    private double flatAngle = 90-STARTING_ANGLE;
+    
+    private final double LEFT_FRONT_ANGLE = 0;
+    private final double RIGHT_FRONT_ANGLE = 0;
+    private final double LEFT_REAR_ANGLE = 0;
+    private final double RIGHT_REAR_ANGLE = 0;
+    private final double FRONT_LIMIT = 0;
+    private final double LEFT_LIMIT = 0;
+    private final double RIGHT_LIMIT = 0;
+    private final double REAR_LIMIT = 0;
+
+
 
     private final CANSparkMax m_arm = new CANSparkMax(5, MotorType.kBrushless);
     private final DigitalInput m_armLimitDown = new DigitalInput(0);
@@ -27,6 +37,7 @@ public class Arm {
     private final double ARM_LENGTH = 0;
     private final double EXTENDER_GEAR_RATIO = 150;
     private final double TOWER_HEIGHT = 0;
+
 
     public Arm(){
         m_pidController=m_arm.getPIDController();
@@ -87,7 +98,7 @@ public class Arm {
         if(currentAngle < flatAngle){
             return false;
         }
-        else if(armYDistance() < 78 && armYDistance() > 76){
+        else if(armYDistance() > 77){
             return true;
         }
         else{
@@ -96,8 +107,78 @@ public class Arm {
         
 
     }
+    public boolean isOverHeightLimit(){
+        if(armYDistance()>77.5){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    public String checkQuadrant(){
+        if(tower.returnAngle()<LEFT_FRONT_ANGLE && tower.returnAngle()>RIGHT_FRONT_ANGLE){
+            return "front";
+        }
+        else if(tower.returnAngle()>RIGHT_FRONT_ANGLE && tower.returnAngle()<RIGHT_REAR_ANGLE){
+            return "right";
+        }
+        else if(tower.returnAngle() > RIGHT_REAR_ANGLE && tower.returnAngle() < LEFT_REAR_ANGLE){
+            return "rear";
+        }
+        else{
+            return "left";
+        }
+    }
+    public boolean isAtExtentionLimit(){
+        String quadrant = checkQuadrant();
+        double limit = 0;
+        if(quadrant == "front"){
+            limit = FRONT_LIMIT;
+        }
+        else if(quadrant == "left"){
+            limit = LEFT_LIMIT;
+        }
+        else if(quadrant == "right"){
+            limit = RIGHT_LIMIT;
+        }
+        else{
+            limit = REAR_LIMIT;
+        }
+        
+        if(armXDistance() > limit-1){
+            return true;
+        }
+        else{
+            return false;
+        }
 
-    public double armXDistance(){
+    }
+    public boolean isOverExtentionLimit(){
+        String quadrant = checkQuadrant();
+        double limit = 0;
+        if(quadrant == "front"){
+            limit = FRONT_LIMIT;
+        }
+        else if(quadrant == "left"){
+            limit = LEFT_LIMIT;
+        }
+        else if(quadrant == "right"){
+            limit = RIGHT_LIMIT;
+        }
+        else{
+            limit = REAR_LIMIT;
+        }
+        
+        if(armXDistance() > limit-.5){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    public double armXZDistance(){
         double armX = (grabber.returnExtension()+ARM_LENGTH) * Math.sin(currentAngle+STARTING_ANGLE);
         return armX;
     }
@@ -105,6 +186,11 @@ public class Arm {
     public double armYDistance(){
         double armY = ((grabber.returnExtension()+ARM_LENGTH) * Math.cos(currentAngle+STARTING_ANGLE-90))+TOWER_HEIGHT;
         return armY;
+    }
+    public double armXDistance(){
+        double angle = Math.abs(tower.returnAngle()%45);
+        double distance = armXZDistance()*Math.cos(angle);
+        return distance;
     }
 }
 
