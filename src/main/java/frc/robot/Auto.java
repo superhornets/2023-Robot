@@ -25,6 +25,7 @@ public class Auto {
     private double turretAngle = 0;
     private int targetID = 0;
     private double extensonLength = 0;
+    private int homePickerUpperStage = 0;
 
     public Auto(Drive drive, PickerUpper pickerUpper){
         this.drive = drive;
@@ -183,8 +184,37 @@ public class Auto {
 
         
 
-
-
         return false;
+    }
+
+
+
+//setArmTo needs to be set (50) is just a refrence
+    public boolean homePickerUpper(){
+       if (homePickerUpperStage == 0){
+        if (pickerUpper.arm.setArmTo(50)){
+            homePickerUpperStage = 1;
+            }
+        }
+       else if (homePickerUpperStage == 1){
+            if (pickerUpper.grabber.retractToPos(0)){
+                homePickerUpperStage = 2;
+            }
+       }
+       else if (homePickerUpperStage == 2){
+            if (pickerUpper.tower.setTurret(0)){
+                homePickerUpperStage = 3;
+            }
+        }
+        else if (homePickerUpperStage == 3){
+            if (pickerUpper.arm.setArmTo(0)){
+               homePickerUpperStage = 4;
+            }
+        }
+       else if (homePickerUpperStage == 4){
+            return true;
+        }
+       
+       return false;
     }
 }
