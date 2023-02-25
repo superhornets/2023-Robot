@@ -15,7 +15,7 @@ public class Grabber {
 
     public void grabberSmartDashboard() {
 
-        extenderSpeed = SmartDashboard.getNumber("grabber speed", grabberSpeed);
+        grabberSpeed = SmartDashboard.getNumber("grabber speed", grabberSpeed);
         //SmartDashboard.putNumber("grabber speed", grabberSpeed);
 
     }

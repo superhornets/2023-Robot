@@ -51,8 +51,7 @@ public class Robot extends TimedRobot {
   private int autoStage = 0;
   private String quadrant = "a";
   private boolean isRotatingToQuadrant = false;
-  private double extenderSpeed = .2;
-  private double grabberSpeed = .2;
+  private double extenderSpeed = 1;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
