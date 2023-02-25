@@ -71,8 +71,11 @@ public class Tower {
             m_pidController.setReference(currentPos, ControlType.kSmartMotion);  
         }
     }  
-    public boolean setTurret(double angle) {
-        return false;
+    public boolean moveTowerTo(double angle) {
+        m_pidController.setReference(angle, ControlType.kSmartMotion);
+
+        double error = angle - m_encoder.getPosition();
+        return Math.abs(error) < 3;
     }
     public boolean setArm(double position) {
         return false;
@@ -94,25 +97,26 @@ public class Tower {
         return degrees / 360 * GEAR_RATIO;
     }
     
-    public boolean setTowerPosition(String quadrant){
-        
+    public boolean moveTowerToQuadrant(String quadrant){
+        boolean done = false;
         if (quadrant == "a"){
-            m_pidController.setReference(degreesToRotations(0 + zeroPos), ControlType.kSmartMotion);
+            done = moveTowerTo(0);
         }
         else if (quadrant == "b"){
-            m_pidController.setReference(degreesToRotations(90 + zeroPos), ControlType.kSmartMotion);
+            done = moveTowerTo(90);
         }
         else if (quadrant == "c"){
             if (getPosition() > 0){
-                m_pidController.setReference(degreesToRotations(180 + zeroPos), ControlType.kSmartMotion);
+                done = moveTowerTo(180);
             }
             else {
-                m_pidController.setReference(degreesToRotations(-180 + zeroPos), ControlType.kSmartMotion);
+                done = moveTowerTo(-180);
             }
         }
         else if (quadrant == "d"){
-            m_pidController.setReference(degreesToRotations(-90 + zeroPos), ControlType.kSmartMotion);
+             done = moveTowerTo(-90);
         }
-        return false;
+
+        return done;
     }
 }
