@@ -26,7 +26,7 @@ public class Grabber {
     private final double GEAR_RATIO = 38.1;
     private double grabberSpeed = .4;
     private double grabberZero = 0;
-    private double grabberMax = 100;
+    private double grabberMax = 180/4;
     
 
 
@@ -87,7 +87,7 @@ public class Grabber {
          * m_grabber.set(0);
          * } else {
          */
-        if (m_grabber.getOutputCurrent() > 2 /*|| m_encoder.getPosition() > grabberMax*/) {
+        if (m_grabber.getOutputCurrent() > 2 || Math.abs(m_encoder.getPosition()) > grabberMax) {
             m_grabber.set(0);
         } else {
             m_grabber.set(grabberSpeed);

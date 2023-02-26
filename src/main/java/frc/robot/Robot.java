@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+
+import org.opencv.core.Mat;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -393,38 +396,46 @@ public class Robot extends TimedRobot {
     
   }
     //Tower Code
-    double towerSpeed = m_rightStick.getRawAxis(2);
-    pickerUpper.tower.moveTower(towerSpeed);
-
-    if (m_rightStick.getRawButton(11)) {
-      pickerUpper.tower.setZero();
-    }
     if (m_rightStick.isConnected()) {
-      if (isRotatingToQuadrant == false) {
+      double towerSpeed = m_rightStick.getRawAxis(2);
+      if(Math.abs(towerSpeed)> .05){
+        if((pickerUpper.tower.returnAngle() > 220 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -220 && towerSpeed < 0)){
+          pickerUpper.tower.moveTower(0);
+        }
+        pickerUpper.tower.moveTower(towerSpeed);
+      }
+      else if (m_rightStick.getRawButton(11)) {
+        pickerUpper.tower.setZero();
+      }
+      else if (isRotatingToQuadrant == false) {
         if(m_rightStick.getPOV() == 0) {
-         // quadrant = "a";
-         // isRotatingToQuadrant = true;
-          pickerUpper.tower.moveTowerToQuadrant("a");
+          quadrant = "a";
+          isRotatingToQuadrant = true;
+          //pickerUpper.tower.moveTowerToQuadrant("a");
         } 
         else if(m_rightStick.getPOV() == 90) {
-         // quadrant = "b";
-         // isRotatingToQuadrant = true;
-          pickerUpper.tower.moveTowerToQuadrant("b");
+          quadrant = "b";
+          isRotatingToQuadrant = true;
+          //pickerUpper.tower.moveTowerToQuadrant("b");
         }
         else if(m_rightStick.getPOV() == 180) {
-         // quadrant = "c";
-         // isRotatingToQuadrant = true;
-          pickerUpper.tower.moveTowerToQuadrant("c");
+          quadrant = "c";
+          isRotatingToQuadrant = true;
+          //pickerUpper.tower.moveTowerToQuadrant("c");
         }
         else if(m_rightStick.getPOV() == 270) {
-         // quadrant = "d";
-         // isRotatingToQuadrant = true;
-          pickerUpper.tower.moveTowerToQuadrant("d");
+          quadrant = "d";
+          isRotatingToQuadrant = true;
+          //pickerUpper.tower.moveTowerToQuadrant("d");
         }
       }
-
-      if(m_rightStick.getX() < -0.2 || m_rightStick.getX() > 0.2){
-        pickerUpper.tower.moveTower(m_rightStick.getX());
+      else if(isRotatingToQuadrant){
+        if(pickerUpper.tower.moveTowerToQuadrant(quadrant)){
+          isRotatingToQuadrant = false;
+        }
+      }
+      else{
+        pickerUpper.tower.moveTower(0);
       }
     }
 
