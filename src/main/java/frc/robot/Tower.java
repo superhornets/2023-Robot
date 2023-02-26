@@ -23,6 +23,8 @@ public class Tower {
     private double currentPos = 0;
     private RelativeEncoder m_encoder;
     private int driveSpeed = 4800;
+    private Arm arm;
+    private Grabber grabber;
 
     public Tower(){
         m_pidController = m_tower.getPIDController();
@@ -53,7 +55,26 @@ public class Tower {
      public void SmartDashboardPrintout(){
          SmartDashboard.putNumber("tower position", getPosition());
      }
-
+     public void safety(boolean override){
+        if(arm.currentAngle < 32){
+            if(!override){
+                if(maxVel != 0){
+                    maxVel = 0;
+                    m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
+                }
+            }
+            else{
+                if(maxVel == 0){
+                    maxVel = 1000;
+                    m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
+                }
+            }
+        }
+    }
+     public void setPickerUpper(Arm arm, Grabber grabber) {
+        this.arm = arm;
+        this.grabber = grabber;
+     }
     public void moveTower(double speed) {
         speed = speed * 0.1;
        

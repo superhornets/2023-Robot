@@ -35,7 +35,7 @@ public class Arm {
     private Tower tower;
     private Grabber grabber;
 
-    private double currentAngle = STARTING_ANGLE;
+    public double currentAngle = STARTING_ANGLE;
     private final double ARM_LENGTH = 46.25;
     private final double EXTENDER_GEAR_RATIO = 150;
     private final double TOWER_HEIGHT = 50.5;
@@ -61,9 +61,11 @@ public class Arm {
         m_pidController.setOutputRange(kMinOutput, kMaxOutput);
         m_pidController.setSmartMotionMaxAccel(maxAcc, 0);
         m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
-        currentPos = m_encoder.getPosition();
+        m_encoder.setPosition(0);
+        updatePosition();
     }
     public void updatePosition(){
+        currentPos = m_encoder.getPosition()/2+STARTING_ANGLE;
     }
     public void setPickerUpper(Tower tower, Grabber grabber){
         this.tower = tower;

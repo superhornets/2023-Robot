@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.RelativeEncoder;
@@ -17,6 +18,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.GenericEntry;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -90,6 +92,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("leftStick", m_leftStick.getY());
     pickerUpper.SmartDashboardPrintout();
     extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
+    GenericEntry override = Shuffleboard.getTab("override").add("override", false).withWidget("Toggle Button").getEntry();
+    pickerUpper.tower.safety(SmartDashboard.getBoolean("override", false));
     //SmartDashboard.putNumber("extender speed", extenderSpeed);
     
   }
