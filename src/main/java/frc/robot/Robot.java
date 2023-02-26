@@ -16,7 +16,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+import edu.wpi.first.cameraserver.CameraServer;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
   private String quadrant = "a";
   private boolean isRotatingToQuadrant = false;
   private double extenderSpeed = 1;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -69,6 +70,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("angle", angle);
     SmartDashboard.putBoolean("hold Position", holdMode);
     SmartDashboard.putNumber("tower encoder", pickerUpper.tower.getPosition());
+    CameraServer.startAutomaticCapture();
+
 
 
   }

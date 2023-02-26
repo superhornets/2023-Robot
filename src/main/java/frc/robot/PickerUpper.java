@@ -15,7 +15,7 @@ public class PickerUpper {
     }
  
     public PickerUpper(){
-        
+        arm.setPickerUpper(tower, grabber);
     }
 
     
