@@ -39,6 +39,7 @@ public class Arm {
     private final double ARM_LENGTH = 46.25;
     private final double EXTENDER_GEAR_RATIO = 150;
     private final double TOWER_HEIGHT = 50.5;
+    private final double GRABBER_WIDTH = 7.75;
 
 
     public Arm(){
@@ -193,7 +194,7 @@ public class Arm {
     }
     public double armXDistance(){
         double angle = Math.abs(tower.returnAngle()%45);
-        double distance = armXZDistance()*Math.cos(angle);
+        double distance = armXZDistance()*Math.cos(angle) + GRABBER_WIDTH*Math.sin(angle);
         return distance;
     }
 }
