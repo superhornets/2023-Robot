@@ -94,6 +94,7 @@ public class Robot extends TimedRobot {
     extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
     GenericEntry override = Shuffleboard.getTab("override").add("override", false).withWidget("Toggle Button").getEntry();
     pickerUpper.tower.safety(SmartDashboard.getBoolean("override", false));
+    pickerUpper.grabber.periodic();
     //SmartDashboard.putNumber("extender speed", extenderSpeed);
     
   }
@@ -318,10 +319,13 @@ public class Robot extends TimedRobot {
 
     //Grabber code
     if (m_rightStick.getRawButton(1)){
-      pickerUpper.grabber.closeCone();
+      pickerUpper.grabber.close();
     }
     else if (m_rightStick.getRawButton(2)){
       pickerUpper.grabber.open();
+    }
+    else{
+      pickerUpper.grabber.hold();
     }
     
     if(pickerUpper.arm.isOverExtentionLimit() || pickerUpper.arm.isOverHeightLimit()){

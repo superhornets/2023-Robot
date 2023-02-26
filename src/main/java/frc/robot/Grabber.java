@@ -20,14 +20,20 @@ public class Grabber {
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;
     private double currentPos = 0;
     private RelativeEncoder m_encoder;
+    private RelativeEncoder m_grabberEncoder;
+
     private int driveSpeed = 5000;
     private final double GEAR_RATIO = 38.1;
     private double grabberSpeed = .4;
+    private double grabberZero = 0;
+    private double grabberMax = 100;
+    
 
 
     public Grabber(){
         m_pidController = extender.getPIDController();
         m_encoder = extender.getEncoder();
+        m_grabberEncoder = m_grabber.getEncoder();
         kP = 5e-5; 
         kI = 8e-7;
         kD = 0; 
@@ -46,6 +52,7 @@ public class Grabber {
         m_pidController.setSmartMotionMaxAccel(maxAcc, 0);
         m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
         currentPos = m_encoder.getPosition();
+
     }
     public void grabberSmartDashboard() {
 
@@ -80,7 +87,7 @@ public class Grabber {
          * m_grabber.set(0);
          * } else {
          */
-        if (m_grabber.getOutputCurrent() > 5) {
+        if (m_grabber.getOutputCurrent() > 2 /*|| m_encoder.getPosition() > grabberMax*/) {
             m_grabber.set(0);
         } else {
             m_grabber.set(grabberSpeed);
@@ -89,26 +96,30 @@ public class Grabber {
 
     }
 
-    public void closeCone() {
+    public void close() {
         /*
          * if(m_grabberLimitClosed.get()) {
          * m_grabber.set(0);
          * } else{
          */
-        if (m_grabber.getOutputCurrent() > 5) {
+        if (m_grabber.getOutputCurrent() > 2) {
             m_grabber.set(0);
         } else {
             m_grabber.set(-grabberSpeed);
             // }
         }
     }
-
+    public void hold(){
+        m_grabber.set(0);
+    }
     public void closeCube() {
     }
 
     public void periodic() {
         double grabberCurrent = m_grabber.getOutputCurrent();
         SmartDashboard.putNumber("Grabber Current", grabberCurrent);
+        SmartDashboard.putNumber("grabber encoder", m_grabberEncoder.getPosition());
+
     }
     public double returnExtension(){
         return m_encoder.getPosition()*GEAR_RATIO;
