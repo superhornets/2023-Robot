@@ -396,32 +396,24 @@ public class Robot extends TimedRobot {
         if(m_rightStick.getPOV() == 0) {
          // quadrant = "a";
          // isRotatingToQuadrant = true;
-          pickerUpper.tower.setTowerPosition("a");
+          pickerUpper.tower.moveTowerToQuadrant("a");
         } 
         else if(m_rightStick.getPOV() == 90) {
          // quadrant = "b";
          // isRotatingToQuadrant = true;
-          pickerUpper.tower.setTowerPosition("b");
+          pickerUpper.tower.moveTowerToQuadrant("b");
         }
         else if(m_rightStick.getPOV() == 180) {
          // quadrant = "c";
          // isRotatingToQuadrant = true;
-          pickerUpper.tower.setTowerPosition("c");
+          pickerUpper.tower.moveTowerToQuadrant("c");
         }
         else if(m_rightStick.getPOV() == 270) {
          // quadrant = "d";
          // isRotatingToQuadrant = true;
-          pickerUpper.tower.setTowerPosition("d");
+          pickerUpper.tower.moveTowerToQuadrant("d");
         }
       }
-      /* 
-      else {
-        if(pickerUpper.tower.setTowerPosition(quadrant) == true) {
-          isRotatingToQuadrant = false;
-        } 
-        
-      }
-      */
 
       if(m_rightStick.getX() < -0.2 || m_rightStick.getX() > 0.2){
         pickerUpper.tower.moveTower(m_rightStick.getX());
