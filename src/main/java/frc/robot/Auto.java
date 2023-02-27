@@ -189,32 +189,32 @@ public class Auto {
 
 
 
-//setArmTo needs to be set (50) is just a refrence
     public boolean homePickerUpper(){
-       if (homePickerUpperStage == 0){
-        if (pickerUpper.arm.moveArmTo(50)){
-            homePickerUpperStage = 1;
+        if (homePickerUpperStage == 0){
+            //moveArmTo needs to be set (50) is just a refrence
+            if (pickerUpper.arm.moveArmTo(50)){
+                homePickerUpperStage = 1;
             }
         }
-       else if (homePickerUpperStage == 1){
+        else if (homePickerUpperStage == 1){
             if (pickerUpper.grabber.retractToPos(0)){
                 homePickerUpperStage = 2;
             }
-       }
-       else if (homePickerUpperStage == 2){
+        }
+        else if (homePickerUpperStage == 2){
             if (pickerUpper.tower.moveTowerTo(0)){
                 homePickerUpperStage = 3;
             }
         }
         else if (homePickerUpperStage == 3){
             if (pickerUpper.arm.moveArmTo(0)){
-               homePickerUpperStage = 4;
+                homePickerUpperStage = 4;
             }
         }
-       else if (homePickerUpperStage == 4){
+        else if (homePickerUpperStage == 4){
             return true;
         }
-       
-       return false;
+
+        return false;
     }
 }
