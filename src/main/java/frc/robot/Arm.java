@@ -99,12 +99,8 @@ public class Arm {
     
     }
     public boolean isAtHeightLimit(){
-        currentAngle = m_encoder.getPosition()*2;
-        if(currentAngle < flatAngle){
-            return false;
-        }
-        else if(armYDistance() > 77){
-            return true;
+        if(armYDistance() > 77){
+            return true; 
         }
         else{
             return false;
@@ -188,14 +184,80 @@ public class Arm {
         return armX;
     }
 
-    public double armYDistance(){
+     public double armYDistance(){
         double armY = ((grabber.returnExtension()+ARM_LENGTH) * Math.cos(currentAngle+STARTING_ANGLE-90))+TOWER_HEIGHT;
         return armY;
     }
     public double armXDistance(){
-        double angle = Math.abs(tower.returnAngle()%45);
+        double angle = normalizeAngle(tower.returnAngle());
         double distance = armXZDistance()*Math.cos(angle) + GRABBER_WIDTH*Math.sin(angle);
         return distance;
+    }
+    public double armZDistance(){
+        double angle = normalizeAngle(tower.returnAngle());
+        double distance = armXZDistance()*Math.sin(angle) + GRABBER_WIDTH*Math.cos(angle);
+        return distance;
+    }
+    public double normalizeAngle(double angle) {
+        angle = Math.abs(angle%90);
+        if (angle > 45){
+            angle = 90-angle;   
+        }
+        return angle;
+    }
+    public boolean isAtLeftFrame(){
+        double angle = tower.returnAngle()%90;
+        String quadrant = checkQuadrant();
+        double limit = 0;
+        if(angle > 0){
+            return false;
+        }
+        if(quadrant == "front"){
+            limit = 11.25;
+        }
+        else if(quadrant == "left"){
+            limit = 10;
+        }
+        else if(quadrant == "right"){
+            limit = 21.75;
+        }
+        else{
+            limit = 11.25;
+        }
+
+        if(armZDistance()>limit){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    public boolean isAtRightFrame(){
+        double angle = tower.returnAngle()%90;
+        String quadrant = checkQuadrant();
+        double limit = 0;
+        if(angle < 0){
+            return false;
+        }
+        if(quadrant == "front"){
+            limit = 11.25;
+        }
+        else if(quadrant == "left"){
+            limit = 21.75;
+        }
+        else if(quadrant == "right"){
+            limit = 10;
+        }
+        else{
+            limit = 11.25;
+        }
+
+        if(armZDistance()>limit){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }
 

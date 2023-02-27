@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
     pickerUpper.tower.safety(SmartDashboard.getBoolean("override", false));
     pickerUpper.grabber.periodic();
     //SmartDashboard.putNumber("extender speed", extenderSpeed);
-    
+    pickerUpper.arm.updatePosition();
   }
 
   /**
@@ -331,6 +331,8 @@ public class Robot extends TimedRobot {
       pickerUpper.grabber.hold();
     }
     
+
+
     if(pickerUpper.arm.isOverExtentionLimit() || pickerUpper.arm.isOverHeightLimit()){
       if(pickerUpper.grabber.returnExtension() > 0){
         pickerUpper.grabber.extend(-.1);
@@ -340,7 +342,7 @@ public class Robot extends TimedRobot {
       }
     }
     else if(pickerUpper.arm.isAtExtentionLimit()){
-      double towerSpeed = m_rightStick.getRawAxis(2);
+      /*double towerSpeed = m_rightStick.getRawAxis(2);
       if(Math.abs(pickerUpper.tower.returnAngle()+45)%90>45){
         if(towerSpeed > 0){
           pickerUpper.tower.moveTower(towerSpeed);
@@ -350,7 +352,7 @@ public class Robot extends TimedRobot {
         if(towerSpeed < 0){
           pickerUpper.tower.moveTower(towerSpeed);
         }
-      }
+      }*/
       if(m_rightStick.getRawButton(8)){
         pickerUpper.grabber.extend(-.1);
       }
@@ -368,7 +370,7 @@ public class Robot extends TimedRobot {
         double armSpeed = m_rightStick.getRawAxis(1);
         pickerUpper.arm.moveArm(armSpeed);
       }
-      double towerSpeed = m_rightStick.getRawAxis(2);
+      double towerSpeed = m_rightStick.getRawAxis(0);
       pickerUpper.tower.moveTower(towerSpeed);
     }
     else{
@@ -378,10 +380,10 @@ public class Robot extends TimedRobot {
   
     
     //Extender code
-    if(m_rightStick.getRawButton(7)){
+    if(m_rightStick.getRawButton(7) && pickerUpper.grabber.returnExtension() < 15){
       pickerUpper.grabber.extend(extenderSpeed);
     }
-    else if(m_rightStick.getRawButton(8)){
+    else if(m_rightStick.getRawButton(8) && pickerUpper.grabber.returnExtension() > 0){
       pickerUpper.grabber.extend(-extenderSpeed);
     }
     else if(m_rightStick.getRawButton(9)){
@@ -397,12 +399,17 @@ public class Robot extends TimedRobot {
   }
     //Tower Code
     if (m_rightStick.isConnected()) {
-      double towerSpeed = m_rightStick.getRawAxis(2);
+      double towerSpeed = m_rightStick.getRawAxis(0);
       if(Math.abs(towerSpeed)> .05){
         if((pickerUpper.tower.returnAngle() > 220 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -220 && towerSpeed < 0)){
           pickerUpper.tower.moveTower(0);
         }
+        else if(((towerSpeed > 0 && pickerUpper.arm.isAtRightFrame()) || (towerSpeed < 0 && pickerUpper.arm.isAtLeftFrame())) && !m_rightStick.getRawButton(10)){
+          pickerUpper.tower.moveTower(0);
+        }
+        else{
         pickerUpper.tower.moveTower(towerSpeed);
+        }
       }
       else if (m_rightStick.getRawButton(11)) {
         pickerUpper.tower.setZero();
