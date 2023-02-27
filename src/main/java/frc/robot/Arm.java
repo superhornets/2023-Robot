@@ -68,5 +68,9 @@ public class Arm {
         }
     
     }
+
+    public boolean moveArmTo(double position) {
+        return false;
+    }
 }
 

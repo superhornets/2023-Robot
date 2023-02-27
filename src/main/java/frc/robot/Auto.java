@@ -192,7 +192,7 @@ public class Auto {
 //setArmTo needs to be set (50) is just a refrence
     public boolean homePickerUpper(){
        if (homePickerUpperStage == 0){
-        if (pickerUpper.arm.setArmTo(50)){
+        if (pickerUpper.arm.moveArmTo(50)){
             homePickerUpperStage = 1;
             }
         }
@@ -202,12 +202,12 @@ public class Auto {
             }
        }
        else if (homePickerUpperStage == 2){
-            if (pickerUpper.tower.setTurret(0)){
+            if (pickerUpper.tower.moveTowerTo(0)){
                 homePickerUpperStage = 3;
             }
         }
         else if (homePickerUpperStage == 3){
-            if (pickerUpper.arm.setArmTo(0)){
+            if (pickerUpper.arm.moveArmTo(0)){
                homePickerUpperStage = 4;
             }
         }
