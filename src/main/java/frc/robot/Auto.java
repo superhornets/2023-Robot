@@ -152,7 +152,7 @@ public class Auto {
         }
         //Stage 7: set turret position
         else if(placeStage == 7){
-            if(pickerUpper.tower.setTurret(armAngle)){
+            if(pickerUpper.tower.moveTowerTo(armAngle)){
                 placeStage = 8;
             }
         }
