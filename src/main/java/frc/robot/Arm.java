@@ -5,6 +5,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 public class Arm {
 
@@ -13,11 +15,11 @@ public class Arm {
     private double currentPos = 0;
     private RelativeEncoder m_encoder;
     private int driveSpeed = 4800;
-    private final double STARTING_ANGLE = 0;
+    private final double STARTING_ANGLE = 20;
     private double flatAngle = 90-STARTING_ANGLE;
 
 
-    private final double EXTENSION_LIMIT = 15;
+    private final double EXTENSION_LIMIT = 48;
     private final double LEFT_FRONT_ANGLE = -27.84;
     private final double RIGHT_FRONT_ANGLE = 27.84;
     private final double LEFT_REAR_ANGLE = -131.78;
@@ -45,6 +47,7 @@ public class Arm {
     public Arm(){
         m_pidController=m_arm.getPIDController();
         m_encoder = m_arm.getEncoder();
+        m_arm.setInverted(true);
         kP = 5e-5; 
         kI = 8e-7;
         kD = 0; 
@@ -66,7 +69,10 @@ public class Arm {
         updatePosition();
     }
     public void updatePosition(){
-        currentPos = m_encoder.getPosition()/2+STARTING_ANGLE;
+        currentPos = m_encoder.getPosition()*2+STARTING_ANGLE;
+    }
+    public void reseZero() {
+        m_encoder.setPosition(0);
     }
     public void setPickerUpper(Tower tower, Grabber grabber){
         this.tower = tower;
@@ -78,13 +84,13 @@ public class Arm {
             /*if(m_armLimitDown.get()) {
                 m_arm.set(0);
             } else {*/
-                m_pidController.setReference(currentPos, ControlType.kSmartMotion);            //}
+                m_pidController.setReference(0, ControlType.kSmartVelocity);            //}
         } else if(speed >0){
             /*if(m_armLimitUp.get()) {
                 m_arm.set(0);
             } else {*/
                 m_pidController.setReference(speed*driveSpeed, ControlType.kSmartVelocity);
-                currentPos = m_encoder.getPosition();
+
             //}
         }
         else if(speed <0){
@@ -92,7 +98,7 @@ public class Arm {
                 m_arm.set(0);
             } else {*/
                 m_pidController.setReference(speed*driveSpeed, ControlType.kSmartVelocity);
-                currentPos = m_encoder.getPosition();
+
     
             //}
         }
@@ -180,22 +186,22 @@ public class Arm {
     }
 
     public double armXZDistance(){
-        double armX = (grabber.returnExtension()+ARM_LENGTH) * Math.sin(currentAngle+STARTING_ANGLE);
+        double armX = (grabber.returnExtension()+ARM_LENGTH) * Math.sin(Math.toRadians(currentPos));
         return armX;
     }
 
      public double armYDistance(){
-        double armY = ((grabber.returnExtension()+ARM_LENGTH) * Math.cos(currentAngle+STARTING_ANGLE-90))+TOWER_HEIGHT;
+        double armY = Math.copySign((grabber.returnExtension()+ARM_LENGTH) *Math.sin(Math.toRadians(currentPos-90)), (currentPos-90))+TOWER_HEIGHT;
         return armY;
     }
     public double armXDistance(){
         double angle = normalizeAngle(tower.returnAngle());
-        double distance = armXZDistance()*Math.cos(angle) + GRABBER_WIDTH*Math.sin(angle);
+        double distance = armXZDistance()*Math.cos(Math.toRadians(angle)) + GRABBER_WIDTH*Math.sin(Math.toRadians(angle));
         return distance;
     }
     public double armZDistance(){
         double angle = normalizeAngle(tower.returnAngle());
-        double distance = armXZDistance()*Math.sin(angle) + GRABBER_WIDTH*Math.cos(angle);
+        double distance = armXZDistance()*Math.sin(Math.toRadians(angle)) + GRABBER_WIDTH*Math.cos(Math.toRadians(angle));
         return distance;
     }
     public double normalizeAngle(double angle) {
@@ -258,6 +264,13 @@ public class Arm {
         else{
             return false;
         }
+    }
+    public void SmartDashboard() {
+        SmartDashboard.putNumber("arm x distance ", armXDistance());
+        SmartDashboard.putNumber("arm y distance", armYDistance());
+        SmartDashboard.putNumber("current angle", currentPos);
+        SmartDashboard.putNumber("grabber extension", grabber.returnExtension());
+        SmartDashboard.putNumber("arm encoder", m_encoder.getPosition());
     }
 }
 
