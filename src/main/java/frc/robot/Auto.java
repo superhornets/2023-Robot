@@ -55,6 +55,24 @@ public class Auto {
     public void runSelected() {
       switch (m_autoSelected) {
         case kCustomAuto:
+            customAuto();
+            break;
+        case kBrokenArmAuto:
+            brokenArmAuto();
+            break; 
+        case kDefaultAuto:
+            defaultAuto(); 
+            break;
+        case kStraightAuto:
+            break;
+        default:
+          // Put default auto code here
+          break;
+      }
+    }
+
+    public void customAuto() {
+
           // Put custom auto code here
           if (autoStage == 0){
             if(drive.driveTo(-168)){
@@ -86,10 +104,10 @@ public class Auto {
           else{
             drive.holdPosition();
           }
-  
-  
-        case kBrokenArmAuto:
-          if (autoStage == 0){
+    }
+
+    private void brokenArmAuto() {
+        if (autoStage == 0){
             // Back up
             if(drive.driveTo(-24)){
               autoStage = 1;
@@ -158,9 +176,10 @@ public class Auto {
               autoStage = 11;
             }
           }
-          break; 
-        case kDefaultAuto:
-          if(autoStage == 0){
+    }
+
+    public void defaultAuto() {
+        if(autoStage == 0){
             drive.driveOverInit();
             autoStage = 1;
           }
@@ -183,14 +202,8 @@ public class Auto {
           else if(autoStage == 4){
             drive.holdPosition();
           }
-  
-          
-        case kStraightAuto:
-        default:
-          // Put default auto code here
-          break;
-      }
     }
+
     public void placePieceInit(int target){
         placeStage = 0;
 
@@ -224,6 +237,8 @@ public class Auto {
             targetY = 23.5;
         }
     }
+
+ 
     public boolean placePiece(int target, boolean isFront, boolean isPositive){
             double x = 0;
             double y = 0;
