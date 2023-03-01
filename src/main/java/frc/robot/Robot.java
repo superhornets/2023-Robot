@@ -416,7 +416,10 @@ if(m_rightStick.getRawButtonPressed(4)){
 }
     if (m_rightStick.isConnected()) {
       double towerSpeed = m_rightStick.getRawAxis(0);
-      if(Math.abs(towerSpeed)> .05 && !holdPositionTurret){
+      if(m_rightStick.getRawButton(10)){
+        auto.homePickerUpper();
+      }
+      else if(Math.abs(towerSpeed)> .05 && !holdPositionTurret){
         if((pickerUpper.tower.returnAngle() > 60 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -60 && towerSpeed < 0)){
           pickerUpper.tower.moveTower(0);
         }
