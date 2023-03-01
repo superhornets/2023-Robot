@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class Auto {
     private Drive drive;
@@ -15,6 +17,13 @@ public class Auto {
     private final double ARM_HEIGHT = 0;
     private final double EXTRA_ANGLE = 5;
     private final double METERS_TO_INCHES = 39.37;
+    private String m_autoSelected;
+    private final SendableChooser<String> m_chooser = new SendableChooser<>();
+    private static final String kDefaultAuto = "Default";
+    private static final String kCustomAuto = "My Auto";
+    private static final String kStraightAuto = "Straight auto";
+    private static final String kBrokenArmAuto = "Broken Arm";
+   
 
 
     private double targetX = 0;
@@ -25,10 +34,162 @@ public class Auto {
     private double turretAngle = 0;
     private int targetID = 0;
     private double extensonLength = 0;
+    private int autoStage = 0;
 
     public Auto(Drive drive, PickerUpper pickerUpper){
         this.drive = drive;
         this.pickerUpper = pickerUpper;
+        m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
+        m_chooser.addOption("My Auto", kCustomAuto);
+        m_chooser.addOption("Broken Arm", kBrokenArmAuto);
+        SmartDashboard.putData("Auto choices", m_chooser);
+    }
+
+    public void updateSelected() {
+        m_autoSelected = m_chooser.getSelected();
+        // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+        System.out.println("Auto selected: " + m_autoSelected);
+        autoStage = 0;
+
+    }
+    public void runSelected() {
+      switch (m_autoSelected) {
+        case kCustomAuto:
+          // Put custom auto code here
+          if (autoStage == 0){
+            if(drive.driveTo(-168)){
+              autoStage = 1;
+            }
+          }
+          else if(autoStage == 1){
+            if(drive.turnTo(-90)){
+              autoStage = 2;
+            }
+          }
+          else if(autoStage == 2){
+            if(drive.driveTo(54)){
+              autoStage = 3;
+            }
+          }
+          else if(autoStage == 3){
+            if(drive.turnTo(0)){
+              autoStage = 4;
+              drive.levelInit();
+            }
+          }
+          else if(autoStage == 4){
+            if(drive.level()){
+              autoStage = 5;
+              drive.setPos();
+            }
+          }
+          else{
+            drive.holdPosition();
+          }
+  
+  
+        case kBrokenArmAuto:
+          if (autoStage == 0){
+            // Back up
+            if(drive.driveTo(-24)){
+              autoStage = 1;
+            }
+          }
+          else if(autoStage == 1){
+            // Forward
+            if(drive.driveTo(30)){
+              autoStage = 2;
+            }
+          }
+          if (autoStage == 2){
+            // Back up
+            if(drive.driveTo(-24)){
+              autoStage = 3;
+            }
+          }
+            // ;)
+          
+          else if(autoStage == 3){
+            // Turn 180 degrees
+            if(drive.turnTo(180)){
+              autoStage = 4;
+            }
+          }
+          else if(autoStage == 4){
+            // Forward until hit game piece
+            if(drive.driveTo(144)){
+              autoStage = 5;
+            }
+          }
+          else if(autoStage == 5){
+            // Turn 180 degrees in place
+            if(drive.turnTo(180)){
+              autoStage = 6;
+            }
+          }
+          else if(autoStage == 6){
+            // Move to node
+            if(drive.driveTo(144)){
+              autoStage = 7;
+            }
+          }
+  
+          else if(autoStage == 7){
+            // Forward
+            if(drive.driveTo(24)){
+              autoStage = 8;
+            }
+          }
+          else if(autoStage == 8){
+            // Back up
+            if(drive.driveTo(-24)){
+              autoStage = 9;
+            }
+          }
+          else if(autoStage == 9){
+            // Turn "A bit"
+            if(drive.turnTo(20)){
+              autoStage = 10;
+            }
+          }
+          else if(autoStage == 10){
+            // Forward
+            if(drive.driveTo(6)){
+              autoStage = 11;
+            }
+          }
+          break; 
+        case kDefaultAuto:
+          if(autoStage == 0){
+            drive.driveOverInit();
+            autoStage = 1;
+          }
+          else if(autoStage == 1){
+            if(drive.driveOverChargingStation()){
+              autoStage = 2;
+            }
+          }
+          else if(autoStage == 2){
+            if(drive.turnTo(180)){
+              autoStage = 3;
+            }
+          }
+          else if(autoStage == 3){
+            if(drive.level()){
+              autoStage = 4;
+              drive.setPos();
+            }
+          }
+          else if(autoStage == 4){
+            drive.holdPosition();
+          }
+  
+          
+        case kStraightAuto:
+        default:
+          // Put default auto code here
+          break;
+      }
     }
     public void placePieceInit(int target){
         placeStage = 0;
