@@ -77,11 +77,6 @@ public class Grabber {
         }
 
     }
-
-    public boolean retractToPos(double Pos) {
-        return false;
-    }
-
     public void open() {
         /*
          * if(m_grabberLimitOpen.get()) {

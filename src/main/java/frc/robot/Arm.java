@@ -55,8 +55,8 @@ public class Arm {
         kFF = 0;
         maxVel = 2000; // rpm
         maxAcc = 1500;
-        kMaxOutput = 1; 
-        kMinOutput = -1;
+        kMaxOutput = .2; 
+        kMinOutput = -.2;
         m_pidController.setP(kP);
         m_pidController.setI(kI);
         m_pidController.setD(kD);
@@ -201,7 +201,10 @@ public class Arm {
     }
 
     public boolean moveArmTo(double position) {
-        return false;
+        m_pidController.setReference(position, ControlType.kSmartMotion);
+
+        double error = position - currentPos;
+        return Math.abs(error) < 3;   
     }
     public double armZDistance(){
         double angle = normalizeAngle(tower.returnAngle());

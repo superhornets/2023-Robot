@@ -197,7 +197,7 @@ public class Auto {
             }
         }
         else if (homePickerUpperStage == 1){
-            if (pickerUpper.grabber.retractToPos(0)){
+            if (pickerUpper.grabber.extendToPos(0)){
                 homePickerUpperStage = 2;
             }
         }
@@ -207,7 +207,7 @@ public class Auto {
             }
         }
         else if (homePickerUpperStage == 3){
-            if (pickerUpper.arm.moveArmTo(0)){
+            if (pickerUpper.arm.moveArmTo(20)){
                 homePickerUpperStage = 4;
             }
         }

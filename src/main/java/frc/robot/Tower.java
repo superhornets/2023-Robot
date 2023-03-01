@@ -37,8 +37,8 @@ public class Tower {
         kFF = 0;
         maxVel = 1000; // rpm
         maxAcc = 500;
-        kMaxOutput = 1; 
-        kMinOutput = -1;
+        kMaxOutput = .2; 
+        kMinOutput = -.2;
         m_pidController.setP(kP);
         m_pidController.setI(kI);
         m_pidController.setD(kD);
