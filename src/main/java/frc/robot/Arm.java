@@ -196,5 +196,9 @@ public class Arm {
         double distance = armXZDistance()*Math.cos(angle);
         return distance;
     }
+
+    public boolean moveArmTo(double position) {
+        return false;
+    }
 }
 
