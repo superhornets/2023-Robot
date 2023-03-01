@@ -15,7 +15,7 @@ public class Arm {
     private double currentPos = 0;
     private RelativeEncoder m_encoder;
     private int driveSpeed = 4800;
-    private final double STARTING_ANGLE = 20;
+    private final double STARTING_ANGLE = 15;
     private double flatAngle = 90-STARTING_ANGLE;
 
 
@@ -123,7 +123,7 @@ public class Arm {
         }
     }
     public String checkQuadrant(){
-        if(tower.returnAngle()<LEFT_FRONT_ANGLE && tower.returnAngle()>RIGHT_FRONT_ANGLE){
+        if(tower.returnAngle()>LEFT_FRONT_ANGLE && tower.returnAngle()<RIGHT_FRONT_ANGLE){
             return "front";
         }
         else if(tower.returnAngle()>RIGHT_FRONT_ANGLE && tower.returnAngle()<RIGHT_REAR_ANGLE){
@@ -271,6 +271,8 @@ public class Arm {
         SmartDashboard.putNumber("current angle", currentPos);
         SmartDashboard.putNumber("grabber extension", grabber.returnExtension());
         SmartDashboard.putNumber("arm encoder", m_encoder.getPosition());
+        SmartDashboard.putString("quadrant ", checkQuadrant());
+
     }
 }
 

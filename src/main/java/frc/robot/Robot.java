@@ -285,6 +285,7 @@ public class Robot extends TimedRobot {
     if(m_leftStick.getX() > .07 || m_leftStick.getX() < -.07 || m_leftStick.getY() > .07 || m_leftStick.getY() < -.07){
 
       drive.arcade(m_leftStick.getY(), m_leftStick.getX());
+      drive.setPos();
     }
     else if(!isAutoDriving){
       if(holdMode){
@@ -389,7 +390,7 @@ public class Robot extends TimedRobot {
   
     
     //Extender code
-    if(m_rightStick.getRawButton(7) && (pickerUpper.grabber.returnExtension() < 15 || m_rightStick.getRawButton(6))){
+    if(m_rightStick.getRawButton(7) && (pickerUpper.grabber.returnExtension() < 17 || m_rightStick.getRawButton(6))){
       pickerUpper.grabber.extend(extenderSpeed);
     }
     else if(m_rightStick.getRawButton(8) && (pickerUpper.grabber.returnExtension() > 0|| m_rightStick.getRawButton(6))){
@@ -407,10 +408,10 @@ public class Robot extends TimedRobot {
     
   }
     //Tower Code
-if(m_rightStick.getRawButton(3)){
+if(m_rightStick.getRawButtonPressed(3)){
   holdPositionTurret = !holdPositionTurret;
 }
-if(m_rightStick.getRawButton(4)){
+if(m_rightStick.getRawButtonPressed(4)){
   limitFramePerimiter = !limitFramePerimiter;
 }
     if (m_rightStick.isConnected()) {
@@ -426,9 +427,9 @@ if(m_rightStick.getRawButton(4)){
         pickerUpper.tower.moveTower(towerSpeed);
         }
       }
-      /*else if(holdPositionTurret){
+      else if(holdPositionTurret){
         pickerUpper.tower.holdTowerPos();
-      }*/
+      }
       else if (m_rightStick.getRawButton(11)) {
         pickerUpper.tower.setZero();
       }

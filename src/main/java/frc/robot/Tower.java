@@ -120,11 +120,12 @@ public class Tower {
         }
         else if (speed == 0) {
             m_pidController.setReference(0, ControlType.kSmartVelocity);  
+            currentPos = getPosition();
         }
     }  
-    /*public void holdTowerPos(){
-        m_pidController.setReference(getPosition(), ControlType.kSmartMotion);
-    }*/
+    public void holdTowerPos(){
+        m_pidController.setReference(m_encoder.getPosition(), ControlType.kSmartMotion);
+    }
     public boolean moveTowerTo(double angle) {
         m_pidController.setReference(angle, ControlType.kSmartMotion);
 
