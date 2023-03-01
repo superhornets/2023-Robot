@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+
+import org.opencv.core.Mat;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -54,6 +57,9 @@ public class Robot extends TimedRobot {
   private String quadrant = "a";
   private boolean isRotatingToQuadrant = false;
   private double extenderSpeed = 1;
+  private boolean override = false;
+  private boolean holdPositionTurret = false;
+  private boolean limitFramePerimiter = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -92,10 +98,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("leftStick", m_leftStick.getY());
     pickerUpper.SmartDashboardPrintout();
     extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
-    GenericEntry override = Shuffleboard.getTab("override").add("override", false).withWidget("Toggle Button").getEntry();
-    pickerUpper.tower.safety(SmartDashboard.getBoolean("override", false));
+    //GenericEntry override = Shuffleboard.getTab("override").add("override", false).withWidget("Toggle Button").getEntry();
+    //pickerUpper.tower.safety(SmartDashboard.getBoolean("override", false));
+    pickerUpper.grabber.periodic();
     //SmartDashboard.putNumber("extender speed", extenderSpeed);
-    
+    pickerUpper.arm.updatePosition();
   }
 
   /**
@@ -278,6 +285,7 @@ public class Robot extends TimedRobot {
     if(m_leftStick.getX() > .07 || m_leftStick.getX() < -.07 || m_leftStick.getY() > .07 || m_leftStick.getY() < -.07){
 
       drive.arcade(m_leftStick.getY(), m_leftStick.getX());
+      drive.setPos();
     }
     else if(!isAutoDriving){
       if(holdMode){
@@ -318,12 +326,17 @@ public class Robot extends TimedRobot {
 
     //Grabber code
     if (m_rightStick.getRawButton(1)){
-      pickerUpper.grabber.closeCone();
+      pickerUpper.grabber.close();
     }
     else if (m_rightStick.getRawButton(2)){
       pickerUpper.grabber.open();
     }
+    else{
+      pickerUpper.grabber.hold();
+    }
     
+
+
     if(pickerUpper.arm.isOverExtentionLimit() || pickerUpper.arm.isOverHeightLimit()){
       if(pickerUpper.grabber.returnExtension() > 0){
         pickerUpper.grabber.extend(-.1);
@@ -333,7 +346,7 @@ public class Robot extends TimedRobot {
       }
     }
     else if(pickerUpper.arm.isAtExtentionLimit()){
-      double towerSpeed = m_rightStick.getRawAxis(2);
+      /*double towerSpeed = m_rightStick.getRawAxis(2);
       if(Math.abs(pickerUpper.tower.returnAngle()+45)%90>45){
         if(towerSpeed > 0){
           pickerUpper.tower.moveTower(towerSpeed);
@@ -343,7 +356,7 @@ public class Robot extends TimedRobot {
         if(towerSpeed < 0){
           pickerUpper.tower.moveTower(towerSpeed);
         }
-      }
+      }*/
       if(m_rightStick.getRawButton(8)){
         pickerUpper.grabber.extend(-.1);
       }
@@ -361,20 +374,26 @@ public class Robot extends TimedRobot {
         double armSpeed = m_rightStick.getRawAxis(1);
         pickerUpper.arm.moveArm(armSpeed);
       }
-      double towerSpeed = m_rightStick.getRawAxis(2);
+      double towerSpeed = m_rightStick.getRawAxis(0);
       pickerUpper.tower.moveTower(towerSpeed);
     }
     else{
     //Arm code
     double armSpeed = m_rightStick.getRawAxis(1);
+    if(armSpeed < .05 && armSpeed > -.05){
+      armSpeed = 0;
+    }
     pickerUpper.arm.moveArm(armSpeed);
+    if(m_rightStick.getRawButton(5)){
+      pickerUpper.arm.reseZero();
+    }
   
     
     //Extender code
-    if(m_rightStick.getRawButton(7)){
+    if(m_rightStick.getRawButton(7) && (pickerUpper.grabber.returnExtension() < 17 || m_rightStick.getRawButton(6))){
       pickerUpper.grabber.extend(extenderSpeed);
     }
-    else if(m_rightStick.getRawButton(8)){
+    else if(m_rightStick.getRawButton(8) && (pickerUpper.grabber.returnExtension() > 0|| m_rightStick.getRawButton(6))){
       pickerUpper.grabber.extend(-extenderSpeed);
     }
     else if(m_rightStick.getRawButton(9)){
@@ -389,38 +408,60 @@ public class Robot extends TimedRobot {
     
   }
     //Tower Code
-    double towerSpeed = m_rightStick.getRawAxis(2);
-    pickerUpper.tower.moveTower(towerSpeed);
-
-    if (m_rightStick.getRawButton(11)) {
-      pickerUpper.tower.setZero();
-    }
+if(m_rightStick.getRawButtonPressed(3)){
+  holdPositionTurret = !holdPositionTurret;
+}
+if(m_rightStick.getRawButtonPressed(4)){
+  limitFramePerimiter = !limitFramePerimiter;
+}
     if (m_rightStick.isConnected()) {
-      if (isRotatingToQuadrant == false) {
-        if(m_rightStick.getPOV() == 0) {
-         // quadrant = "a";
-         // isRotatingToQuadrant = true;
-          pickerUpper.tower.moveTowerToQuadrant("a");
-        } 
-        else if(m_rightStick.getPOV() == 90) {
-         // quadrant = "b";
-         // isRotatingToQuadrant = true;
-          pickerUpper.tower.moveTowerToQuadrant("b");
+      double towerSpeed = m_rightStick.getRawAxis(0);
+      if(Math.abs(towerSpeed)> .05 && !holdPositionTurret){
+        if((pickerUpper.tower.returnAngle() > 60 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -60 && towerSpeed < 0)){
+          pickerUpper.tower.moveTower(0);
         }
-        else if(m_rightStick.getPOV() == 180) {
-         // quadrant = "c";
-         // isRotatingToQuadrant = true;
-          pickerUpper.tower.moveTowerToQuadrant("c");
+        else if(((towerSpeed > 0 && pickerUpper.arm.isAtRightFrame()) || (towerSpeed < 0 && pickerUpper.arm.isAtLeftFrame())) && limitFramePerimiter){
+          pickerUpper.tower.moveTower(0);
         }
-        else if(m_rightStick.getPOV() == 270) {
-         // quadrant = "d";
-         // isRotatingToQuadrant = true;
-          pickerUpper.tower.moveTowerToQuadrant("d");
+        else{
+        pickerUpper.tower.moveTower(towerSpeed);
         }
       }
-
-      if(m_rightStick.getX() < -0.2 || m_rightStick.getX() > 0.2){
-        pickerUpper.tower.moveTower(m_rightStick.getX());
+      else if(holdPositionTurret){
+        pickerUpper.tower.holdTowerPos();
+      }
+      else if (m_rightStick.getRawButton(11)) {
+        pickerUpper.tower.setZero();
+      }
+      else if (isRotatingToQuadrant == false) {
+        if(m_rightStick.getPOV() == 0) {
+          quadrant = "a";
+          isRotatingToQuadrant = true;
+          //pickerUpper.tower.moveTowerToQuadrant("a");
+        } 
+        else if(m_rightStick.getPOV() == 90) {
+          quadrant = "b";
+          isRotatingToQuadrant = true;
+          //pickerUpper.tower.moveTowerToQuadrant("b");
+        }
+        else if(m_rightStick.getPOV() == 180) {
+          quadrant = "c";
+          isRotatingToQuadrant = true;
+          //pickerUpper.tower.moveTowerToQuadrant("c");
+        }
+        else if(m_rightStick.getPOV() == 270) {
+          quadrant = "d";
+          isRotatingToQuadrant = true;
+          //pickerUpper.tower.moveTowerToQuadrant("d");
+        }
+      }
+      else if(isRotatingToQuadrant){
+        if(pickerUpper.tower.moveTowerToQuadrant(quadrant)){
+          isRotatingToQuadrant = false;
+        }
+      }
+      else{
+        pickerUpper.tower.moveTower(0);
       }
     }
 

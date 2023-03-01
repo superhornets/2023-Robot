@@ -12,6 +12,7 @@ public class PickerUpper {
     public void SmartDashboardPrintout(){
         tower.SmartDashboardPrintout();
         grabber.grabberSmartDashboard();
+        arm.SmartDashboard();
     }
  
     public PickerUpper(){
