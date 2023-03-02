@@ -248,7 +248,7 @@ public class Auto {
             if(isFront){
                 double xydistance = Math.sqrt(((x+targetX)*(x+targetX))+((targetY-y)*(targetY-y)));
                 double distance = Math.sqrt(((xydistance*xydistance)+((ROBOT_ARM_HEIGHT-targetZ)*(ROBOT_ARM_HEIGHT-targetZ))));
-                if((distance > (ARM_LENGTH+EXTENSON_LENGTH) || (Math.abs(targetY-y) > SIDE_LENGTH || distance < ARM_LENGTH))){
+                if((distance > (ARM_LENGTH+EXTENSON_LENGTH) /*|| (Math.abs(targetY-y) > SIDE_LENGTH || distance < ARM_LENGTH)*/)){
                     System.out.println("Too far away");
                     return true;
                 }
