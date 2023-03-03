@@ -23,7 +23,7 @@ public class Grabber {
     private RelativeEncoder m_grabberEncoder;
 
     private int driveSpeed = 5000;
-    private final double GEAR_RATIO = 38.1;
+    private final double GEAR_RATIO = 38.3;
     private double grabberSpeed = .4;
     private double grabberZero = 0;
     private double grabberMax = 180/4;
@@ -31,6 +31,7 @@ public class Grabber {
 
 
     public Grabber(){
+        m_grabber.setInverted(false);
         m_pidController = extender.getPIDController();
         m_encoder = extender.getEncoder();
         m_grabberEncoder = m_grabber.getEncoder();
@@ -62,7 +63,7 @@ public class Grabber {
     }
 
     public void extend(double speed) {
-        m_pidController.setReference(speed*driveSpeed, ControlType.kSmartVelocity);
+        m_pidController.setReference(-speed*driveSpeed, ControlType.kSmartVelocity);
     }
 
     public boolean extendToPos(double Pos){
@@ -87,7 +88,7 @@ public class Grabber {
          * m_grabber.set(0);
          * } else {
          */
-        if (m_grabber.getOutputCurrent() > 2 || Math.abs(m_encoder.getPosition()) > grabberMax) {
+        if (m_grabber.getOutputCurrent() > 3 || Math.abs(m_encoder.getPosition()) > grabberMax) {
             m_grabber.set(0);
         } else {
             m_grabber.set(grabberSpeed);
@@ -102,7 +103,7 @@ public class Grabber {
          * m_grabber.set(0);
          * } else{
          */
-        if (m_grabber.getOutputCurrent() > 2) {
+        if (m_grabber.getOutputCurrent() > 3) {
             m_grabber.set(0);
         } else {
             m_grabber.set(-grabberSpeed);
@@ -119,9 +120,8 @@ public class Grabber {
         double grabberCurrent = m_grabber.getOutputCurrent();
         SmartDashboard.putNumber("Grabber Current", grabberCurrent);
         SmartDashboard.putNumber("grabber encoder", m_grabberEncoder.getPosition());
-
     }
     public double returnExtension(){
-        return m_encoder.getPosition()*GEAR_RATIO;
+        return -m_encoder.getPosition()/GEAR_RATIO;
     }
 }
