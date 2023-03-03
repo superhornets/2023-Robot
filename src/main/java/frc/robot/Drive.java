@@ -169,6 +169,7 @@ public class Drive {
         else{return false;}
     }
     public boolean driveTo(double distance) {
+        distance = distance * -1;
         if(!isMoving){
             isMoving=true;
             //setPos();

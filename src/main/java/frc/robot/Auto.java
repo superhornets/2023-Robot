@@ -50,6 +50,7 @@ public class Auto {
         // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
         System.out.println("Auto selected: " + m_autoSelected);
         autoStage = 0;
+        drive.teleopInitDrive();
 
     }
     public void runSelected() {
@@ -109,6 +110,7 @@ public class Auto {
     private void brokenArmAuto() {
         if (autoStage == 0){
             // Back up
+            System.out.println("HEREEEEEEEEEEEEEEEEEEEEEE");
             if(drive.driveTo(-24)){
               autoStage = 1;
             }
@@ -117,11 +119,12 @@ public class Auto {
             // Forward
             if(drive.driveTo(30)){
               autoStage = 2;
+              drive.teleopInitDrive();
             }
           }
           if (autoStage == 2){
             // Back up
-            if(drive.driveTo(-24)){
+            if(drive.driveTo(-10 * 12)){
               autoStage = 3;
             }
           }
@@ -131,6 +134,7 @@ public class Auto {
             // Turn 180 degrees
             if(drive.turnTo(180)){
               autoStage = 4;
+              drive.teleopInitDrive();
             }
           }
           else if(autoStage == 4){
@@ -143,12 +147,14 @@ public class Auto {
             // Turn 180 degrees in place
             if(drive.turnTo(180)){
               autoStage = 6;
+              drive.teleopInitDrive();
             }
           }
           else if(autoStage == 6){
             // Move to node
             if(drive.driveTo(144)){
               autoStage = 7;
+              drive.teleopInitDrive();
             }
           }
   
@@ -156,6 +162,7 @@ public class Auto {
             // Forward
             if(drive.driveTo(24)){
               autoStage = 8;
+              drive.teleopInitDrive();
             }
           }
           else if(autoStage == 8){
@@ -168,6 +175,7 @@ public class Auto {
             // Turn "A bit"
             if(drive.turnTo(20)){
               autoStage = 10;
+              drive.teleopInitDrive();
             }
           }
           else if(autoStage == 10){
