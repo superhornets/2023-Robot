@@ -127,7 +127,7 @@ public class Tower {
         m_pidController.setReference(m_encoder.getPosition(), ControlType.kSmartMotion);
     }
     public boolean moveTowerTo(double angle) {
-        m_pidController.setReference(angle, ControlType.kSmartMotion);
+        m_pidController.setReference(rotationsToDegrees(angle), ControlType.kSmartMotion);
 
         double error = angle - getPosition();
         return Math.abs(error) < 3;

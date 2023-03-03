@@ -78,6 +78,7 @@ public class Arm {
         this.tower = tower;
         this.grabber = grabber;
     }
+
     public void moveArm(double speed) {
         speed = speed * 0.2;
         if(speed == 0) {
@@ -201,8 +202,7 @@ public class Arm {
     }
 
     public boolean moveArmTo(double position) {
-        m_pidController.setReference(position, ControlType.kSmartMotion);
-
+        m_pidController.setReference((position-STARTING_ANGLE)/2, ControlType.kSmartMotion);
         double error = position - currentPos;
         return Math.abs(error) < 3;   
     }

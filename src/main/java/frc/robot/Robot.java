@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
+import java.util.function.DoubleToIntFunction;
+
 import org.opencv.core.Mat;
 
 import com.revrobotics.CANSparkMax;
@@ -53,6 +55,7 @@ public class Robot extends TimedRobot {
   private boolean override = false;
   private boolean holdPositionTurret = false;
   private boolean limitFramePerimiter = false;
+  private boolean isPlacing = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -67,7 +70,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("angle", angle);
     SmartDashboard.putBoolean("hold Position", holdMode);
     SmartDashboard.putNumber("tower encoder", pickerUpper.tower.getPosition());
+    SmartDashboard.putNumber("Target", 2);
     CameraServer.startAutomaticCapture();
+  
 
 
 
@@ -317,7 +322,17 @@ if(m_rightStick.getRawButtonPressed(4)){
         pickerUpper.tower.moveTower(0);
       }
     }
-
+    if(m_leftStick.getRawButton(10)){
+      if(!isPlacing){
+        isPlacing = true;
+        int target = (int)SmartDashboard.getNumber("Target", 2);
+        auto.placePieceInit(target);
+      }
+    }
+    if(isPlacing){
+      int target = (int)SmartDashboard.getNumber("Target", 2);
+      if(auto.placePiece(target, true, true));
+    }
     SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
   }
   
