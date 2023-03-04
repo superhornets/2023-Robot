@@ -221,9 +221,9 @@ public class Drive {
         rotateToAngle = false;
     }
     public void arcade(double forwardSpeed, double turnSpeed) {
-        if(turnSpeed > .3){
-            m_pidController.setSmartMotionMaxAccel(500, 0);
-            m_pidControllerR.setSmartMotionMaxAccel(500, 0);
+        if(turnSpeed > .1){
+            m_pidController.setSmartMotionMaxAccel(200, 0);
+            m_pidControllerR.setSmartMotionMaxAccel(200, 0);
 
         }
         else{

@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
     pickerUpper.SmartDashboardPrintout();
     extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
     //GenericEntry override = Shuffleboard.getTab("override").add("override", false).withWidget("Toggle Button").getEntry();
-    pickerUpper.tower.safety(false);
+    //pickerUpper.tower.safety(false);
     pickerUpper.grabber.periodic();
     //SmartDashboard.putNumber("extender speed", extenderSpeed);
     pickerUpper.arm.updatePosition();
@@ -195,10 +195,10 @@ public class Robot extends TimedRobot {
 
     if(pickerUpper.arm.isOverExtentionLimit() || pickerUpper.arm.isOverHeightLimit()){
       if(pickerUpper.grabber.returnExtension() > 0){
-        pickerUpper.grabber.extend(-.1);
+        pickerUpper.grabber.extend(-.4);
       }
       else{
-        pickerUpper.arm.moveArm(-.1);
+        pickerUpper.arm.moveArm(-.4);
       }
     }
     else if(pickerUpper.arm.isAtExtentionLimit()){
@@ -284,8 +284,8 @@ if(m_rightStick.getRawButtonPressed(5)){
 }
     if (m_rightStick.isConnected()) {
       double towerSpeed = m_rightStick.getRawAxis(0);
-      if(Math.abs(towerSpeed)> .05 && !holdPositionTurret){
-        if(((pickerUpper.tower.returnAngle() > 120 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -120 && towerSpeed < 0))&& !m_rightStick.getRawButton(11) && m_rightStick.getRawButton(12)){
+      if(Math.abs(towerSpeed)> .04 && !holdPositionTurret){
+        if(((pickerUpper.tower.returnAngle() > 120 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -120 && towerSpeed < 0))&& ((!m_rightStick.getRawButton(11) && m_rightStick.getRawButton(12)) || !m_rightStick.getRawButton(12) )){
           pickerUpper.tower.moveTower(0);
         }
         else if(((towerSpeed > 0 && pickerUpper.arm.isAtRightFrame()) || (towerSpeed < 0 && pickerUpper.arm.isAtLeftFrame())) && limitFramePerimiter){

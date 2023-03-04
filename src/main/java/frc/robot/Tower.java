@@ -107,7 +107,7 @@ public class Tower {
         this.grabber = grabber;
      }
     public void moveTower(double speed) {
-        speed = speed * 0.1;
+        speed = speed * 0.3;
        
         if(speed > 0) {
             m_pidController.setReference(speed*driveSpeed, ControlType.kSmartVelocity);
