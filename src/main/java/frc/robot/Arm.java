@@ -272,6 +272,15 @@ public class Arm {
             return false;
         }
     }
+    public boolean isAtLowerArmLimit() {
+        if(currentAngle < 15){
+            return true;
+        }
+        else{
+            return false;
+        }
+        
+    }
     public void SmartDashboard() {
         SmartDashboard.putNumber("arm x distance ", armXDistance());
         SmartDashboard.putNumber("arm y distance", armYDistance());

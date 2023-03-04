@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
     pickerUpper.SmartDashboardPrintout();
     extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
     //GenericEntry override = Shuffleboard.getTab("override").add("override", false).withWidget("Toggle Button").getEntry();
-    //pickerUpper.tower.safety(SmartDashboard.getBoolean("override", false));
+    pickerUpper.tower.safety(false);
     pickerUpper.grabber.periodic();
     //SmartDashboard.putNumber("extender speed", extenderSpeed);
     pickerUpper.arm.updatePosition();
@@ -136,6 +136,7 @@ public class Robot extends TimedRobot {
     double distance = SmartDashboard.getNumber("Distance", 0);
     double angle = SmartDashboard.getNumber("angle", 0);
     //boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
+    
 
     if(m_leftStick.getX() > .07 || m_leftStick.getX() < -.07 || m_leftStick.getY() > .07 || m_leftStick.getY() < -.07){
 
@@ -238,6 +239,9 @@ public class Robot extends TimedRobot {
     if(armSpeed < .05 && armSpeed > -.05){
       armSpeed = 0;
     }
+    else if(armSpeed < 0 && pickerUpper.arm.isAtLowerArmLimit()){
+      armSpeed = 0;
+    }
     pickerUpper.arm.moveArm(armSpeed);
     if(m_rightStick.getRawButton(5)){
       pickerUpper.arm.reseZero();
@@ -245,17 +249,20 @@ public class Robot extends TimedRobot {
   
     
     //Extender code
-    if(m_rightStick.getRawButton(7) && (pickerUpper.grabber.returnExtension() < 17 || m_rightStick.getRawButton(6))){
+    if(m_rightStick.getRawButton(7) && (pickerUpper.grabber.returnExtension() < 16 || m_rightStick.getRawButton(6))){
       pickerUpper.grabber.extend(extenderSpeed);
     }
     else if(m_rightStick.getRawButton(8) && (pickerUpper.grabber.returnExtension() > 0|| m_rightStick.getRawButton(6))){
       pickerUpper.grabber.extend(-extenderSpeed);
     }
-    else if(m_rightStick.getRawButton(9)){
+    /*else if(m_rightStick.getRawButton(9)){
       pickerUpper.grabber.extendToPos(5);
     }
     else if(m_rightStick.getRawButton(10)){
       pickerUpper.grabber.extendToPos(-5);
+    }*/
+    else if(m_rightStick.getRawButton(9)){
+      pickerUpper.grabber.resetExtenderEncoder();
     }
     else{
       pickerUpper.grabber.extend(0);
@@ -271,11 +278,8 @@ if(m_rightStick.getRawButtonPressed(4)){
 }
     if (m_rightStick.isConnected()) {
       double towerSpeed = m_rightStick.getRawAxis(0);
-      if(m_rightStick.getRawButton(10)){
-        auto.homePickerUpper();
-      }
-      else if(Math.abs(towerSpeed)> .05 && !holdPositionTurret){
-        if((pickerUpper.tower.returnAngle() > 60 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -60 && towerSpeed < 0)){
+      if(Math.abs(towerSpeed)> .05 && !holdPositionTurret){
+        if((pickerUpper.tower.returnAngle() > 120 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -120 && towerSpeed < 0)){
           pickerUpper.tower.moveTower(0);
         }
         else if(((towerSpeed > 0 && pickerUpper.arm.isAtRightFrame()) || (towerSpeed < 0 && pickerUpper.arm.isAtLeftFrame())) && limitFramePerimiter){

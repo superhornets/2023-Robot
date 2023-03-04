@@ -77,13 +77,20 @@ public class Grabber {
         }
 
     }
+
+    public boolean retractToPos(double Pos) {
+        return false;
+    }
+    public void resetExtenderEncoder() {
+        m_encoder.setPosition(0);   
+    }
     public void open() {
         /*
          * if(m_grabberLimitOpen.get()) {
          * m_grabber.set(0);
          * } else {
          */
-        if (m_grabber.getOutputCurrent() > 3 || Math.abs(m_encoder.getPosition()) > grabberMax) {
+        if (m_grabber.getOutputCurrent() > 4 /*|| Math.abs(m_encoder.getPosition()) > grabberMax*/) {
             m_grabber.set(0);
         } else {
             m_grabber.set(grabberSpeed);
@@ -98,7 +105,7 @@ public class Grabber {
          * m_grabber.set(0);
          * } else{
          */
-        if (m_grabber.getOutputCurrent() > 3) {
+        if (m_grabber.getOutputCurrent() > 4) {
             m_grabber.set(0);
         } else {
             m_grabber.set(-grabberSpeed);
