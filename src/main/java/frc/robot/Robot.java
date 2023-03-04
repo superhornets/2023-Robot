@@ -213,7 +213,7 @@ public class Robot extends TimedRobot {
           pickerUpper.tower.moveTower(towerSpeed);
         }
       }*/
-      if(m_rightStick.getRawButton(8)){
+      if(m_rightStick.getRawButton(8)&&!m_rightStick.getRawButton(12)){
         pickerUpper.grabber.extend(-.1);
       }
       if(m_rightStick.getRawAxis(1) < 0){
@@ -223,7 +223,7 @@ public class Robot extends TimedRobot {
 
     }
     else if(pickerUpper.arm.isAtHeightLimit()){
-      if(m_rightStick.getRawButton(8)){
+      if(m_rightStick.getRawButton(8)&&!m_rightStick.getRawButton(12)){
         pickerUpper.grabber.extend(-.1);
       }
       if(m_rightStick.getRawAxis(1) < 0){
@@ -239,20 +239,26 @@ public class Robot extends TimedRobot {
     if(armSpeed < .05 && armSpeed > -.05){
       armSpeed = 0;
     }
-    else if(armSpeed < 0 && pickerUpper.arm.isAtLowerArmLimit()){
+    else if(armSpeed < 0 && pickerUpper.arm.isAtLowerArmLimit() && !m_rightStick.getRawButton(10) && m_rightStick.getRawButton(12)){
       armSpeed = 0;
     }
     pickerUpper.arm.moveArm(armSpeed);
-    if(m_rightStick.getRawButton(5)){
+    if(m_rightStick.getRawButton(9) && m_rightStick.getRawButton(12)){
       pickerUpper.arm.reseZero();
+    }
+    else if(m_rightStick.getRawButton(4)){
+      auto.homePickerUpper();
+    }
+    else if(m_rightStick.getRawButton(6)){
+      pickerUpper.arm.moveArmTo(40);
     }
   
     
     //Extender code
-    if(m_rightStick.getRawButton(7) && (pickerUpper.grabber.returnExtension() < 16 || m_rightStick.getRawButton(6))){
+    if((m_rightStick.getRawButton(7) &&!m_rightStick.getRawButton(12)) && (pickerUpper.grabber.returnExtension() < 16 || m_rightStick.getRawButton(11))){
       pickerUpper.grabber.extend(extenderSpeed);
     }
-    else if(m_rightStick.getRawButton(8) && (pickerUpper.grabber.returnExtension() > 0|| m_rightStick.getRawButton(6))){
+    else if((m_rightStick.getRawButton(8)&&!m_rightStick.getRawButton(12)) && (pickerUpper.grabber.returnExtension() > 0|| m_rightStick.getRawButton(11))){
       pickerUpper.grabber.extend(-extenderSpeed);
     }
     /*else if(m_rightStick.getRawButton(9)){
@@ -261,7 +267,7 @@ public class Robot extends TimedRobot {
     else if(m_rightStick.getRawButton(10)){
       pickerUpper.grabber.extendToPos(-5);
     }*/
-    else if(m_rightStick.getRawButton(9)){
+    else if(m_rightStick.getRawButton(7)&& m_rightStick.getRawButton(12)){
       pickerUpper.grabber.resetExtenderEncoder();
     }
     else{
@@ -273,13 +279,13 @@ public class Robot extends TimedRobot {
 if(m_rightStick.getRawButtonPressed(3)){
   holdPositionTurret = !holdPositionTurret;
 }
-if(m_rightStick.getRawButtonPressed(4)){
+if(m_rightStick.getRawButtonPressed(5)){
   limitFramePerimiter = !limitFramePerimiter;
 }
     if (m_rightStick.isConnected()) {
       double towerSpeed = m_rightStick.getRawAxis(0);
       if(Math.abs(towerSpeed)> .05 && !holdPositionTurret){
-        if((pickerUpper.tower.returnAngle() > 120 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -120 && towerSpeed < 0)){
+        if(((pickerUpper.tower.returnAngle() > 120 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -120 && towerSpeed < 0))&& !m_rightStick.getRawButton(11) && m_rightStick.getRawButton(12)){
           pickerUpper.tower.moveTower(0);
         }
         else if(((towerSpeed > 0 && pickerUpper.arm.isAtRightFrame()) || (towerSpeed < 0 && pickerUpper.arm.isAtLeftFrame())) && limitFramePerimiter){
@@ -292,7 +298,7 @@ if(m_rightStick.getRawButtonPressed(4)){
       else if(holdPositionTurret){
         pickerUpper.tower.holdTowerPos();
       }
-      else if (m_rightStick.getRawButton(11)) {
+      else if (m_rightStick.getRawButton(8)&& m_rightStick.getRawButton(12)) {
         pickerUpper.tower.setZero();
       }
       else if (isRotatingToQuadrant == false) {
@@ -326,7 +332,7 @@ if(m_rightStick.getRawButtonPressed(4)){
         pickerUpper.tower.moveTower(0);
       }
     }
-    if(m_leftStick.getRawButton(10)){
+    if(m_leftStick.getRawButton(10) &&!m_rightStick.getRawButton(12)){
       if(!isPlacing){
         isPlacing = true;
         int target = (int)SmartDashboard.getNumber("Target", 2);
