@@ -4,6 +4,7 @@ import org.opencv.core.Mat;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -12,6 +13,7 @@ public class Auto {
     private static final String kCustomAuto = "My Auto";
     private static final String kStraightAuto = "Straight auto";
     private static final String kBrokenArmAuto = "Broken Arm";
+    private static final String idealauto = "place pice";
     private String m_autoSelected;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
@@ -54,6 +56,7 @@ public class Auto {
     private double extensonLength = 0;
     private int homePickerUpperStage = 0;
     private int autoPlaceStage = 0;
+    private double time = 0;
 
     public Auto(Drive drive, PickerUpper pickerUpper){
         this.drive = drive;
@@ -210,6 +213,41 @@ public class Auto {
             default:
               // Put default auto code here
               break;
+
+            case idealauto:
+                if (autoStage == 0){
+                    drive.driveTo(-30);
+                    autoStage = 1;
+                }
+                else if (autoStage == 1){
+                    if(pickerUpper.arm.moveArmTo(80)){
+                        autoStage = 2;
+                    }
+                }
+                else if (autoStage == 2){
+                    if (drive.driveTo(30)){
+                        autoStage = 3;
+                        }
+                }
+
+                else if (autoStage == 3){
+                    placePieceAutoBySetpointInit();
+                    autoStage = 4;
+                        
+                }
+                else if (autoStage == 4){
+                    if (placePieceAutoBySetpoint()){
+                        autoStage = 5;
+                        time = Timer.getFPGATimestamp();
+                    }
+                }
+                else if (autoStage == 5){
+                    if (Timer.getFPGATimestamp() - time < 1){
+                        pickerUpper.grabber.open();
+                    }
+                }
+                break;
+
         }
     }
 
@@ -467,4 +505,7 @@ public class Auto {
         }
         return false;
     }
+
+
+
 }
