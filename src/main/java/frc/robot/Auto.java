@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.opencv.core.Mat;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -29,6 +31,15 @@ public class Auto {
     private final double CAMERA_X = 4.25; // forward
     private final double CAMERA_Y = 4.25; // side to side
     private final double CAMERA_Z = 22; // height
+    private double x = 0;
+    private double y = 0;
+    private final double z = 0;
+    private final double pickupAngle =90 - Math.toDegrees(Math.atan(58/10));
+    private final double pickupExtension = Math.sqrt(58*58+100);
+
+    private double distancePlace = Math.sqrt((49.5*49.5)+(11.75*11.75));
+    private double anglePlace = Math.toDegrees(Math.atan(11.75/49.5));
+    private double heightPlace = /*Math.toDegrees(Math.atan(distancePlace/((ARM_HEIGHT - 46)+5)));*/ 85;
 
 
     private double targetX = 0;
@@ -40,6 +51,7 @@ public class Auto {
     private int targetID = 0;
     private double extensonLength = 0;
     private int homePickerUpperStage = 0;
+    private int autoPlaceStage = 0;
 
     public Auto(Drive drive, PickerUpper pickerUpper){
         this.drive = drive;
@@ -233,8 +245,6 @@ public class Auto {
         }
     }
     public boolean placePiece(int target, boolean isFront, boolean isPositive){
-            double x = 0;
-            double y = 0;
             //double z = 0;
             //Stage 0: read x, y, and z values for the robot.
         if(placeStage == 0){
@@ -250,9 +260,13 @@ public class Auto {
         else if(placeStage == 1){
             if(isFront){
                 double xydistance = Math.sqrt(((x+targetX+CAMERA_X)*(x+targetX+CAMERA_X))+((targetY+y+CAMERA_Y)*(targetY+y+CAMERA_Y)));
-                double distance = Math.sqrt(((xydistance*xydistance)+((ROBOT_ARM_HEIGHT-targetZ)*(ROBOT_ARM_HEIGHT-targetZ))));
+                double distance = Math.sqrt(((xydistance*xydistance)+((ROBOT_ARM_HEIGHT-targetZ-TARGET_HEIGHT)*(ROBOT_ARM_HEIGHT-targetZ-TARGET_HEIGHT))));
                 if((distance > (ARM_LENGTH+EXTENSON_LENGTH) /*|| (Math.abs(targetY-y) > SIDE_LENGTH || distance < ARM_LENGTH)*/)){
                     System.out.println("Too far away " + distance);
+                    return true;
+                }
+                else if(distance < ARM_LENGTH){
+                    System.out.println("Too close " + distance);
                     return true;
                 }
             }
@@ -262,6 +276,7 @@ public class Auto {
                     System.out.println("Too far away");
                     return true;
                 }
+
             }
             placeStage = 2;
         }
@@ -288,7 +303,7 @@ public class Auto {
         else if(placeStage == 3){
             armAngle = Math.atan((targetX+x+CAMERA_X)/(ROBOT_ARM_HEIGHT-(TARGET_HEIGHT+targetZ)));
             armAngle = Math.toDegrees(armAngle);
-            armAngle += EXTRA_ANGLE;
+            armAngle = 90-armAngle+EXTRA_ANGLE;
             placeStage = 4;
         }
         //Stage 4: move the arm
@@ -328,13 +343,13 @@ public class Auto {
         else if(placeStage == 8){
             double xydistance = Math.sqrt(((x+targetX+CAMERA_X)*(x+targetX+CAMERA_X))+((targetY+y+CAMERA_Y)*(targetY+y+CAMERA_Y)));
             double distance = Math.sqrt(((xydistance*xydistance)+((ROBOT_ARM_HEIGHT-targetZ)*(ROBOT_ARM_HEIGHT-targetZ))));
-            if(distance>(ARM_LENGTH-2) || distance <(ARM_LENGTH+2)){
+            /*if(distance>(ARM_LENGTH-2) || distance <(ARM_LENGTH+2)){
                 placeStage = 10;
             }
-            else{
+            else{*/
                 extensonLength = distance - ARM_LENGTH;
                 placeStage = 9;
-            }
+            //}
 
         }
         //Stage 9: extend
@@ -383,6 +398,57 @@ public class Auto {
             return true;
         }
 
+        return false;
+    }
+    public void placePieceAutoBySetpointInit(){
+        autoPlaceStage = 0;
+
+    }
+    public boolean placePieceAutoBySetpoint(){
+        if(autoPlaceStage == 0){
+            System.out.println("stage 0" + heightPlace);
+            if(pickerUpper.arm.moveArmTo(heightPlace)){
+                autoPlaceStage = 1;
+            }
+        }
+        else if(autoPlaceStage == 1){
+            System.out.println("stage 1" + anglePlace);
+
+            if(pickerUpper.tower.moveTowerTo(anglePlace)){
+                autoPlaceStage = 2;
+            }
+        }
+        else if(autoPlaceStage ==2){
+            System.out.println("stage 2" + (distancePlace - ARM_LENGTH));
+
+            if(pickerUpper.grabber.extendToPos(distancePlace - ARM_LENGTH)){
+                autoPlaceStage = 3;
+            }
+        }
+        else if(autoPlaceStage == 3){
+            return true;
+        }
+        return false;
+    }
+
+    public void pickupPieceAutoBySetpointInit(){
+        autoPlaceStage = 0;
+
+    }
+    public boolean pickupPieceAutoBySetpoint(){
+        if(autoPlaceStage == 0){
+            if(pickerUpper.arm.moveArmTo(pickupAngle)){
+                autoPlaceStage = 1;
+            }
+        }
+        else if(autoPlaceStage ==1){
+            if(pickerUpper.grabber.extendToPos(pickupExtension - ARM_LENGTH)){
+                autoPlaceStage = 2;
+            }
+        }
+        else if(autoPlaceStage == 2){
+            return true;
+        }
         return false;
     }
 }

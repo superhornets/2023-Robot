@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -51,11 +53,18 @@ public class Robot extends TimedRobot {
   private boolean isAutoLeveling = false;
   private String quadrant = "a";
   private boolean isRotatingToQuadrant = false;
-  private double extenderSpeed = 1;
+  private double extenderSpeed = .5;
   private boolean override = false;
   private boolean holdPositionTurret = false;
   private boolean limitFramePerimiter = false;
   private boolean isPlacing = false;
+  private boolean isSlowMode = false;
+  private boolean isPlacingHigh = false;
+  private boolean isPickingUp = false;
+  private AddressableLED m_led = new AddressableLED(9);
+  private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(68);
+
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -65,11 +74,18 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     drive.driveInit();
     drive.NavXInit();
-    
-    SmartDashboard.putNumber("Distance", distance);
-    SmartDashboard.putNumber("angle", angle);
-    SmartDashboard.putBoolean("hold Position", holdMode);
-    SmartDashboard.putNumber("tower encoder", pickerUpper.tower.getPosition());
+    m_led.setLength(m_ledBuffer.getLength());
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+      // Sets the specified LED to the RGB values for red
+      m_ledBuffer.setRGB(i, 255, 255, 0);
+    }
+   
+    m_led.setData(m_ledBuffer);
+    m_led.start();
+    //SmartDashboard.putNumber("Distance", distance);
+    //SmartDashboard.putNumber("angle", angle);
+    //SmartDashboard.putBoolean("hold Position", holdMode);
+    //SmartDashboard.putNumber("tower encoder", pickerUpper.tower.getPosition());
     SmartDashboard.putNumber("Target", 2);
     CameraServer.startAutomaticCapture();
   
@@ -89,12 +105,12 @@ public class Robot extends TimedRobot {
   
   public void robotPeriodic() {
     drive.SmartDashboardPrintout();
-    SmartDashboard.putNumber("leftStick", m_leftStick.getY());
+    //SmartDashboard.putNumber("leftStick", m_leftStick.getY());
     pickerUpper.SmartDashboardPrintout();
     extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
     //GenericEntry override = Shuffleboard.getTab("override").add("override", false).withWidget("Toggle Button").getEntry();
     //pickerUpper.tower.safety(false);
-    pickerUpper.grabber.periodic();
+    pickerUpper.grabber.periodicGrabber();
     //SmartDashboard.putNumber("extender speed", extenderSpeed);
     pickerUpper.arm.updatePosition();
   }
@@ -133,14 +149,20 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    double distance = SmartDashboard.getNumber("Distance", 0);
-    double angle = SmartDashboard.getNumber("angle", 0);
+    //double distance = SmartDashboard.getNumber("Distance", 0);
+   // double angle = SmartDashboard.getNumber("angle", 0);
     //boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
-    
-
-    if(m_leftStick.getX() > .07 || m_leftStick.getX() < -.07 || m_leftStick.getY() > .07 || m_leftStick.getY() < -.07){
-
-      drive.arcade(m_leftStick.getY(), m_leftStick.getX());
+    if(m_rightStick.getRawButtonPressed(9)&&!m_rightStick.getRawButton(12)){
+      isSlowMode = !isSlowMode;
+    }
+    if(!isPlacing && !isPlacingHigh && !isPickingUp){
+    if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
+      if(isSlowMode || pickerUpper.arm.isAtSlowLimit()){
+        drive.arcade(m_leftStick.getY()*.25, m_leftStick.getX()*.25);
+      }
+      else{
+        drive.arcade(m_leftStick.getY(), m_leftStick.getX());
+      }
       drive.setPos();
     }
     else if(!isAutoDriving){
@@ -224,7 +246,7 @@ public class Robot extends TimedRobot {
     }
     else if(pickerUpper.arm.isAtHeightLimit()){
       if(m_rightStick.getRawButton(8)&&!m_rightStick.getRawButton(12)){
-        pickerUpper.grabber.extend(-.1);
+        pickerUpper.grabber.extend(-.3);
       }
       if(m_rightStick.getRawAxis(1) < 0){
         double armSpeed = m_rightStick.getRawAxis(1);
@@ -239,8 +261,13 @@ public class Robot extends TimedRobot {
     if(armSpeed < .05 && armSpeed > -.05){
       armSpeed = 0;
     }
-    else if(armSpeed < 0 && pickerUpper.arm.isAtLowerArmLimit() && !m_rightStick.getRawButton(10) && m_rightStick.getRawButton(12)){
+    else if(armSpeed < 0 && pickerUpper.arm.isAtLowerArmLimit()){
       armSpeed = 0;
+      System.out.println("at lower limit");
+      
+    }
+    else if(isSlowMode){
+      armSpeed = armSpeed/4;
     }
     pickerUpper.arm.moveArm(armSpeed);
     if(m_rightStick.getRawButton(9) && m_rightStick.getRawButton(12)){
@@ -255,7 +282,7 @@ public class Robot extends TimedRobot {
   
     
     //Extender code
-    if((m_rightStick.getRawButton(7) &&!m_rightStick.getRawButton(12)) && (pickerUpper.grabber.returnExtension() < 16 || m_rightStick.getRawButton(11))){
+    if((m_rightStick.getRawButton(7) &&!m_rightStick.getRawButton(12)) && (pickerUpper.grabber.returnExtension() < 14 || m_rightStick.getRawButton(11))){
       pickerUpper.grabber.extend(extenderSpeed);
     }
     else if((m_rightStick.getRawButton(8)&&!m_rightStick.getRawButton(12)) && (pickerUpper.grabber.returnExtension() > 0|| m_rightStick.getRawButton(11))){
@@ -285,13 +312,16 @@ if(m_rightStick.getRawButtonPressed(5)){
     if (m_rightStick.isConnected()) {
       double towerSpeed = m_rightStick.getRawAxis(0);
       if(Math.abs(towerSpeed)> .04 && !holdPositionTurret){
-        if(((pickerUpper.tower.returnAngle() > 120 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -120 && towerSpeed < 0))&& ((!m_rightStick.getRawButton(11) && m_rightStick.getRawButton(12)) || !m_rightStick.getRawButton(12) )){
+        if(((pickerUpper.tower.returnAngle() > 120 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -120 && towerSpeed < 0)) && ((!m_rightStick.getRawButton(11) && m_rightStick.getRawButton(12)) || !m_rightStick.getRawButton(12) )){
           pickerUpper.tower.moveTower(0);
         }
         else if(((towerSpeed > 0 && pickerUpper.arm.isAtRightFrame()) || (towerSpeed < 0 && pickerUpper.arm.isAtLeftFrame())) && limitFramePerimiter){
           pickerUpper.tower.moveTower(0);
         }
-        else{
+        else if(isSlowMode || pickerUpper.arm.isAtSlowLimit()){
+          pickerUpper.tower.moveTower(towerSpeed/4);
+        }
+        else {
         pickerUpper.tower.moveTower(towerSpeed);
         }
       }
@@ -322,6 +352,9 @@ if(m_rightStick.getRawButtonPressed(5)){
           isRotatingToQuadrant = true;
           //pickerUpper.tower.moveTowerToQuadrant("d");
         }
+        else{
+          pickerUpper.tower.moveTower(0);
+        }
       }
       else if(isRotatingToQuadrant){
         if(pickerUpper.tower.moveTowerToQuadrant(quadrant)){
@@ -332,18 +365,47 @@ if(m_rightStick.getRawButtonPressed(5)){
         pickerUpper.tower.moveTower(0);
       }
     }
-    if(m_leftStick.getRawButton(10) &&!m_rightStick.getRawButton(12)){
+  }
+
+  // auto pickup and place
+  if(m_leftStick.getRawButton(8)){
+    isPlacing = false;
+    isPlacingHigh = false;
+    isPickingUp = false;
+  }
+    if(m_rightStick.getRawButton(10) &&!m_rightStick.getRawButton(12)){
       if(!isPlacing){
         isPlacing = true;
         int target = (int)SmartDashboard.getNumber("Target", 2);
         auto.placePieceInit(target);
       }
     }
-    if(isPlacing){
+    else if(isPlacing){
       int target = (int)SmartDashboard.getNumber("Target", 2);
-      if(auto.placePiece(target, true, true));
+      if(auto.placePiece(target, true, true)){
+        isPlacing = false;
+      }
     }
-    SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
+    /*if(m_rightStick.getRawButton(10)&&m_rightStick.getRawButton(12) && !isPlacingHigh){
+      auto.placePieceAutoBySetpointInit();
+      isPlacingHigh = true;
+    }
+    else if(isPlacingHigh){
+      if(auto.placePieceAutoBySetpoint()){
+        isPlacingHigh = false;
+      }
+    }*/
+
+    if(m_leftStick.getRawButton(10) && !isPickingUp){
+      isPickingUp = true;
+      auto.pickupPieceAutoBySetpointInit();
+    }
+    else if(isPickingUp){
+      if(auto.pickupPieceAutoBySetpoint()){
+        isPickingUp = false;
+      }
+    }
+    //SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
   }
   
   /** This function is called once when the robot is disabled. */

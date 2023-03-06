@@ -1,6 +1,8 @@
 package frc.robot;
 
-public class PickerUpper {
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class PickerUpper extends SubsystemBase{
     
 
     public final Grabber grabber = new Grabber();
@@ -20,5 +22,9 @@ public class PickerUpper {
         tower.setPickerUpper(arm, grabber);
     }
 
-    
+    @Override
+    public void periodic() {
+
+        tower.setP(tower.fjasdkl.getDouble(0));
+    }
 }

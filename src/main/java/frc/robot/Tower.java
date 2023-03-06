@@ -4,18 +4,25 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 
-public class Tower {
+public class Tower extends SubsystemBase {
     
     private final CANSparkMax m_tower = new CANSparkMax(6, MotorType.kBrushless);
     private final DigitalInput m_towerLimitRight = new DigitalInput(2);
     private final DigitalInput m_towerLimitLeft = new DigitalInput(3);
     private double position = 0;
     private final int GEAR_RATIO = 60;
+
+    GenericEntry fjasdkl;
 
 
     private SparkMaxPIDController m_pidController;
@@ -27,11 +34,12 @@ public class Tower {
     private Grabber grabber;
 
     public Tower(){
+        fjasdkl = Shuffleboard.getTab("alsoyay").add("tower", 0).getEntry();
         m_pidController = m_tower.getPIDController();
         m_tower.setInverted(true);
         m_encoder = m_tower.getEncoder();
-        kP = 5e-5; 
-        kI = 8e-7;
+        kP = 5e-5;  //was 5e-5
+        kI = 8e-7; //was 8e-7
         kD = 0; 
         kIz = 0; 
         kFF = 0;
@@ -48,7 +56,7 @@ public class Tower {
         m_pidController.setSmartMotionMaxAccel(maxAcc, 0);
         m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
         currentPos = getPosition();
-        SmartDashboard.putNumber("P Gain", kP);
+        /*SmartDashboard.putNumber("P Gain", kP);
         SmartDashboard.putNumber("I Gain", kI);
         SmartDashboard.putNumber("D Gain", kD);
         SmartDashboard.putNumber("I Zone", kIz);
@@ -58,12 +66,13 @@ public class Tower {
 
         // display Smart Motion coefficients
         SmartDashboard.putNumber("Max Velocity", maxVel);
-        SmartDashboard.putNumber("Max Acceleration", maxAcc);
+        SmartDashboard.putNumber("Max Acceleration", maxAcc);*/
     }
 
     
     
      public void SmartDashboardPrintout(){
+        /*SmartDashboard.putNumber("tower motor speed", m_encoder.getVelocity());
         SmartDashboard.putNumber("tower position", getPosition());
         double p = SmartDashboard.getNumber("P Gain", 0);
         double i = SmartDashboard.getNumber("I Gain", 0);
@@ -84,7 +93,9 @@ public class Tower {
             kMinOutput = min; kMaxOutput = max; 
         }
         if((maxV != maxVel)) { m_pidController.setSmartMotionMaxVelocity(maxV,0); maxVel = maxV; }
-        if((maxA != maxAcc)) { m_pidController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; }
+        if((maxA != maxAcc)) { m_pidController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; }*/
+        SmartDashboard.putNumber("tower angle", returnAngle());
+
         }
      public void safety(boolean override){
         if(arm.currentAngle < 32){
@@ -180,5 +191,15 @@ public class Tower {
     }
     public double returnAngle(){
         return getPosition();
+    }
+
+    public void setP(double yay) {
+
+        m_pidController.setP(yay);
+    }
+
+    @Override
+    public void periodic() {
+        //m_pidController.setP(fjasdkl.getDouble(0));
     }
 }

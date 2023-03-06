@@ -2,12 +2,17 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
@@ -21,12 +26,14 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.SPI;
 
 
 
 
-public class Drive {
+public class Drive extends SubsystemBase {
     private final CANSparkMax leftFrontDrive = new CANSparkMax(1, MotorType.kBrushless);
     private final CANSparkMax leftRearDrive = new CANSparkMax(2, MotorType.kBrushless);
     private final CANSparkMax rightFrontDrive = new CANSparkMax(3, MotorType.kBrushless);
@@ -55,19 +62,21 @@ public class Drive {
     final double kFT = 0.00;
     int levelStage = 0;
     int driveStage = 0;
+    GenericEntry yay;
 
     //vision
     PhotonCamera camera = new PhotonCamera("OV5647");
 
     
     public void driveInit(){
-        kP = 5e-5; 
-        kI = 8e-7;
+        kP = 5e-5; //was 5e-5
+        kI = 8e-7; //was 8e-7
         kD = 0; 
         kIz = 0; 
         kFF = 0;
+        yay = Shuffleboard.getTab("alsoyay").add("dfsafkj", 0).withWidget(BuiltInWidgets.kGraph).getEntry();
         maxRPM = 5700;
-        maxVel = 2000; // rpm
+        maxVel = 3000; // rpm
         maxAcc = 1000;
         kMaxOutput = 1; 
         kMinOutput = -1;
@@ -97,7 +106,6 @@ public class Drive {
         // Encoder object created to display position values
         m_encoder = leftFrontDrive.getEncoder();
         m_encoderR = rightFrontDrive.getEncoder();
-
 
         //turn to angle init
 
@@ -221,17 +229,17 @@ public class Drive {
         rotateToAngle = false;
     }
     public void arcade(double forwardSpeed, double turnSpeed) {
-        if(turnSpeed > .1){
-            m_pidController.setSmartMotionMaxAccel(200, 0);
-            m_pidControllerR.setSmartMotionMaxAccel(200, 0);
+        /*if(Math.abs(turnSpeed) > .1){
+            m_pidController.setSmartMotionMaxAccel(100, 0);
+            m_pidControllerR.setSmartMotionMaxAccel(100, 0);
 
         }
         else{
             m_pidController.setSmartMotionMaxAccel(1000, 0);
             m_pidControllerR.setSmartMotionMaxAccel(1000, 0);
 
-        }
-        var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed, true);
+        }*/
+        var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed*.3, false);
         m_pidController.setReference(speeds.left*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         m_pidControllerR.setReference(speeds.right*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         //SmartDashboard.putNumber("left", speeds.left);
@@ -351,6 +359,9 @@ public class Drive {
             SmartDashboard.putNumber("distance Y", target.getBestCameraToTarget().getY());
             SmartDashboard.putNumber("distance Z", target.getBestCameraToTarget().getZ());
         }
+        SmartDashboard.putNumber("left drive motor", m_encoder.getVelocity());
+        SmartDashboard.putNumber("right drive motor", m_encoderR.getVelocity());
+
     }
     public boolean checkForTarget(int targetID) {
         var result = camera.getLatestResult();
@@ -393,5 +404,11 @@ public class Drive {
 
 
    
+    }
+
+    @Override
+    public void periodic() {
+
+        yay.setDouble(leftFrontDrive.getAppliedOutput());
     }
 }

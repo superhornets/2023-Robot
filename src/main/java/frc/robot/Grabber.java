@@ -5,10 +5,14 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Grabber {
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Grabber extends SubsystemBase{
 
     private final CANSparkMax m_grabber = new CANSparkMax(7, MotorType.kBrushless);
     private final CANSparkMax extender = new CANSparkMax(8, MotorType.kBrushless);
@@ -24,24 +28,28 @@ public class Grabber {
 
     private int driveSpeed = 5000;
     private final double GEAR_RATIO = 38.3;
-    private double grabberSpeed = .4;
+    private double grabberSpeed = 1;
     private double grabberZero = 0;
     private double grabberMax = 180/4;
+
+    GenericEntry extendP;
     
 
 
     public Grabber(){
+
         m_grabber.setInverted(false);
         m_pidController = extender.getPIDController();
         m_encoder = extender.getEncoder();
         m_grabberEncoder = m_grabber.getEncoder();
-        kP = 5e-5; 
+        extender.setInverted(true);
+        kP =  5e-5; 
         kI = 8e-7;
         kD = 0; 
         kIz = 0; 
         kFF = 0;
-        maxVel = 2000; // rpm
-        maxAcc = 1500;
+        maxVel = 3000; // rpm
+        maxAcc = 2000;
         kMaxOutput = 1; 
         kMinOutput = -1;
         m_pidController.setP(kP);
@@ -54,27 +62,26 @@ public class Grabber {
         m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
         currentPos = m_encoder.getPosition();
 
+        extendP = Shuffleboard.getTab("alsoyay").add("extendp", 0).getEntry();
+
     }
     public void grabberSmartDashboard() {
 
-        grabberSpeed = SmartDashboard.getNumber("grabber speed", grabberSpeed);
+        //grabberSpeed = SmartDashboard.getNumber("grabber speed", grabberSpeed);
         //SmartDashboard.putNumber("grabber speed", grabberSpeed);
 
     }
 
     public void extend(double speed) {
-        m_pidController.setReference(-speed*driveSpeed, ControlType.kSmartVelocity);
+        extender.set(speed);
+        System.out.print(speed);
+        //m_pidController.setReference(-speed*driveSpeed, ControlType.kSmartVelocity);
     }
 
     public boolean extendToPos(double Pos){
-        double target = (Pos*GEAR_RATIO) + currentPos;
+        double target = (Pos*GEAR_RATIO);
         m_pidController.setReference(target, ControlType.kSmartMotion);
-        if(m_encoder.getPosition() > Pos*GEAR_RATIO+currentPos-20 && m_encoder.getPosition() < Pos*GEAR_RATIO+currentPos+20 ){
-            return false;
-        }
-        else{
-            return true;
-        }
+        return Math.abs(Pos-returnExtension()) < 1;
 
     }
 
@@ -90,7 +97,7 @@ public class Grabber {
          * m_grabber.set(0);
          * } else {
          */
-        if (m_grabber.getOutputCurrent() > 4 /*|| Math.abs(m_encoder.getPosition()) > grabberMax*/) {
+        if (m_grabber.getOutputCurrent() > 8 /*|| Math.abs(m_encoder.getPosition()) > grabberMax*/) {
             m_grabber.set(0);
         } else {
             m_grabber.set(grabberSpeed);
@@ -105,7 +112,7 @@ public class Grabber {
          * m_grabber.set(0);
          * } else{
          */
-        if (m_grabber.getOutputCurrent() > 4) {
+        if (m_grabber.getOutputCurrent() > 8) {
             m_grabber.set(0);
         } else {
             m_grabber.set(-grabberSpeed);
@@ -118,12 +125,18 @@ public class Grabber {
     public void closeCube() {
     }
 
-    public void periodic() {
+    public void periodicGrabber() {
         double grabberCurrent = m_grabber.getOutputCurrent();
         SmartDashboard.putNumber("Grabber Current", grabberCurrent);
         SmartDashboard.putNumber("grabber encoder", m_grabberEncoder.getPosition());
     }
     public double returnExtension(){
-        return -m_encoder.getPosition()/GEAR_RATIO;
+
+        return m_encoder.getPosition()/GEAR_RATIO;
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("extender distance", returnExtension());
     }
 }

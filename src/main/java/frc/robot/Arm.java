@@ -2,13 +2,18 @@ package frc.robot;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
-public class Arm {
+public class Arm extends SubsystemBase {
 
     private SparkMaxPIDController m_pidController;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;
@@ -17,6 +22,8 @@ public class Arm {
     private int driveSpeed = 4800;
     private final double STARTING_ANGLE = 15;
     private double flatAngle = 90-STARTING_ANGLE;
+
+    GenericEntry dsajkfdlas;
 
 
     private final double EXTENSION_LIMIT = 48;
@@ -67,6 +74,7 @@ public class Arm {
         m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
         m_encoder.setPosition(0);
         updatePosition();
+        dsajkfdlas = Shuffleboard.getTab("alsoyay").add("dsdjlfasdjarm", 0).getEntry();
     }
     public void updatePosition(){
         currentPos = m_encoder.getPosition()*2+STARTING_ANGLE;
@@ -273,13 +281,21 @@ public class Arm {
         }
     }
     public boolean isAtLowerArmLimit() {
-        if(currentAngle < 15){
+        if(currentPos < 15 || armXDistance() < 2){
             return true;
         }
         else{
             return false;
         }
         
+    }
+    public boolean isAtSlowLimit(){
+        if(currentPos > 60){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     public void SmartDashboard() {
         SmartDashboard.putNumber("arm x distance ", armXDistance());
@@ -288,7 +304,14 @@ public class Arm {
         SmartDashboard.putNumber("grabber extension", grabber.returnExtension());
         SmartDashboard.putNumber("arm encoder", m_encoder.getPosition());
         SmartDashboard.putString("quadrant ", checkQuadrant());
+        SmartDashboard.putNumber("Arm angle", currentPos);
 
+    }
+
+    @Override
+    public void periodic() {
+
+        dsajkfdlas.setDouble(m_arm.getAppliedOutput());
     }
 }
 
