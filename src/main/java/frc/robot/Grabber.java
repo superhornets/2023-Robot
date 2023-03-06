@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 
 public class Grabber extends SubsystemBase{
 
@@ -28,11 +31,12 @@ public class Grabber extends SubsystemBase{
 
     private int driveSpeed = 5000;
     private final double GEAR_RATIO = 38.3;
-    private double grabberSpeed = 1;
+    private double grabberSpeed = .7;
     private double grabberZero = 0;
     private double grabberMax = 180/4;
 
     GenericEntry extendP;
+    PhotonCamera camera = new PhotonCamera("HD_USB_Camera");
     
 
 
@@ -43,7 +47,7 @@ public class Grabber extends SubsystemBase{
         m_encoder = extender.getEncoder();
         m_grabberEncoder = m_grabber.getEncoder();
         extender.setInverted(true);
-        kP =  5e-5; 
+        kP =  1e-5; 
         kI = 8e-7;
         kD = 0; 
         kIz = 0; 
@@ -112,7 +116,7 @@ public class Grabber extends SubsystemBase{
          * m_grabber.set(0);
          * } else{
          */
-        if (m_grabber.getOutputCurrent() > 8) {
+        if (m_grabber.getOutputCurrent() > 15) {
             m_grabber.set(0);
         } else {
             m_grabber.set(-grabberSpeed);
@@ -134,9 +138,39 @@ public class Grabber extends SubsystemBase{
 
         return m_encoder.getPosition()/GEAR_RATIO;
     }
+    public boolean checkForTarget() {
+        var result = camera.getLatestResult();
+        boolean hasTargets = result.hasTargets();
+        if(hasTargets){
+            return true;
+        }
+        else{
+            return false;
+            }
+    }
+    public double targetYaw(){
+        var result = camera.getLatestResult();
+        boolean hasTargets = result.hasTargets();
+        PhotonTrackedTarget target = result.getBestTarget();
+        return target.getYaw();
+    }
+    public double targetPitch(){
+        var result = camera.getLatestResult();
+        boolean hasTargets = result.hasTargets();
+        PhotonTrackedTarget target = result.getBestTarget();
+        return target.getPitch();
+    }
+    public double targetSkew(){
+        var result = camera.getLatestResult();
+        boolean hasTargets = result.hasTargets();
+        PhotonTrackedTarget target = result.getBestTarget();
+        return target.getSkew();
+    }
+
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("extender distance", returnExtension());
+        SmartDashboard.putNumber("yaw to target", targetYaw());
     }
 }

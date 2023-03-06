@@ -61,6 +61,8 @@ public class Robot extends TimedRobot {
   private boolean isSlowMode = false;
   private boolean isPlacingHigh = false;
   private boolean isPickingUp = false;
+  private boolean isRotatingToCube = false;
+  private boolean isLightPattern = false;
   private AddressableLED m_led = new AddressableLED(9);
   private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(68);
 
@@ -77,7 +79,7 @@ public class Robot extends TimedRobot {
     m_led.setLength(m_ledBuffer.getLength());
     for (var i = 0; i < m_ledBuffer.getLength(); i++) {
       // Sets the specified LED to the RGB values for red
-      m_ledBuffer.setRGB(i, 255, 255, 0);
+      m_ledBuffer.setRGB(i, 155, 100, 0);
     }
    
     m_led.setData(m_ledBuffer);
@@ -87,7 +89,7 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putBoolean("hold Position", holdMode);
     //SmartDashboard.putNumber("tower encoder", pickerUpper.tower.getPosition());
     SmartDashboard.putNumber("Target", 2);
-    CameraServer.startAutomaticCapture();
+    //CameraServer.startAutomaticCapture();
   
 
 
@@ -109,7 +111,7 @@ public class Robot extends TimedRobot {
     pickerUpper.SmartDashboardPrintout();
     extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
     //GenericEntry override = Shuffleboard.getTab("override").add("override", false).withWidget("Toggle Button").getEntry();
-    //pickerUpper.tower.safety(false);
+    pickerUpper.tower.safety(false);
     pickerUpper.grabber.periodicGrabber();
     //SmartDashboard.putNumber("extender speed", extenderSpeed);
     pickerUpper.arm.updatePosition();
@@ -149,16 +151,58 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putBoolean("Slow Mode", isSlowMode);
     //double distance = SmartDashboard.getNumber("Distance", 0);
    // double angle = SmartDashboard.getNumber("angle", 0);
     //boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
+/*
+    if(m_leftStick.getRawButton(10)){
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        if(i%2 == 0){
+        m_ledBuffer.setRGB(i, 155, 100, 0);
+        }
+        else{
+          m_ledBuffer.setRGB(i, 0, 0, 0);
+        }
+      }
+      isLightPattern = true;
+      m_led.setData(m_ledBuffer);
+      m_led.start();
+    }
+    else if(m_leftStick.getRawButton(11)){
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        if(i%2==0){
+        m_ledBuffer.setRGB(i, 155, 0, 155);
+        }
+        else{
+          m_ledBuffer.setRGB(i, 0, 0, 0);
+        }
+      }
+      isLightPattern = true;
+      m_led.setData(m_ledBuffer);
+      m_led.start();
+    }
+    else if(isLightPattern){
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        m_ledBuffer.setRGB(i, 155, 100,0);
+      }
+     
+      m_led.setData(m_ledBuffer);
+      m_led.start();
+      isLightPattern = false;
+    }
+*/
     if(m_rightStick.getRawButtonPressed(9)&&!m_rightStick.getRawButton(12)){
       isSlowMode = !isSlowMode;
     }
     if(!isPlacing && !isPlacingHigh && !isPickingUp){
     if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
       if(isSlowMode || pickerUpper.arm.isAtSlowLimit()){
-        drive.arcade(m_leftStick.getY()*.25, m_leftStick.getX()*.25);
+        drive.arcade(m_leftStick.getY()*.1, m_leftStick.getX()*.1);
+        System.out.println("is driving slowly");
       }
       else{
         drive.arcade(m_leftStick.getY(), m_leftStick.getX());
@@ -236,7 +280,7 @@ public class Robot extends TimedRobot {
         }
       }*/
       if(m_rightStick.getRawButton(8)&&!m_rightStick.getRawButton(12)){
-        pickerUpper.grabber.extend(-.1);
+        pickerUpper.grabber.extend(-.3);
       }
       if(m_rightStick.getRawAxis(1) < 0){
         double armSpeed = m_rightStick.getRawAxis(1);
@@ -270,7 +314,7 @@ public class Robot extends TimedRobot {
       armSpeed = armSpeed/4;
     }
     pickerUpper.arm.moveArm(armSpeed);
-    if(m_rightStick.getRawButton(9) && m_rightStick.getRawButton(12)){
+    if(m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)){
       pickerUpper.arm.reseZero();
     }
     else if(m_rightStick.getRawButton(4)){
@@ -294,7 +338,7 @@ public class Robot extends TimedRobot {
     else if(m_rightStick.getRawButton(10)){
       pickerUpper.grabber.extendToPos(-5);
     }*/
-    else if(m_rightStick.getRawButton(7)&& m_rightStick.getRawButton(12)){
+    else if(m_rightStick.getRawButton(11)&& !m_rightStick.getRawButton(12)){
       pickerUpper.grabber.resetExtenderEncoder();
     }
     else{
@@ -312,7 +356,7 @@ if(m_rightStick.getRawButtonPressed(5)){
     if (m_rightStick.isConnected()) {
       double towerSpeed = m_rightStick.getRawAxis(0);
       if(Math.abs(towerSpeed)> .04 && !holdPositionTurret){
-        if(((pickerUpper.tower.returnAngle() > 120 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -120 && towerSpeed < 0)) && ((!m_rightStick.getRawButton(11) && m_rightStick.getRawButton(12)) || !m_rightStick.getRawButton(12) )){
+        if(((pickerUpper.tower.returnAngle() > 120 && towerSpeed > 0) || (pickerUpper.tower.returnAngle() < -120 && towerSpeed < 0)) && ((!m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) || m_rightStick.getRawButton(12) )){
           pickerUpper.tower.moveTower(0);
         }
         else if(((towerSpeed > 0 && pickerUpper.arm.isAtRightFrame()) || (towerSpeed < 0 && pickerUpper.arm.isAtLeftFrame())) && limitFramePerimiter){
@@ -328,8 +372,18 @@ if(m_rightStick.getRawButtonPressed(5)){
       else if(holdPositionTurret){
         pickerUpper.tower.holdTowerPos();
       }
-      else if (m_rightStick.getRawButton(8)&& m_rightStick.getRawButton(12)) {
+      else if (m_rightStick.getRawButton(11)&& !m_rightStick.getRawButton(12)) {
         pickerUpper.tower.setZero();
+      }
+      else if(isRotatingToCube){
+        if(pickerUpper.tower.rotateToCube()){
+          isRotatingToCube = false;
+        }
+      }
+      else if (m_rightStick.getRawButton(7) && m_rightStick.getRawButton(12)){
+        pickerUpper.tower.rotateToCubeInit();
+        isRotatingToCube = true;
+
       }
       else if (isRotatingToQuadrant == false) {
         if(m_rightStick.getPOV() == 0) {

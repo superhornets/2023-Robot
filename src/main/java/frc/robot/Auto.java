@@ -2,6 +2,8 @@ package frc.robot;
 
 import org.opencv.core.Mat;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -33,7 +35,7 @@ public class Auto {
     private final double CAMERA_Z = 22; // height
     private double x = 0;
     private double y = 0;
-    private final double z = 0;
+    private double z = 0;
     private final double pickupAngle =90 - Math.toDegrees(Math.atan(58/10));
     private final double pickupExtension = Math.sqrt(58*58+100);
 
@@ -215,23 +217,23 @@ public class Auto {
         placeStage = 0;
 
         if(target == 1 || target == 2 || target == 3){
-            targetX = 6.75;
+            targetX = 8.5;
         }
         else{
-            targetX = 23.75;
+            targetX = 2;
         }
 
         if(target == 1 || target == 3){
-            targetZ = 15.75;
+            targetZ = 10.75;
         }
         else if  (target == 4 || target == 6){
-            targetZ = 27.25;
+            targetZ = 22.25;
         }
         else if (target == 2){
-            targetZ = 5.25;
+            targetZ = 0.25;
         }
         else{
-            targetZ=17.25;
+            targetZ=12.25;
         }
 
         if (target == 1 || target == 4){
@@ -243,6 +245,7 @@ public class Auto {
         else{
             targetY = 23.5;
         }
+        System.out.println("target x, y, z: " + targetX + ", " + targetY + ", "+targetZ);
     }
     public boolean placePiece(int target, boolean isFront, boolean isPositive){
             //double z = 0;
@@ -251,6 +254,8 @@ public class Auto {
             if(drive.checkForTarget(0)){
                 x = drive.targetValues().getX() * METERS_TO_INCHES;
                 y = drive.targetValues().getY() * METERS_TO_INCHES;
+                z = drive.targetValues().getZ();
+                System.out.println("stage 0: x: "+x+" y: "+ y);
                 //z = drive.targetValues().getZ() * METERS_TO_INCHES;
                 targetID = drive.targetID();
                 placeStage = 1;
@@ -261,6 +266,8 @@ public class Auto {
             if(isFront){
                 double xydistance = Math.sqrt(((x+targetX+CAMERA_X)*(x+targetX+CAMERA_X))+((targetY+y+CAMERA_Y)*(targetY+y+CAMERA_Y)));
                 double distance = Math.sqrt(((xydistance*xydistance)+((ROBOT_ARM_HEIGHT-targetZ-TARGET_HEIGHT)*(ROBOT_ARM_HEIGHT-targetZ-TARGET_HEIGHT))));
+                System.out.println("Stage 1: xydistance: "+ xydistance + " distance: "+ distance+" target x, y, z: " + targetX+", "+ targetY+ ", "+targetZ);
+                
                 if((distance > (ARM_LENGTH+EXTENSON_LENGTH) /*|| (Math.abs(targetY-y) > SIDE_LENGTH || distance < ARM_LENGTH)*/)){
                     System.out.println("Too far away " + distance);
                     return true;
@@ -283,6 +290,7 @@ public class Auto {
         //Stage 2: Check if the robot is in front of the target
         else if(placeStage == 2){
             if(isFront){
+                System.out.println("stage 2");
                 placeStage = 3;
             }
             else{
@@ -303,11 +311,13 @@ public class Auto {
         else if(placeStage == 3){
             armAngle = Math.atan((targetX+x+CAMERA_X)/(ROBOT_ARM_HEIGHT-(TARGET_HEIGHT+targetZ)));
             armAngle = Math.toDegrees(armAngle);
-            armAngle = 90-armAngle+EXTRA_ANGLE;
+            armAngle = armAngle+EXTRA_ANGLE;
             placeStage = 4;
+            System.out.println("stage 3: arm angle: "+ armAngle);
         }
         //Stage 4: move the arm
         else if(placeStage == 4){
+            System.out.println("stage 4");
             if(pickerUpper.arm.moveArmTo(armAngle)){
                 placeStage = 5;
             }
@@ -317,7 +327,8 @@ public class Auto {
             if(drive.checkForTarget(targetID)){
                 x = drive.targetValues().getX()*METERS_TO_INCHES;
                 y = drive.targetValues().getY()*METERS_TO_INCHES;
-                //z = drive.targetValues().getZ();
+                z = drive.targetValues().getZ();
+                System.out.println("Stage 5: x: "+ x + " y: "+y);
                 placeStage = 6;
             }
             else{
@@ -329,31 +340,36 @@ public class Auto {
         }
         //Stage 6: calculate turret angle
         else if(placeStage == 6){
+            double angle = drive.returnAngle();
             turretAngle = Math.atan((y+targetY+CAMERA_Y)/(x+targetX+CAMERA_X));
-            turretAngle = Math.toDegrees(turretAngle);
+            turretAngle = Math.toDegrees(turretAngle + z - angle);
             placeStage = 7;
+            System.out.println("stage 6: turretAngle: "+ turretAngle);
         }
         //Stage 7: set turret position
         else if(placeStage == 7){
-            if(pickerUpper.tower.moveTowerTo(armAngle)){
+            System.out.println("stage 7");
+            if(pickerUpper.tower.moveTowerTo(turretAngle)){
                 placeStage = 8;
             }
         }
         //Stage 8: calculate extenton distance
         else if(placeStage == 8){
             double xydistance = Math.sqrt(((x+targetX+CAMERA_X)*(x+targetX+CAMERA_X))+((targetY+y+CAMERA_Y)*(targetY+y+CAMERA_Y)));
-            double distance = Math.sqrt(((xydistance*xydistance)+((ROBOT_ARM_HEIGHT-targetZ)*(ROBOT_ARM_HEIGHT-targetZ))));
+            double distance = Math.sqrt(((xydistance*xydistance)+((ROBOT_ARM_HEIGHT-targetZ-TARGET_HEIGHT)*(ROBOT_ARM_HEIGHT-targetZ-TARGET_HEIGHT))));
             /*if(distance>(ARM_LENGTH-2) || distance <(ARM_LENGTH+2)){
                 placeStage = 10;
             }
             else{*/
                 extensonLength = distance - ARM_LENGTH;
                 placeStage = 9;
+                System.out.println("stage 8: xydistance: "+xydistance+" distance: "+ distance+" extenson length"+ extensonLength);
             //}
 
         }
         //Stage 9: extend
         else if(placeStage == 9){
+            System.out.println("stage 9");
             if(pickerUpper.grabber.extendToPos(extensonLength)){
                 placeStage = 10;
             }

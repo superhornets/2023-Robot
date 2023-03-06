@@ -32,6 +32,8 @@ public class Tower extends SubsystemBase {
     private int driveSpeed = 4800;
     private Arm arm;
     private Grabber grabber;
+    private double cubeAngle = 0;
+    private double startingAngle = 0;
 
     public Tower(){
         fjasdkl = Shuffleboard.getTab("alsoyay").add("tower", 0).getEntry();
@@ -95,23 +97,24 @@ public class Tower extends SubsystemBase {
         if((maxV != maxVel)) { m_pidController.setSmartMotionMaxVelocity(maxV,0); maxVel = maxV; }
         if((maxA != maxAcc)) { m_pidController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; }*/
         SmartDashboard.putNumber("tower angle", returnAngle());
+        SmartDashboard.putNumber("maxVel", maxVel);
 
         }
      public void safety(boolean override){
-        if(arm.currentAngle < 32){
+        if(arm.returnAngle() < 32){
             if(!override){
                 if(maxVel != 0){
                     maxVel = 0;
                     m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
                 }
-            }
-            else{
-                if(maxVel == 0){
-                    maxVel = 1000;
-                    m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
-                }
+            }}
+        else{
+            if(maxVel == 0){
+                maxVel = 1000;
+                m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
             }
         }
+        
     }
      public void setPickerUpper(Arm arm, Grabber grabber) {
         this.arm = arm;
@@ -152,7 +155,13 @@ public class Tower extends SubsystemBase {
         currentPos = 0;
         moveTowerTo(currentPos);
     }
-
+    public void rotateToCubeInit(){
+        cubeAngle = grabber.targetYaw();
+        startingAngle = currentPos;
+    }
+    public boolean rotateToCube(){
+        return moveTowerTo(startingAngle+cubeAngle);
+    }
 
 
     public double getPosition(){

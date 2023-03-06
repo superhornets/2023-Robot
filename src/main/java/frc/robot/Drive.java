@@ -52,6 +52,7 @@ public class Drive extends SubsystemBase {
     private boolean isAutoDriving = false;
     private boolean rotateToAngle = false;
     private double currentRotationRate = 0;
+    private final double METERS_TO_INCHES = 39.37;
     AHRS ahrs;
     double rotateToAngleRate;
     PIDController turnController;
@@ -118,6 +119,9 @@ public class Drive extends SubsystemBase {
         setPos();
         isMoving = false;
         System.out.println("teleop init");
+    }
+    public double returnAngle(){
+        return ahrs.getAngle();
     }
     public void NavXInit (){
         try {
@@ -239,7 +243,7 @@ public class Drive extends SubsystemBase {
             m_pidControllerR.setSmartMotionMaxAccel(1000, 0);
 
         }*/
-        var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed*.3, false);
+        var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed*.25, false);
         m_pidController.setReference(speeds.left*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         m_pidControllerR.setReference(speeds.right*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         //SmartDashboard.putNumber("left", speeds.left);
@@ -355,12 +359,14 @@ public class Drive extends SubsystemBase {
         if(hasTargets){
             PhotonTrackedTarget target = result.getBestTarget();
             SmartDashboard.putNumber("aprilTag", target.getFiducialId());
-            SmartDashboard.putNumber("distance X", target.getBestCameraToTarget().getX());
-            SmartDashboard.putNumber("distance Y", target.getBestCameraToTarget().getY());
+            SmartDashboard.putNumber("distance X", target.getBestCameraToTarget().getX()*METERS_TO_INCHES);
+            SmartDashboard.putNumber("distance Y", target.getBestCameraToTarget().getY()*METERS_TO_INCHES);
             SmartDashboard.putNumber("distance Z", target.getBestCameraToTarget().getZ());
+            SmartDashboard.putNumber("navX angle", ahrs.getAngle());
         }
         SmartDashboard.putNumber("left drive motor", m_encoder.getVelocity());
         SmartDashboard.putNumber("right drive motor", m_encoderR.getVelocity());
+        SmartDashboard.putNumber("drive angle", ahrs.getAngle());
 
     }
     public boolean checkForTarget(int targetID) {

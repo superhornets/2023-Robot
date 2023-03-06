@@ -297,6 +297,9 @@ public class Arm extends SubsystemBase {
             return false;
         }
     }
+    public double returnAngle(){
+        return currentPos;
+    }
     public void SmartDashboard() {
         SmartDashboard.putNumber("arm x distance ", armXDistance());
         SmartDashboard.putNumber("arm y distance", armYDistance());
