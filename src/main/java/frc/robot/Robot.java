@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
   private boolean isPickingUp = false;
   private AddressableLED m_led = new AddressableLED(9);
   private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(68);
-
+  private Intake intake = new Intake();
 
 
   /**
@@ -156,20 +156,22 @@ public class Robot extends TimedRobot {
       isSlowMode = !isSlowMode;
     }
     if(!isPlacing && !isPlacingHigh && !isPickingUp){
-    if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
+    if(m_leftStick.getY() > .1 || m_leftStick.getY() < -.1 || m_rightStick.getY() > .1 || m_rightStick.getY() < -.1){
       if(isSlowMode || pickerUpper.arm.isAtSlowLimit()){
-        drive.arcade(m_leftStick.getY()*.25, m_leftStick.getX()*.25);
+       drive.arcade(m_leftStick.getY()*.25, m_leftStick.getX()*.25);
+       //drive.tank(m_leftStick.getY()*.25, m_rightStick.getY()*.25);
       }
       else{
-        drive.arcade(m_leftStick.getY(), m_leftStick.getX());
+       drive.arcade(m_leftStick.getY(), m_leftStick.getX());
+      //drive.tank(m_leftStick.getY(), m_rightStick.getY());
       }
       drive.setPos();
     }
-    else if(!isAutoDriving){
+    /*else if(!isAutoDriving){
       if(holdMode){
       drive.holdPosition();
       } 
-    }
+    }*/
     else{
       drive.holdSpeed(0);
      }
@@ -406,6 +408,14 @@ if(m_rightStick.getRawButtonPressed(5)){
       }
     }
     //SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
+
+    //Intake
+    if (m_leftStick.getRawButton(1)) {
+      intake.move(-1);
+    }
+    else {
+      intake.move(1);
+    }
   }
   
   /** This function is called once when the robot is disabled. */

@@ -77,7 +77,7 @@ public class Drive extends SubsystemBase {
         yay = Shuffleboard.getTab("alsoyay").add("dfsafkj", 0).withWidget(BuiltInWidgets.kGraph).getEntry();
         maxRPM = 5700;
         maxVel = 3000; // rpm
-        maxAcc = 1000;
+        maxAcc = 1000000;
         kMaxOutput = 1; 
         kMinOutput = -1;
         leftRearDrive.follow(leftFrontDrive);
@@ -246,6 +246,10 @@ public class Drive extends SubsystemBase {
         //SmartDashboard.putNumber("right", speeds.right);
         setPos();
         //System.out.println("arcade");
+    }
+    public void tank(double leftSpeed, double rightSpeed){
+        m_pidController.setReference(leftSpeed*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
+        m_pidControllerR.setReference(rightSpeed*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
     }
     public void levelInit(){
         levelStage = 0;
