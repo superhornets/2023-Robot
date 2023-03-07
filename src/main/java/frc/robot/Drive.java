@@ -243,7 +243,7 @@ public class Drive extends SubsystemBase {
             m_pidControllerR.setSmartMotionMaxAccel(1000, 0);
 
         }*/
-        var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed*.25, false);
+        var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed*.20, false);
         m_pidController.setReference(speeds.left*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         m_pidControllerR.setReference(speeds.right*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         //SmartDashboard.putNumber("left", speeds.left);
@@ -258,14 +258,14 @@ public class Drive extends SubsystemBase {
         
         double time = 0;
         if(levelStage == 0){
-            arcade(.7, 0);
+            arcade(-.4, 0);
             if(ahrs.getRoll() > 0){
                 levelStage = 1;
                 System.out.println("stage 0");
             }
         }
         else if(levelStage == 1){
-            arcade(.35, 0);
+            arcade(-.25, 0);
             if(ahrs.getRoll()<0){
                 levelStage = 2;
                 time = Timer.getFPGATimestamp();
@@ -293,7 +293,7 @@ public class Drive extends SubsystemBase {
             }
         }
         else if(levelStage == 3){
-            arcade(-.4, 0);
+            arcade(.25, 0);
             if(ahrs.getRoll()>-6){
                 levelStage = 2;
                 time = Timer.getFPGATimestamp();
@@ -329,7 +329,7 @@ public class Drive extends SubsystemBase {
             }
         }
         if(driveStage == 0){
-            arcade(.8, 0);
+            arcade(.5, 0);
             if(distance >= 4){
                 driveStage = 1;
             }

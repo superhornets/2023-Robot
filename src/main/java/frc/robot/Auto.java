@@ -14,6 +14,7 @@ public class Auto {
     private static final String kStraightAuto = "Straight auto";
     private static final String kBrokenArmAuto = "Broken Arm";
     private static final String idealauto = "place pice";
+    private static final String placePiece = "place piece auto";
     private String m_autoSelected;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
@@ -38,7 +39,7 @@ public class Auto {
     private double x = 0;
     private double y = 0;
     private double z = 0;
-    private final double pickupAngle =90 - Math.toDegrees(Math.atan(58/10));
+    private final double pickupAngle =Math.toDegrees(Math.atan(58/10));
     private final double pickupExtension = Math.sqrt(58*58+100);
 
     private double distancePlace = Math.sqrt((49.5*49.5)+(11.75*11.75));
@@ -65,6 +66,9 @@ public class Auto {
         m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
         m_chooser.addOption("My Auto", kCustomAuto);
         m_chooser.addOption("Broken Arm", kBrokenArmAuto);
+        m_chooser.addOption("place piece auto", placePiece);
+        m_chooser.addOption("place pice", idealauto);
+        m_chooser.addOption("straight auto", kStraightAuto);
         SmartDashboard.putData("Auto choices", m_chooser);
     }
 
@@ -192,17 +196,12 @@ public class Auto {
                     }
                 }
                 else if(autoStage == 2){
-                    if(drive.turnTo(180)){
-                        autoStage = 3;
-                    }
-                }
-                else if(autoStage == 3){
                     if(drive.level()){
-                        autoStage = 4;
+                        autoStage = 3;
                         drive.setPos();
                     }
                 }
-                else if(autoStage == 4){
+                else if(autoStage == 3){
                     drive.holdPosition();
                 }
       
@@ -216,7 +215,7 @@ public class Auto {
 
             case idealauto:
                 if (autoStage == 0){
-                    drive.driveTo(-30);
+                    drive.driveTo(10);
                     autoStage = 1;
                 }
                 else if (autoStage == 1){
@@ -225,7 +224,7 @@ public class Auto {
                     }
                 }
                 else if (autoStage == 2){
-                    if (drive.driveTo(30)){
+                    if (drive.driveTo(-20)){
                         autoStage = 3;
                         }
                 }
@@ -242,11 +241,49 @@ public class Auto {
                     }
                 }
                 else if (autoStage == 5){
-                    if (Timer.getFPGATimestamp() - time < 1){
+                    if (Timer.getFPGATimestamp() - time < .05){
                         pickerUpper.grabber.open();
+                    }
+                    else{
+                        autoStage = 6;
+                    }
+                }
+                else if(autoStage == 6){
+                    if(drive.driveTo(200)){
+                        autoStage = 7;
                     }
                 }
                 break;
+            case placePiece:
+                if(autoStage == 0){
+                    placePieceAutoBySetpointInit();
+                    autoStage = 1;
+                }
+                else if(autoStage == 1){
+                    if (placePieceAutoBySetpoint()){
+                        autoStage = 2;
+                    }
+                }
+                else if(autoStage == 2){
+                    pickerUpper.grabber.open();
+                    if(Math.abs(time-Timer.getFPGATimestamp()) > .05){
+                        autoStage = 3;
+                    }
+                }
+                else if(autoStage == 3){
+                    if(pickerUpper.arm.moveArmTo(50)){
+                        autoStage = 4;
+                        drive.driveOverInit();
+                    }
+                }
+                else if(autoStage==4){
+                    if(drive.driveOverChargingStation()){
+                        autoStage = 5;
+                    }
+                }
+                else if(autoStage == 5){
+                    drive.holdPosition();
+                }
 
         }
     }
@@ -378,9 +415,9 @@ public class Auto {
         }
         //Stage 6: calculate turret angle
         else if(placeStage == 6){
-            double angle = drive.returnAngle();
+            //double angle = drive.returnAngle();
             turretAngle = Math.atan((y+targetY+CAMERA_Y)/(x+targetX+CAMERA_X));
-            turretAngle = Math.toDegrees(turretAngle + z - angle);
+            turretAngle = Math.toDegrees(turretAngle + z);
             placeStage = 7;
             System.out.println("stage 6: turretAngle: "+ turretAngle);
         }
@@ -504,6 +541,42 @@ public class Auto {
             return true;
         }
         return false;
+    }
+
+
+    public void autoPlaceAndDrive(){
+        if(autoStage == 0){
+            placePieceInit(4);
+            autoStage = 1;
+        }
+        else if(autoStage == 1){
+            if(placePiece(4, true, true)){
+                autoStage =2;
+                time = Timer.getFPGATimestamp();
+            }
+        }
+        else if(autoStage == 2){
+            if(Math.abs(time-Timer.getFPGATimestamp()) > .25){
+                autoStage = 3;
+                drive.driveOverInit();
+            }
+        }
+        else if(autoStage == 3){
+            drive.arcade(.5, 0);
+            if(drive.driveOverChargingStation()){
+                autoStage = 4;
+                drive.levelInit();
+            }
+
+        }
+        else if(autoStage == 4){
+            if(drive.level()){
+                autoStage = 5;
+            }
+        }
+        else if(autoStage == 5){
+            drive.holdPosition();
+        }
     }
 
 

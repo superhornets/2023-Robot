@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
   private boolean isPickingUp = false;
   private boolean isRotatingToCube = false;
   private boolean isLightPattern = false;
+  private int lightMode = 0;
   private AddressableLED m_led = new AddressableLED(9);
   private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(68);
 
@@ -155,6 +156,55 @@ public class Robot extends TimedRobot {
     //double distance = SmartDashboard.getNumber("Distance", 0);
    // double angle = SmartDashboard.getNumber("angle", 0);
     //boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
+    /*if(m_leftStick.getRawButtonPressed(10)){
+      lightMode += 1;
+      if(lightMode == 3){
+        lightMode = 0;
+      }
+      isLightPattern = true;
+    }
+    if(lightMode == 1){
+      if(m_leftStick.getRawButton(10)){
+        for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+          // Sets the specified LED to the RGB values for red
+          if(i%2 == 0){
+          m_ledBuffer.setRGB(i, 155, 100, 0);
+          }
+          else{
+            m_ledBuffer.setRGB(i, 0, 0, 0);
+          }
+        }
+        isLightPattern = false;
+        m_led.setData(m_ledBuffer);
+        m_led.start();
+      }
+      else if(lightMode == 2){
+        for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+          // Sets the specified LED to the RGB values for red
+          if(i%2==0){
+          m_ledBuffer.setRGB(i, 155, 0, 155);
+          }
+          else{
+            m_ledBuffer.setRGB(i, 0, 0, 0);
+          }
+        }
+        isLightPattern = false;
+        m_led.setData(m_ledBuffer);
+        m_led.start();
+      }
+      else if(lightMode == 0){
+        for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+          // Sets the specified LED to the RGB values for red
+          m_ledBuffer.setRGB(i, 155, 100,0);
+        }
+       
+        m_led.setData(m_ledBuffer);
+        m_led.start();
+        isLightPattern = false;
+      }
+    }
+*/
+
 /*
     if(m_leftStick.getRawButton(10)){
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
@@ -195,7 +245,7 @@ public class Robot extends TimedRobot {
       isLightPattern = false;
     }
 */
-    if(m_rightStick.getRawButtonPressed(9)&&!m_rightStick.getRawButton(12)){
+    if(m_leftStick.getRawButtonPressed(3)&&!m_rightStick.getRawButton(12)){
       isSlowMode = !isSlowMode;
     }
     if(!isPlacing && !isPlacingHigh && !isPickingUp){
@@ -440,7 +490,7 @@ if(m_rightStick.getRawButtonPressed(5)){
         isPlacing = false;
       }
     }
-    /*if(m_rightStick.getRawButton(10)&&m_rightStick.getRawButton(12) && !isPlacingHigh){
+    if(m_rightStick.getRawButton(9)&&!m_rightStick.getRawButton(12) && !isPlacingHigh){
       auto.placePieceAutoBySetpointInit();
       isPlacingHigh = true;
     }
@@ -448,9 +498,9 @@ if(m_rightStick.getRawButtonPressed(5)){
       if(auto.placePieceAutoBySetpoint()){
         isPlacingHigh = false;
       }
-    }*/
+    }
 
-    if(m_leftStick.getRawButton(10) && !isPickingUp){
+    if(m_rightStick.getRawButton(10) && m_rightStick.getRawButton(12) && !isPickingUp){
       isPickingUp = true;
       auto.pickupPieceAutoBySetpointInit();
     }
