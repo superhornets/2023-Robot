@@ -241,7 +241,7 @@ public class Auto {
                     }
                 }
                 else if (autoStage == 5){
-                    if (Timer.getFPGATimestamp() - time < .05){
+                    if (Math.abs(Timer.getFPGATimestamp() - time) < .05){
                         pickerUpper.grabber.open();
                     }
                     else{
@@ -249,7 +249,7 @@ public class Auto {
                     }
                 }
                 else if(autoStage == 6){
-                    if(drive.driveTo(200)){
+                    if(drive.driveTo(120)){
                         autoStage = 7;
                     }
                 }
@@ -461,7 +461,9 @@ public class Auto {
         return false;
     }
 
-
+    public void homePickerUpperInit(){
+        homePickerUpperStage = 0;
+    }
 
     public boolean homePickerUpper(){
         if (homePickerUpperStage == 0){

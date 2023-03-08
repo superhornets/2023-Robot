@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.function.DoubleToIntFunction;
 
 import org.opencv.core.Mat;
@@ -63,9 +63,11 @@ public class Robot extends TimedRobot {
   private boolean isPickingUp = false;
   private boolean isRotatingToCube = false;
   private boolean isLightPattern = false;
+  private boolean isHoming = false;
   private int lightMode = 0;
   private AddressableLED m_led = new AddressableLED(9);
   private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(68);
+  private boolean pitOverride = false;
 
 
 
@@ -116,6 +118,79 @@ public class Robot extends TimedRobot {
     pickerUpper.grabber.periodicGrabber();
     //SmartDashboard.putNumber("extender speed", extenderSpeed);
     pickerUpper.arm.updatePosition();
+    if(DriverStation.isFMSAttached()){
+      pitOverride = true;
+    }
+    else if(m_leftStick.getRawButtonPressed(11)){
+      pitOverride = !pitOverride;
+      if(pitOverride){
+        lightMode = 0;
+        isLightPattern = true;
+      }
+    }
+
+    if(!pitOverride){
+      if(lightMode != 3){
+        lightMode = 3;
+        isLightPattern = true;
+      }
+    }
+    SmartDashboard.putBoolean("pit safety", pitOverride);
+    pickerUpper.tower.pitSafety(pitOverride);
+    
+
+
+
+    if(lightMode == 1 && isLightPattern){
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        if(i%2 == 0){
+        m_ledBuffer.setRGB(i, 155, 100, 0);
+        }
+        else{
+          m_ledBuffer.setRGB(i, 0, 0, 0);
+        }
+      }
+      isLightPattern = false;
+      m_led.setData(m_ledBuffer);
+      m_led.start();
+    }
+    else if(lightMode == 2&& isLightPattern){
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        if(i%2==0){
+        m_ledBuffer.setRGB(i, 155, 0, 155);
+        }
+        else{
+          m_ledBuffer.setRGB(i, 0, 0, 0);
+        }
+      }
+      isLightPattern = false;
+      m_led.setData(m_ledBuffer);
+      m_led.start();
+    }
+    else if(lightMode == 0&& isLightPattern){
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        m_ledBuffer.setRGB(i, 155, 100,0);
+      }
+     
+      m_led.setData(m_ledBuffer);
+      m_led.start();
+      isLightPattern = false;
+    }
+    else if(lightMode == 3 && isLightPattern){
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        //final var hue = (0+(i*180/m_ledBuffer.getLength()))%180;
+       // m_ledBuffer.setHSV(i, hue, 255, 128);
+       m_ledBuffer.setRGB(i, 0, 155, 0);
+      }
+     
+      m_led.setData(m_ledBuffer);
+      m_led.start();
+      isLightPattern = false;
+    }
   }
 
   /**
@@ -163,44 +238,7 @@ public class Robot extends TimedRobot {
       }
       isLightPattern = true;
     }
-    if(lightMode == 1 && isLightPattern){
-        for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-          // Sets the specified LED to the RGB values for red
-          if(i%2 == 0){
-          m_ledBuffer.setRGB(i, 155, 100, 0);
-          }
-          else{
-            m_ledBuffer.setRGB(i, 0, 0, 0);
-          }
-        }
-        isLightPattern = false;
-        m_led.setData(m_ledBuffer);
-        m_led.start();
-      }
-      else if(lightMode == 2&& isLightPattern){
-        for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-          // Sets the specified LED to the RGB values for red
-          if(i%2==0){
-          m_ledBuffer.setRGB(i, 155, 0, 155);
-          }
-          else{
-            m_ledBuffer.setRGB(i, 0, 0, 0);
-          }
-        }
-        isLightPattern = false;
-        m_led.setData(m_ledBuffer);
-        m_led.start();
-      }
-      else if(lightMode == 0&& isLightPattern){
-        for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-          // Sets the specified LED to the RGB values for red
-          m_ledBuffer.setRGB(i, 155, 100,0);
-        }
-       
-        m_led.setData(m_ledBuffer);
-        m_led.start();
-        isLightPattern = false;
-      }
+    
     
 
 
@@ -247,10 +285,10 @@ public class Robot extends TimedRobot {
     if(m_leftStick.getRawButtonPressed(3)){
       isSlowMode = !isSlowMode;
     }
-    if(!isPlacing && !isPlacingHigh && !isPickingUp){
+    if(!isPlacing && !isPlacingHigh && !isPickingUp && !isHoming){
     if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
       if(isSlowMode || pickerUpper.arm.isAtSlowLimit()){
-        drive.arcade(m_leftStick.getY()*.1, m_leftStick.getX()*.1);
+        drive.arcade(m_leftStick.getY()*.1, m_leftStick.getX()*.2);
         System.out.println("is driving slowly");
       }
       else{
@@ -366,9 +404,7 @@ public class Robot extends TimedRobot {
     if(m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)){
       pickerUpper.arm.reseZero();
     }
-    else if(m_rightStick.getRawButton(4)){
-      auto.homePickerUpper();
-    }
+
     else if(m_rightStick.getRawButton(6)){
       pickerUpper.arm.moveArmTo(40);
     }
@@ -475,6 +511,7 @@ if(m_rightStick.getRawButtonPressed(5)){
     isPlacing = false;
     isPlacingHigh = false;
     isPickingUp = false;
+    isHoming = false;
   }
     if(m_rightStick.getRawButton(10) &&!m_rightStick.getRawButton(12)){
       if(!isPlacing){
@@ -499,6 +536,15 @@ if(m_rightStick.getRawButtonPressed(5)){
       }
     }
 
+    if(m_rightStick.getRawButton(4) && !isHoming){
+      isHoming = true;
+      auto.homePickerUpperInit();
+    }
+    else if(isHoming){
+      if(auto.homePickerUpper()){
+        isHoming = false;
+      }
+    }
     if(m_rightStick.getRawButton(10) && m_rightStick.getRawButton(12) && !isPickingUp){
       isPickingUp = true;
       auto.pickupPieceAutoBySetpointInit();

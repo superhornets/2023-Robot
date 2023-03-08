@@ -243,7 +243,21 @@ public class Drive extends SubsystemBase {
             m_pidControllerR.setSmartMotionMaxAccel(1000, 0);
 
         }*/
-        var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed*.20, false);
+        double turning = 0;
+        //if(Math.abs(turnSpeed) < .1){
+           // turning = 0;
+        ////}
+       // else{
+
+            if(turnSpeed < 0){
+                turning = (turnSpeed + .05)*.3;
+
+            }
+            else{
+            turning = (turnSpeed - .05)*.3;
+            }
+       // }
+        var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turning, false);
         m_pidController.setReference(speeds.left*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         m_pidControllerR.setReference(speeds.right*driveSpeed, com.revrobotics.CANSparkMax.ControlType.kSmartVelocity);
         //SmartDashboard.putNumber("left", speeds.left);

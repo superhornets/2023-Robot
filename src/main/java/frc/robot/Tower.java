@@ -34,6 +34,7 @@ public class Tower extends SubsystemBase {
     private Grabber grabber;
     private double cubeAngle = 0;
     private double startingAngle = 0;
+    private boolean safety = false;
 
     public Tower(){
         fjasdkl = Shuffleboard.getTab("alsoyay").add("tower", 0).getEntry();
@@ -47,8 +48,8 @@ public class Tower extends SubsystemBase {
         kFF = 0;
         maxVel = 1000; // rpm
         maxAcc = 500;
-        kMaxOutput = .2; 
-        kMinOutput = -.2;
+        kMaxOutput = 0; 
+        kMinOutput = 0;
         m_pidController.setP(kP);
         m_pidController.setI(kI);
         m_pidController.setD(kD);
@@ -103,18 +104,33 @@ public class Tower extends SubsystemBase {
      public void safety(boolean override){
         if(arm.returnAngle() < 32){
             if(!override){
-                if(maxVel != 0){
-                    maxVel = 0;
+                if(!safety){
+                    safety = true;
                     m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
                 }
             }}
         else{
-            if(maxVel == 0){
-                maxVel = 1000;
+            if(safety){
+                safety = true;
                 m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
             }
         }
         
+    }
+    public void pitSafety(boolean override){
+        if(!override){
+            if(maxVel != 0){
+                maxVel = 0;
+                m_pidController.setOutputRange(0, 0);
+            }
+        }
+    else{
+        if(maxVel == 0){
+            maxVel = 1000;
+            m_pidController.setOutputRange(-.2, .2);
+
+        }
+    }
     }
      public void setPickerUpper(Arm arm, Grabber grabber) {
         this.arm = arm;
