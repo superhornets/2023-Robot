@@ -156,15 +156,14 @@ public class Robot extends TimedRobot {
     //double distance = SmartDashboard.getNumber("Distance", 0);
    // double angle = SmartDashboard.getNumber("angle", 0);
     //boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
-    /*if(m_leftStick.getRawButtonPressed(10)){
+    if(m_leftStick.getRawButtonPressed(10)){
       lightMode += 1;
       if(lightMode == 3){
         lightMode = 0;
       }
       isLightPattern = true;
     }
-    if(lightMode == 1){
-      if(m_leftStick.getRawButton(10)){
+    if(lightMode == 1 && isLightPattern){
         for (var i = 0; i < m_ledBuffer.getLength(); i++) {
           // Sets the specified LED to the RGB values for red
           if(i%2 == 0){
@@ -178,7 +177,7 @@ public class Robot extends TimedRobot {
         m_led.setData(m_ledBuffer);
         m_led.start();
       }
-      else if(lightMode == 2){
+      else if(lightMode == 2&& isLightPattern){
         for (var i = 0; i < m_ledBuffer.getLength(); i++) {
           // Sets the specified LED to the RGB values for red
           if(i%2==0){
@@ -192,7 +191,7 @@ public class Robot extends TimedRobot {
         m_led.setData(m_ledBuffer);
         m_led.start();
       }
-      else if(lightMode == 0){
+      else if(lightMode == 0&& isLightPattern){
         for (var i = 0; i < m_ledBuffer.getLength(); i++) {
           // Sets the specified LED to the RGB values for red
           m_ledBuffer.setRGB(i, 155, 100,0);
@@ -202,8 +201,8 @@ public class Robot extends TimedRobot {
         m_led.start();
         isLightPattern = false;
       }
-    }
-*/
+    
+
 
 /*
     if(m_leftStick.getRawButton(10)){
@@ -245,7 +244,7 @@ public class Robot extends TimedRobot {
       isLightPattern = false;
     }
 */
-    if(m_leftStick.getRawButtonPressed(3)&&!m_rightStick.getRawButton(12)){
+    if(m_leftStick.getRawButtonPressed(3)){
       isSlowMode = !isSlowMode;
     }
     if(!isPlacing && !isPlacingHigh && !isPickingUp){
