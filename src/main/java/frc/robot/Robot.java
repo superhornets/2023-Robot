@@ -296,10 +296,8 @@ public class Robot extends TimedRobot {
       }
       drive.setPos();
     }
-    else if(!isAutoDriving){
-      if(holdMode){
+    else if(holdMode){
       drive.holdPosition();
-      } 
     }
     else{
       drive.holdSpeed(0);

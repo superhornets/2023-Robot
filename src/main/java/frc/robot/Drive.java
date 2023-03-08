@@ -265,6 +265,12 @@ public class Drive extends SubsystemBase {
         setPos();
         //System.out.println("arcade");
     }
+    public void arcadeTeleop1(double forwardSpeed, double turnSpeed){
+        var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turnSpeed, false);
+        leftFrontDrive.set(speeds.left);
+        rightFrontDrive.set(speeds.right);
+        setPos();
+    }
     public void levelInit(){
         levelStage = 0;
     }
