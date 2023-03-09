@@ -223,12 +223,14 @@ public class Auto {
                 else if (autoStage == 1){
                     if(pickerUpper.arm.moveArmTo(80)){
                         autoStage = 2;
+                        time = Timer.getFPGATimestamp();
+
                     }
                     pickerUpper.grabber.hold();
 
                 }
                 else if (autoStage == 2){
-                    if (drive.driveTo(-20)){
+                    if (drive.driveTo(-20) || Math.abs(Timer.getFPGATimestamp() - time) > 1.5){
                         autoStage = 3;
                         }
                         pickerUpper.grabber.hold();
@@ -262,10 +264,14 @@ public class Auto {
                     if(pickerUpper.tower.moveTowerTo(0)){
                         autoStage =7;
                     }
+                    
                 }
                 else if(autoStage == 7){
                     if(drive.driveTo(120)){
                         autoStage = 8;
+                    }
+                    else{
+                        pickerUpper.grabber.close();
                     }
                 }
                 break;
