@@ -123,13 +123,13 @@ public class Robot extends TimedRobot {
     }
     else if(m_leftStick.getRawButtonPressed(11)){
       pitOverride = !pitOverride;
-      if(pitOverride){
-        lightMode = 0;
-        isLightPattern = true;
-      }
+      
     }
-
-    if(!pitOverride){
+    if(pitOverride){
+      lightMode = 0;
+      isLightPattern = true;
+    }
+    else if(!pitOverride){
       if(lightMode != 3){
         lightMode = 3;
         isLightPattern = true;
@@ -295,7 +295,7 @@ public class Robot extends TimedRobot {
     else{
       pickerUpper.grabber.hold();
     }
-    
+
     if(!isPlacing && !isPlacingHigh && !isPickingUp && !isHoming){
     if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
       if(isSlowMode || pickerUpper.arm.isAtSlowLimit()){

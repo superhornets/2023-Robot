@@ -215,23 +215,31 @@ public class Auto {
 
             case idealauto:
                 if (autoStage == 0){
-                    drive.driveTo(10);
-                    autoStage = 1;
+                    if(drive.driveTo(10)){
+                        autoStage = 1;
+                    }
+                    pickerUpper.grabber.hold();
                 }
                 else if (autoStage == 1){
                     if(pickerUpper.arm.moveArmTo(80)){
                         autoStage = 2;
                     }
+                    pickerUpper.grabber.hold();
+
                 }
                 else if (autoStage == 2){
                     if (drive.driveTo(-20)){
                         autoStage = 3;
                         }
+                        pickerUpper.grabber.hold();
+
                 }
 
                 else if (autoStage == 3){
                     placePieceAutoBySetpointInit();
                     autoStage = 4;
+                    pickerUpper.grabber.hold();
+
                         
                 }
                 else if (autoStage == 4){
@@ -239,9 +247,11 @@ public class Auto {
                         autoStage = 5;
                         time = Timer.getFPGATimestamp();
                     }
+                    pickerUpper.grabber.hold();
+
                 }
                 else if (autoStage == 5){
-                    if (Math.abs(Timer.getFPGATimestamp() - time) < .05){
+                    if (Math.abs(Timer.getFPGATimestamp() - time) < .1){
                         pickerUpper.grabber.open();
                     }
                     else{
@@ -249,8 +259,13 @@ public class Auto {
                     }
                 }
                 else if(autoStage == 6){
+                    if(pickerUpper.tower.moveTowerTo(0)){
+                        autoStage =7;
+                    }
+                }
+                else if(autoStage == 7){
                     if(drive.driveTo(120)){
-                        autoStage = 7;
+                        autoStage = 8;
                     }
                 }
                 break;
@@ -262,6 +277,7 @@ public class Auto {
                 else if(autoStage == 1){
                     if (placePieceAutoBySetpoint()){
                         autoStage = 2;
+
                     }
                 }
                 else if(autoStage == 2){
