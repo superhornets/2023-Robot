@@ -84,7 +84,7 @@ public class Auto {
             case kCustomAuto:
                 // Put custom auto code here
                 if (autoStage == 0){
-                    if(drive.driveTo(-168)){
+                    if(drive.driveTo(168)){
                         autoStage = 1;
                     }
                 }
@@ -94,7 +94,7 @@ public class Auto {
                     }
                 }
                 else if(autoStage == 2){
-                    if(drive.driveTo(54)){
+                    if(drive.driveTo(-54)){
                         autoStage = 3;
                     }
                 }

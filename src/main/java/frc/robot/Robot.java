@@ -285,6 +285,17 @@ public class Robot extends TimedRobot {
     if(m_leftStick.getRawButtonPressed(3)){
       isSlowMode = !isSlowMode;
     }
+
+    if (m_rightStick.getRawButton(1)){
+      pickerUpper.grabber.close();
+    }
+    else if (m_rightStick.getRawButton(2)){
+      pickerUpper.grabber.open();
+    }
+    else{
+      pickerUpper.grabber.hold();
+    }
+    
     if(!isPlacing && !isPlacingHigh && !isPickingUp && !isHoming){
     if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
       if(isSlowMode || pickerUpper.arm.isAtSlowLimit()){
@@ -332,15 +343,7 @@ public class Robot extends TimedRobot {
 
 
     //Grabber code
-    if (m_rightStick.getRawButton(1)){
-      pickerUpper.grabber.close();
-    }
-    else if (m_rightStick.getRawButton(2)){
-      pickerUpper.grabber.open();
-    }
-    else{
-      pickerUpper.grabber.hold();
-    }
+    
     
 
 
