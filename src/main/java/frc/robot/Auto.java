@@ -253,7 +253,7 @@ public class Auto {
 
                 }
                 else if (autoStage == 5){
-                    if (Math.abs(Timer.getFPGATimestamp() - time) < .1){
+                    if (Math.abs(Timer.getFPGATimestamp() - time) < .2){
                         pickerUpper.grabber.open();
                     }
                     else{
@@ -261,7 +261,7 @@ public class Auto {
                     }
                 }
                 else if(autoStage == 6){
-                    if(pickerUpper.arm.moveArmTo(90)){
+                    if(pickerUpper.arm.moveArmTo(110)){
                         autoStage = 7;
                     }
                 }
@@ -282,6 +282,7 @@ public class Auto {
                         pickerUpper.grabber.close();
                     }
                 }
+                SmartDashboard.putNumber("autostage", autoStage);
                 break;
             case placePiece:
                 if(autoStage == 0){
@@ -551,6 +552,7 @@ public class Auto {
         else if(autoPlaceStage == 3){
             return true;
         }
+        SmartDashboard.putNumber("auto place stage", autoPlaceStage);
         return false;
     }
 
