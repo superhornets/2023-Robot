@@ -279,14 +279,14 @@ public class Drive extends SubsystemBase {
         double time = 0;
         if(levelStage == 0){
             arcade(-.4, 0);
-            if(ahrs.getRoll() > 0){
+            if(ahrs.getRoll() < -5){
                 levelStage = 1;
                 System.out.println("stage 0");
             }
         }
         else if(levelStage == 1){
             arcade(-.25, 0);
-            if(ahrs.getRoll()<0){
+            if(ahrs.getRoll()>0){
                 levelStage = 2;
                 time = Timer.getFPGATimestamp();
                 System.out.println("stage 1");
@@ -302,10 +302,10 @@ public class Drive extends SubsystemBase {
                     setPos();
                 }
                 else if(ahrs.getRoll()> 0){
-                    levelStage = 1;
+                    levelStage = 3;
                 }
                 else if(ahrs.getRoll()<-6){
-                    levelStage = 3;
+                    levelStage = 1;
                     System.out.println("Going to stage 3");
                 }
                 System.out.println("stage 2");
@@ -387,6 +387,7 @@ public class Drive extends SubsystemBase {
         SmartDashboard.putNumber("left drive motor", m_encoder.getVelocity());
         SmartDashboard.putNumber("right drive motor", m_encoderR.getVelocity());
         SmartDashboard.putNumber("drive angle", ahrs.getAngle());
+        SmartDashboard.putNumber("navX yaw", ahrs.getRoll());
 
     }
     public boolean checkForTarget(int targetID) {

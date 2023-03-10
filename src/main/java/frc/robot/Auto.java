@@ -39,7 +39,7 @@ public class Auto {
     private double x = 0;
     private double y = 0;
     private double z = 0;
-    private final double pickupAngle =Math.toDegrees(Math.atan(58/10));
+    private final double pickupAngle =Math.toDegrees(Math.atan(58/10))+10;
     private final double pickupExtension = Math.sqrt(58*58+100);
 
     private double distancePlace = Math.sqrt((49.5*49.5)+(11.75*11.75));
