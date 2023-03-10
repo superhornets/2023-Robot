@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
   private boolean isAutoLeveling = false;
   private String quadrant = "a";
   private boolean isRotatingToQuadrant = false;
-  private double extenderSpeed = .5;
+  private double extenderSpeed = 1;
   private boolean override = false;
   private boolean holdPositionTurret = false;
   private boolean limitFramePerimiter = false;
@@ -302,12 +302,12 @@ public class Robot extends TimedRobot {
 
     if(!isPlacing && !isPlacingHigh && !isPickingUp && !isHoming){
     if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
-      if(isSlowMode || pickerUpper.arm.isAtSlowLimit()){
+      if(isSlowMode){
         drive.arcadeTeleop1(m_leftStick.getY()*.1, m_leftStick.getX()*.2);
         System.out.println("is driving slowly");
       }
       else{
-        drive.arcadeTeleop1(m_leftStick.getY(), m_leftStick.getX());
+        drive.arcadeTeleop1(m_leftStick.getY()*.75, m_leftStick.getX()*.75);
       }
       drive.setPos();
     }
@@ -452,7 +452,7 @@ if(m_rightStick.getRawButtonPressed(5)){
         else if(((towerSpeed > 0 && pickerUpper.arm.isAtRightFrame()) || (towerSpeed < 0 && pickerUpper.arm.isAtLeftFrame())) && limitFramePerimiter){
           pickerUpper.tower.moveTower(0);
         }
-        else if(isSlowMode || pickerUpper.arm.isAtSlowLimit()){
+        else if(isSlowMode){
           pickerUpper.tower.moveTower(towerSpeed/4);
         }
         else {
