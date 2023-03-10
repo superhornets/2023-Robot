@@ -303,11 +303,11 @@ public class Robot extends TimedRobot {
     if(!isPlacing && !isPlacingHigh && !isPickingUp && !isHoming){
     if(m_leftStick.getX() > .05 || m_leftStick.getX() < -.05 || m_leftStick.getY() > .05 || m_leftStick.getY() < -.05){
       if(isSlowMode || pickerUpper.arm.isAtSlowLimit()){
-        drive.arcade(m_leftStick.getY()*.1, m_leftStick.getX()*.2);
+        drive.arcadeTeleop1(m_leftStick.getY()*.1, m_leftStick.getX()*.2);
         System.out.println("is driving slowly");
       }
       else{
-        drive.arcade(m_leftStick.getY(), m_leftStick.getX());
+        drive.arcadeTeleop1(m_leftStick.getY(), m_leftStick.getX());
       }
       drive.setPos();
     }
