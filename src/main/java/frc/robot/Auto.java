@@ -89,7 +89,7 @@ public class Auto {
                     }
                 }
                 else if(autoStage == 1){
-                    if(drive.turnTo(-90)){
+                    if(drive.turnTo(90)){
                         autoStage = 2;
                     }
                 }
@@ -261,14 +261,22 @@ public class Auto {
                     }
                 }
                 else if(autoStage == 6){
+                    if(pickerUpper.arm.moveArmTo(90)){
+                        autoStage = 7;
+                    }
+                }
+                else if(autoStage == 7){
                     if(pickerUpper.tower.moveTowerTo(0)){
-                        autoStage =7;
+                        autoStage =8;
+                    }
+                    else{
+                        pickerUpper.grabber.extendToPos(0);
                     }
                     
                 }
-                else if(autoStage == 7){
+                else if(autoStage == 8){
                     if(drive.driveTo(120)){
-                        autoStage = 8;
+                        autoStage = 9;
                     }
                     else{
                         pickerUpper.grabber.close();

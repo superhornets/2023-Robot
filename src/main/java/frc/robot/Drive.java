@@ -250,11 +250,11 @@ public class Drive extends SubsystemBase {
        // else{
 
             if(turnSpeed < 0){
-                turning = (turnSpeed + .05)*.3;
+                turning = (turnSpeed + .05)*.25;
 
             }
             else{
-            turning = (turnSpeed - .05)*.3;
+            turning = (turnSpeed - .05)*.25;
             }
        // }
         var speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, turning, false);

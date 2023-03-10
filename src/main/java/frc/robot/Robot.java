@@ -111,10 +111,10 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     drive.SmartDashboardPrintout();
     //SmartDashboard.putNumber("leftStick", m_leftStick.getY());
-    pickerUpper.SmartDashboardPrintout();
-    extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
+    //pickerUpper.SmartDashboardPrintout();
+    //extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
     //GenericEntry override = Shuffleboard.getTab("override").add("override", false).withWidget("Toggle Button").getEntry();
-    pickerUpper.tower.safety(false);
+    ///pickerUpper.tower.safety(false);
     pickerUpper.grabber.periodicGrabber();
     //SmartDashboard.putNumber("extender speed", extenderSpeed);
     pickerUpper.arm.updatePosition();
@@ -125,10 +125,7 @@ public class Robot extends TimedRobot {
       pitOverride = !pitOverride;
       
     }
-    if(pitOverride){
-      lightMode = 0;
-      isLightPattern = true;
-    }
+
     else if(!pitOverride){
       if(lightMode != 3){
         lightMode = 3;
@@ -152,6 +149,7 @@ public class Robot extends TimedRobot {
         }
       }
       isLightPattern = false;
+      System.out.println("Light Change");
       m_led.setData(m_ledBuffer);
       m_led.start();
     }
@@ -168,6 +166,8 @@ public class Robot extends TimedRobot {
       isLightPattern = false;
       m_led.setData(m_ledBuffer);
       m_led.start();
+      System.out.println("Light Change");
+
     }
     else if(lightMode == 0&& isLightPattern){
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
@@ -178,6 +178,8 @@ public class Robot extends TimedRobot {
       m_led.setData(m_ledBuffer);
       m_led.start();
       isLightPattern = false;
+      System.out.println("Light Change");
+
     }
     else if(lightMode == 3 && isLightPattern){
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
@@ -190,6 +192,8 @@ public class Robot extends TimedRobot {
       m_led.setData(m_ledBuffer);
       m_led.start();
       isLightPattern = false;
+      System.out.println("Light Change");
+
     }
   }
 
