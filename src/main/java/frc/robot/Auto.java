@@ -15,6 +15,7 @@ public class Auto {
     private static final String kBrokenArmAuto = "Broken Arm";
     private static final String idealauto = "place pice";
     private static final String placePiece = "place piece auto";
+    private static final String placeAndLevel = "place and level";
     private String m_autoSelected;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
@@ -39,7 +40,7 @@ public class Auto {
     private double x = 0;
     private double y = 0;
     private double z = 0;
-    private final double pickupAngle =Math.toDegrees(Math.atan(58/10))+10;
+    private final double pickupAngle =Math.toDegrees(Math.atan(58/10))+1;
     private final double pickupExtension = Math.sqrt(58*58+100);
 
     private double distancePlace = Math.sqrt((49.5*49.5)+(11.75*11.75));
@@ -69,6 +70,7 @@ public class Auto {
         m_chooser.addOption("place piece auto", placePiece);
         m_chooser.addOption("place pice", idealauto);
         m_chooser.addOption("straight auto", kStraightAuto);
+        m_chooser.addOption("place and level", placeAndLevel);
         SmartDashboard.putData("Auto choices", m_chooser);
     }
 
@@ -268,6 +270,7 @@ public class Auto {
                 else if(autoStage == 7){
                     if(pickerUpper.tower.moveTowerTo(0)){
                         autoStage =8;
+                        time = Timer.getFPGATimestamp();
                     }
                     else{
                         pickerUpper.grabber.extendToPos(0);
@@ -275,12 +278,16 @@ public class Auto {
                     
                 }
                 else if(autoStage == 8){
-                    if(drive.driveTo(120)){
+                    drive.arcadeTeleop1(.3, 0);
+                    if(Math.abs(Timer.getFPGATimestamp() - time) > 3){
                         autoStage = 9;
                     }
                     else{
                         pickerUpper.grabber.close();
                     }
+                }
+                else if(autoStage == 9){
+                    drive.holdPosition();
                 }
                 SmartDashboard.putNumber("autostage", autoStage);
                 break;
@@ -315,7 +322,77 @@ public class Auto {
                 else if(autoStage == 5){
                     drive.holdPosition();
                 }
+                case placeAndLevel:
+                if (autoStage == 0){
+                    if(drive.driveTo(10)){
+                        autoStage = 1;
+                    }
+                    pickerUpper.grabber.hold();
+                }
+                else if (autoStage == 1){
+                    if(pickerUpper.arm.moveArmTo(80)){
+                        autoStage = 2;
+                        time = Timer.getFPGATimestamp();
 
+                    }
+                    pickerUpper.grabber.hold();
+
+                }
+                else if (autoStage == 2){
+                    if (drive.driveTo(-20) || Math.abs(Timer.getFPGATimestamp() - time) > 1.5){
+                        autoStage = 3;
+                        }
+                        pickerUpper.grabber.hold();
+
+                }
+
+                else if (autoStage == 3){
+                    placePieceAutoBySetpointInit();
+                    autoStage = 4;
+                    pickerUpper.grabber.hold();
+
+                        
+                }
+                else if (autoStage == 4){
+                    if (placePieceAutoBySetpoint()){
+                        autoStage = 5;
+                        time = Timer.getFPGATimestamp();
+                    }
+                    pickerUpper.grabber.hold();
+
+                }
+                else if (autoStage == 5){
+                    if (Math.abs(Timer.getFPGATimestamp() - time) < .2){
+                        pickerUpper.grabber.open();
+                    }
+                    else{
+                        autoStage = 6;
+                    }
+                }
+                else if(autoStage == 6){
+                    if(pickerUpper.arm.moveArmTo(110)){
+                        autoStage = 7;
+                    }
+                }
+                else if(autoStage == 7){
+                    if(pickerUpper.tower.moveTowerTo(0)){
+                        autoStage =8;
+                        time = Timer.getFPGATimestamp();
+                        drive.levelInit();
+                    }
+                    else{
+                        pickerUpper.grabber.extendToPos(0);
+                    }
+                }
+                else if(autoStage == 8){
+                    if(drive.level()){
+                        autoStage =9;
+                    }
+                }
+                else if(autoStage == 9){
+                    drive.holdPosition();
+                }
+                    
         }
     }
 

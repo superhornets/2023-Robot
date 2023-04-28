@@ -116,7 +116,7 @@ public class Grabber extends SubsystemBase{
          * m_grabber.set(0);
          * } else{
          */
-        if (m_grabber.getOutputCurrent() > 15) {
+        if (false) {
             m_grabber.set(0);
         } else {
             m_grabber.set(-grabberSpeed);

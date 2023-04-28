@@ -278,14 +278,14 @@ public class Drive extends SubsystemBase {
         
         double time = 0;
         if(levelStage == 0){
-            arcade(-.4, 0);
-            if(ahrs.getRoll() < -5){
+            arcade(.4, 0);
+            if(ahrs.getRoll() > 5){
                 levelStage = 1;
                 System.out.println("stage 0");
             }
         }
         else if(levelStage == 1){
-            arcade(-.25, 0);
+            arcade(.3, 0);
             if(ahrs.getRoll()>0){
                 levelStage = 2;
                 time = Timer.getFPGATimestamp();
@@ -296,8 +296,8 @@ public class Drive extends SubsystemBase {
         else if (levelStage == 2){
             setPos();
             holdPosition();
-            if(Timer.getFPGATimestamp() - time > .5){
-                if(ahrs.getRoll() <=0 && ahrs.getRoll()>=-5){
+            if(Math.abs(Timer.getFPGATimestamp() - time) > .5){
+                if(ahrs.getRoll() >=-5 && ahrs.getRoll()<=5){
                     levelStage = 4;
                     setPos();
                 }
@@ -313,7 +313,7 @@ public class Drive extends SubsystemBase {
             }
         }
         else if(levelStage == 3){
-            arcade(.25, 0);
+            arcade(-.3, 0);
             if(ahrs.getRoll()>-6){
                 levelStage = 2;
                 time = Timer.getFPGATimestamp();
