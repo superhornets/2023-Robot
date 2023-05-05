@@ -43,6 +43,7 @@ public class Arm extends SubsystemBase {
     private final DigitalInput m_armLimitUp = new DigitalInput(1);
     private Tower tower;
     private Grabber grabber;
+    private Extender extender;
 
     public double currentAngle = STARTING_ANGLE;
     private final double ARM_LENGTH = 46.25;
@@ -82,9 +83,10 @@ public class Arm extends SubsystemBase {
     public void reseZero() {
         m_encoder.setPosition(0);
     }
-    public void setPickerUpper(Tower tower, Grabber grabber){
+    public void setPickerUpper(Tower tower, Grabber grabber, Extender extender){
         this.tower = tower;
         this.grabber = grabber;
+        this.extender = extender;
     }
 
     public void moveArm(double speed) {
@@ -195,12 +197,12 @@ public class Arm extends SubsystemBase {
     }
 
     public double armXZDistance(){
-        double armX = (grabber.returnExtension()+ARM_LENGTH) * Math.sin(Math.toRadians(currentPos));
+        double armX = (extender.returnExtension()+ARM_LENGTH) * Math.sin(Math.toRadians(currentPos));
         return armX;
     }
 
      public double armYDistance(){
-        double armY = Math.copySign((grabber.returnExtension()+ARM_LENGTH) *Math.sin(Math.toRadians(currentPos-90)), (currentPos-90))+TOWER_HEIGHT;
+        double armY = Math.copySign((extender.returnExtension()+ARM_LENGTH) *Math.sin(Math.toRadians(currentPos-90)), (currentPos-90))+TOWER_HEIGHT;
         return armY;
     }
     public double armXDistance(){
@@ -304,7 +306,7 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putNumber("arm x distance ", armXDistance());
         SmartDashboard.putNumber("arm y distance", armYDistance());
         SmartDashboard.putNumber("current angle", currentPos);
-        SmartDashboard.putNumber("grabber extension", grabber.returnExtension());
+        SmartDashboard.putNumber("grabber extension", extender.returnExtension());
         SmartDashboard.putNumber("arm encoder", m_encoder.getPosition());
         SmartDashboard.putString("quadrant ", checkQuadrant());
         SmartDashboard.putNumber("Arm angle", currentPos);

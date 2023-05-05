@@ -3,7 +3,6 @@ package frc.robot;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -18,22 +17,15 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class Grabber extends SubsystemBase{
 
     private final CANSparkMax m_grabber = new CANSparkMax(7, MotorType.kBrushless);
-    private final CANSparkMax extender = new CANSparkMax(8, MotorType.kBrushless);
     private final DigitalInput m_grabberLimitOpen = new DigitalInput(4);
     private final DigitalInput m_grabberLimitClosed = new DigitalInput(5);
-    private final RelativeEncoder m_towerEncoder = extender.getEncoder();
+ 
     
     private SparkMaxPIDController m_pidController;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;
-    private double currentPos = 0;
     private RelativeEncoder m_encoder;
     private RelativeEncoder m_grabberEncoder;
-
-    private int driveSpeed = 5000;
-    private final double GEAR_RATIO = 38.3;
     private double grabberSpeed = .7;
-    private double grabberZero = 0;
-    private double grabberMax = 180/4;
 
     GenericEntry extendP;
     PhotonCamera camera = new PhotonCamera("HD_USB_Camera");
@@ -43,10 +35,9 @@ public class Grabber extends SubsystemBase{
     public Grabber(){
 
         m_grabber.setInverted(false);
-        m_pidController = extender.getPIDController();
-        m_encoder = extender.getEncoder();
+
         m_grabberEncoder = m_grabber.getEncoder();
-        extender.setInverted(true);
+        
         kP =  1e-5; 
         kI = 8e-7;
         kD = 0; 
@@ -64,7 +55,6 @@ public class Grabber extends SubsystemBase{
         m_pidController.setOutputRange(kMinOutput, kMaxOutput);
         m_pidController.setSmartMotionMaxAccel(maxAcc, 0);
         m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
-        currentPos = m_encoder.getPosition();
 
         extendP = Shuffleboard.getTab("alsoyay").add("extendp", 0).getEntry();
 
@@ -76,25 +66,9 @@ public class Grabber extends SubsystemBase{
 
     }
 
-    public void extend(double speed) {
-        extender.set(speed);
-        System.out.print(speed);
-        //m_pidController.setReference(-speed*driveSpeed, ControlType.kSmartVelocity);
-    }
 
-    public boolean extendToPos(double Pos){
-        double target = (Pos*GEAR_RATIO);
-        m_pidController.setReference(target, ControlType.kSmartMotion);
-        return Math.abs(Pos-returnExtension()) < 1;
 
-    }
 
-    public boolean retractToPos(double Pos) {
-        return false;
-    }
-    public void resetExtenderEncoder() {
-        m_encoder.setPosition(0);   
-    }
     public void open() {
         /*
          * if(m_grabberLimitOpen.get()) {
@@ -134,10 +108,7 @@ public class Grabber extends SubsystemBase{
         SmartDashboard.putNumber("Grabber Current", grabberCurrent);
         SmartDashboard.putNumber("grabber encoder", m_grabberEncoder.getPosition());
     }
-    public double returnExtension(){
 
-        return m_encoder.getPosition()/GEAR_RATIO;
-    }
     public boolean checkForTarget() {
         var result = camera.getLatestResult();
         boolean hasTargets = result.hasTargets();
@@ -165,12 +136,5 @@ public class Grabber extends SubsystemBase{
         boolean hasTargets = result.hasTargets();
         PhotonTrackedTarget target = result.getBestTarget();
         return target.getSkew();
-    }
-
-
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("extender distance", returnExtension());
-        SmartDashboard.putNumber("yaw to target", targetYaw());
     }
 }

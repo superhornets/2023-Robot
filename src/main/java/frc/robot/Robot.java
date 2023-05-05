@@ -352,8 +352,8 @@ public class Robot extends TimedRobot {
 
 
     if(pickerUpper.arm.isOverExtentionLimit() || pickerUpper.arm.isOverHeightLimit()){
-      if(pickerUpper.grabber.returnExtension() > 0){
-        pickerUpper.grabber.extend(-.4);
+      if(pickerUpper.extender.returnExtension() > 0){
+        pickerUpper.extender.extend(-.4);
       }
       else{
         pickerUpper.arm.moveArm(-.4);
@@ -372,7 +372,7 @@ public class Robot extends TimedRobot {
         }
       }*/
       if(m_rightStick.getRawButton(8)&&!m_rightStick.getRawButton(12)){
-        pickerUpper.grabber.extend(-.3);
+        pickerUpper.extender.extend(-.3);
       }
       if(m_rightStick.getRawAxis(1) < 0){
         double armSpeed = m_rightStick.getRawAxis(1);
@@ -382,7 +382,7 @@ public class Robot extends TimedRobot {
     }
     else if(pickerUpper.arm.isAtHeightLimit()){
       if(m_rightStick.getRawButton(8)&&!m_rightStick.getRawButton(12)){
-        pickerUpper.grabber.extend(-.3);
+        pickerUpper.extender.extend(-.3);
       }
       if(m_rightStick.getRawAxis(1) < 0){
         double armSpeed = m_rightStick.getRawAxis(1);
@@ -416,11 +416,11 @@ public class Robot extends TimedRobot {
   
     
     //Extender code
-    if((m_rightStick.getRawButton(7) &&!m_rightStick.getRawButton(12)) && (pickerUpper.grabber.returnExtension() < 14 || m_rightStick.getRawButton(11))){
-      pickerUpper.grabber.extend(extenderSpeed);
+    if((m_rightStick.getRawButton(7) &&!m_rightStick.getRawButton(12)) && (pickerUpper.extender.returnExtension() < 14 || m_rightStick.getRawButton(11))){
+      pickerUpper.extender.extend(extenderSpeed);
     }
-    else if((m_rightStick.getRawButton(8)&&!m_rightStick.getRawButton(12)) && (pickerUpper.grabber.returnExtension() > 0|| m_rightStick.getRawButton(11))){
-      pickerUpper.grabber.extend(-extenderSpeed);
+    else if((m_rightStick.getRawButton(8)&&!m_rightStick.getRawButton(12)) && (pickerUpper.extender.returnExtension() > 0|| m_rightStick.getRawButton(11))){
+      pickerUpper.extender.extend(-extenderSpeed);
     }
     /*else if(m_rightStick.getRawButton(9)){
       pickerUpper.grabber.extendToPos(5);
@@ -429,10 +429,10 @@ public class Robot extends TimedRobot {
       pickerUpper.grabber.extendToPos(-5);
     }*/
     else if(m_rightStick.getRawButton(11)&& !m_rightStick.getRawButton(12)){
-      pickerUpper.grabber.resetExtenderEncoder();
+      pickerUpper.extender.resetExtenderEncoder();
     }
     else{
-      pickerUpper.grabber.extend(0);
+      pickerUpper.extender.extend(0);
     }
     
   }

@@ -11,6 +11,8 @@ public class PickerUpper extends SubsystemBase{
 
     public final Arm arm = new Arm();
 
+    public final Extender extender = new Extender();
+
     public void SmartDashboardPrintout(){
         tower.SmartDashboardPrintout();
         grabber.grabberSmartDashboard();
@@ -18,7 +20,7 @@ public class PickerUpper extends SubsystemBase{
     }
  
     public PickerUpper(){
-        arm.setPickerUpper(tower, grabber);
+        arm.setPickerUpper(tower, grabber, extender);
         tower.setPickerUpper(arm, grabber);
     }
 

@@ -273,7 +273,7 @@ public class Auto {
                         time = Timer.getFPGATimestamp();
                     }
                     else{
-                        pickerUpper.grabber.extendToPos(0);
+                        pickerUpper.extender.extendToPos(0);
                     }
                     
                 }
@@ -381,7 +381,7 @@ public class Auto {
                         drive.levelInit();
                     }
                     else{
-                        pickerUpper.grabber.extendToPos(0);
+                        pickerUpper.extender.extendToPos(0);
                     }
                 }
                 else if(autoStage == 8){
@@ -553,7 +553,7 @@ public class Auto {
         //Stage 9: extend
         else if(placeStage == 9){
             System.out.println("stage 9");
-            if(pickerUpper.grabber.extendToPos(extensonLength)){
+            if(pickerUpper.extender.extendToPos(extensonLength)){
                 placeStage = 10;
             }
         }
@@ -581,7 +581,7 @@ public class Auto {
             }
         }
         else if (homePickerUpperStage == 1){
-            if (pickerUpper.grabber.extendToPos(0)){
+            if (pickerUpper.extender.extendToPos(0)){
                 homePickerUpperStage = 2;
             }
         }
@@ -622,7 +622,7 @@ public class Auto {
         else if(autoPlaceStage ==2){
             System.out.println("stage 2" + (distancePlace - ARM_LENGTH));
 
-            if(pickerUpper.grabber.extendToPos(distancePlace - ARM_LENGTH)){
+            if(pickerUpper.extender.extendToPos(distancePlace - ARM_LENGTH)){
                 autoPlaceStage = 3;
             }
         }
@@ -644,7 +644,7 @@ public class Auto {
             }
         }
         else if(autoPlaceStage ==1){
-            if(pickerUpper.grabber.extendToPos(pickupExtension - ARM_LENGTH)){
+            if(pickerUpper.extender.extendToPos(pickupExtension - ARM_LENGTH)){
                 autoPlaceStage = 2;
             }
         }
