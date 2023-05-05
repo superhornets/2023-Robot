@@ -21,5 +21,6 @@ public class PickerUpper extends SubsystemBase {
   public PickerUpper() {
     arm.setPickerUpper(tower, grabber, extender);
     tower.setPickerUpper(arm, grabber);
+    extender.setPickerUpper(arm);
   }
 }

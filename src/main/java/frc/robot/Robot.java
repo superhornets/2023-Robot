@@ -52,7 +52,6 @@ public class Robot extends TimedRobot {
   private String quadrant = "a";
   private boolean isRotatingToQuadrant = false;
   private double extenderSpeed = 1;
-  private boolean override = false;
   private boolean holdPositionTurret = false;
   private boolean limitFramePerimiter = false;
   private boolean isPlacing = false;
@@ -66,6 +65,7 @@ public class Robot extends TimedRobot {
   private AddressableLED m_led = new AddressableLED(9);
   private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(68);
   private boolean pitOverride = false;
+  private boolean override = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -222,47 +222,6 @@ public class Robot extends TimedRobot {
       }
       isLightPattern = true;
     }
-
-    /*
-        if(m_leftStick.getRawButton(10)){
-          for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-            // Sets the specified LED to the RGB values for red
-            if(i%2 == 0){
-            m_ledBuffer.setRGB(i, 155, 100, 0);
-            }
-            else{
-              m_ledBuffer.setRGB(i, 0, 0, 0);
-            }
-          }
-          isLightPattern = true;
-          m_led.setData(m_ledBuffer);
-          m_led.start();
-        }
-        else if(m_leftStick.getRawButton(11)){
-          for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-            // Sets the specified LED to the RGB values for red
-            if(i%2==0){
-            m_ledBuffer.setRGB(i, 155, 0, 155);
-            }
-            else{
-              m_ledBuffer.setRGB(i, 0, 0, 0);
-            }
-          }
-          isLightPattern = true;
-          m_led.setData(m_ledBuffer);
-          m_led.start();
-        }
-        else if(isLightPattern){
-          for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-            // Sets the specified LED to the RGB values for red
-            m_ledBuffer.setRGB(i, 155, 100,0);
-          }
-
-          m_led.setData(m_ledBuffer);
-          m_led.start();
-          isLightPattern = false;
-        }
-    */
     if (m_leftStick.getRawButtonPressed(3)) {
       isSlowMode = !isSlowMode;
     }
@@ -293,22 +252,6 @@ public class Robot extends TimedRobot {
         drive.holdSpeed(0);
       }
 
-      // }
-      /*if(isAutoDriving){
-        if(drive.driveTo(distance)){
-          isAutoDriving = false;
-        }
-
-        if(Drive.isDriving(distance)){
-          isAutoDriving = false;
-          System.out.println("is driving true 2");
-
-        }
-      }*/
-      /*if(m_leftStick.getRawButton(5)){
-        drive.stopRotation();
-        isTurning = false;
-      }*/
       if (m_leftStick.getRawButton(6)) {
         holdMode = false;
       }
@@ -319,146 +262,56 @@ public class Robot extends TimedRobot {
         drive.resetNavX();
       }
 
-      // Grabber code
+      // Arm code
+      double armSpeed = m_rightStick.getRawAxis(1);
+      pickerUpper.arm.moveArm(armSpeed, isSlowMode);
+      if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
+        pickerUpper.arm.resetZero();
+      } else if (m_rightStick.getRawButton(6)) {
+        pickerUpper.arm.moveArmTo(40);
+      }
 
-      if (pickerUpper.arm.isOverExtentionLimit() || pickerUpper.arm.isOverHeightLimit()) {
-        if (pickerUpper.extender.returnExtension() > 0) {
-          pickerUpper.extender.extend(-.4);
-        } else {
-          pickerUpper.arm.moveArm(-.4);
-        }
-      } else if (pickerUpper.arm.isAtExtentionLimit()) {
-        /*double towerSpeed = m_rightStick.getRawAxis(2);
-        if(Math.abs(pickerUpper.tower.returnAngle()+45)%90>45){
-          if(towerSpeed > 0){
-            pickerUpper.tower.moveTower(towerSpeed);
-          }
-        }
-        else{
-          if(towerSpeed < 0){
-            pickerUpper.tower.moveTower(towerSpeed);
-          }
-        }*/
-        if (m_rightStick.getRawButton(8) && !m_rightStick.getRawButton(12)) {
-          pickerUpper.extender.extend(-.3);
-        }
-        if (m_rightStick.getRawAxis(1) < 0) {
-          double armSpeed = m_rightStick.getRawAxis(1);
-          pickerUpper.arm.moveArm(armSpeed);
-        }
-
-      } else if (pickerUpper.arm.isAtHeightLimit()) {
-        if (m_rightStick.getRawButton(8) && !m_rightStick.getRawButton(12)) {
-          pickerUpper.extender.extend(-.3);
-        }
-        if (m_rightStick.getRawAxis(1) < 0) {
-          double armSpeed = m_rightStick.getRawAxis(1);
-          pickerUpper.arm.moveArm(armSpeed);
-        }
-        double towerSpeed = m_rightStick.getRawAxis(0);
-        pickerUpper.tower.moveTower(towerSpeed);
+      // Extender code
+      if (m_rightStick.getRawButton(11)) {
+        override = true;
       } else {
-        // Arm code
-        double armSpeed = m_rightStick.getRawAxis(1);
-        if (armSpeed < .05 && armSpeed > -.05) {
-          armSpeed = 0;
-        } else if (armSpeed < 0 && pickerUpper.arm.isAtLowerArmLimit()) {
-          armSpeed = 0;
-          System.out.println("at lower limit");
-
-        } else if (isSlowMode) {
-          armSpeed = armSpeed / 4;
-        }
-        pickerUpper.arm.moveArm(armSpeed);
-        if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
-          pickerUpper.arm.reseZero();
-        } else if (m_rightStick.getRawButton(6)) {
-          pickerUpper.arm.moveArmTo(40);
-        }
-
-        // Extender code
-        if ((m_rightStick.getRawButton(7) && !m_rightStick.getRawButton(12))
-            && (pickerUpper.extender.returnExtension() < 14 || m_rightStick.getRawButton(11))) {
-          pickerUpper.extender.extend(extenderSpeed);
-        } else if ((m_rightStick.getRawButton(8) && !m_rightStick.getRawButton(12))
-            && (pickerUpper.extender.returnExtension() > 0 || m_rightStick.getRawButton(11))) {
-          pickerUpper.extender.extend(-extenderSpeed);
-        }
-        /*else if(m_rightStick.getRawButton(9)){
-          pickerUpper.grabber.extendToPos(5);
-        }
-        else if(m_rightStick.getRawButton(10)){
-          pickerUpper.grabber.extendToPos(-5);
-        }*/
-        else if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
-          pickerUpper.extender.resetExtenderEncoder();
-        } else {
-          pickerUpper.extender.extend(0);
-        }
+        override = false;
       }
-      // Tower Code
-      if (m_rightStick.getRawButtonPressed(3)) {
-        holdPositionTurret = !holdPositionTurret;
+      if ((m_rightStick.getRawButton(7) && !m_rightStick.getRawButton(12))) {
+        pickerUpper.extender.extend(extenderSpeed, override);
+      } else if ((m_rightStick.getRawButton(8) && !m_rightStick.getRawButton(12))) {
+        pickerUpper.extender.extend(-extenderSpeed, override);
+      } else if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
+        pickerUpper.extender.resetExtenderEncoder();
+      } else {
+        pickerUpper.extender.extend(0, false);
       }
-      if (m_rightStick.getRawButtonPressed(5)) {
-        limitFramePerimiter = !limitFramePerimiter;
-      }
-      if (m_rightStick.isConnected()) {
-        double towerSpeed = m_rightStick.getRawAxis(0);
-        if (Math.abs(towerSpeed) > .04 && !holdPositionTurret) {
-          if (((pickerUpper.tower.returnAngle() > 120 && towerSpeed > 0)
-                  || (pickerUpper.tower.returnAngle() < -120 && towerSpeed < 0))
-              && ((!m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12))
-                  || m_rightStick.getRawButton(12))) {
-            pickerUpper.tower.moveTower(0);
-          } else if (((towerSpeed > 0 && pickerUpper.arm.isAtRightFrame())
-                  || (towerSpeed < 0 && pickerUpper.arm.isAtLeftFrame()))
-              && limitFramePerimiter) {
-            pickerUpper.tower.moveTower(0);
-          } else if (isSlowMode) {
-            pickerUpper.tower.moveTower(towerSpeed / 4);
-          } else {
-            pickerUpper.tower.moveTower(towerSpeed);
-          }
-        } else if (holdPositionTurret) {
-          pickerUpper.tower.holdTowerPos();
-        } else if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
-          pickerUpper.tower.setZero();
-        } else if (isRotatingToCube) {
-          if (pickerUpper.tower.rotateToCube()) {
-            isRotatingToCube = false;
-          }
-        } else if (m_rightStick.getRawButton(7) && m_rightStick.getRawButton(12)) {
-          pickerUpper.tower.rotateToCubeInit();
-          isRotatingToCube = true;
+    }
+    // Tower Code
+    if (m_rightStick.getRawButtonPressed(3)) {
+      holdPositionTurret = !holdPositionTurret;
+    }
+    if (m_rightStick.getRawButtonPressed(5)) {
+      limitFramePerimiter = !limitFramePerimiter;
+    }
 
-        } else if (isRotatingToQuadrant == false) {
-          if (m_rightStick.getPOV() == 0) {
-            quadrant = "a";
-            isRotatingToQuadrant = true;
-            // pickerUpper.tower.moveTowerToQuadrant("a");
-          } else if (m_rightStick.getPOV() == 90) {
-            quadrant = "b";
-            isRotatingToQuadrant = true;
-            // pickerUpper.tower.moveTowerToQuadrant("b");
-          } else if (m_rightStick.getPOV() == 180) {
-            quadrant = "c";
-            isRotatingToQuadrant = true;
-            // pickerUpper.tower.moveTowerToQuadrant("c");
-          } else if (m_rightStick.getPOV() == 270) {
-            quadrant = "d";
-            isRotatingToQuadrant = true;
-            // pickerUpper.tower.moveTowerToQuadrant("d");
-          } else {
-            pickerUpper.tower.moveTower(0);
-          }
-        } else if (isRotatingToQuadrant) {
-          if (pickerUpper.tower.moveTowerToQuadrant(quadrant)) {
-            isRotatingToQuadrant = false;
-          }
-        } else {
-          pickerUpper.tower.moveTower(0);
+    if (m_rightStick.isConnected()) {
+      double towerSpeed = m_rightStick.getRawAxis(0);
+      if (Math.abs(towerSpeed) > .04 && !holdPositionTurret) {
+        pickerUpper.tower.moveTower(towerSpeed, override, isSlowMode);
+      } else if (holdPositionTurret) {
+        pickerUpper.tower.holdTowerPos();
+      } else if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
+        pickerUpper.tower.setZero();
+      } else if (isRotatingToCube) {
+        if (pickerUpper.tower.rotateToCube()) {
+          isRotatingToCube = false;
         }
+      } else if (m_rightStick.getRawButton(7) && m_rightStick.getRawButton(12)) {
+        pickerUpper.tower.rotateToCubeInit();
+        isRotatingToCube = true;
+      } else {
+        pickerUpper.tower.moveTower(0, false, false);
       }
     }
 

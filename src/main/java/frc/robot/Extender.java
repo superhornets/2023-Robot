@@ -12,6 +12,7 @@ public class Extender {
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;
   private RelativeEncoder m_encoder;
   private final double GEAR_RATIO = 38.3;
+  private Arm arm;
 
   public Extender() {
     m_pidController = extender.getPIDController();
@@ -36,8 +37,19 @@ public class Extender {
     m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
   }
 
-  public void extend(double speed) {
+  public void setPickerUpper(Arm arm) {
+    this.arm = arm;
+  }
 
+  public void extend(double speed, boolean override) {
+
+    if ((arm.isAtExtentionLimit() || arm.isAtHeightLimit() || (returnExtension() > 14 && !override))
+        && speed > 0) {
+      speed = 0;
+    }
+    if ((returnExtension() < 0 && !override) && speed < 0) {
+      speed = 0;
+    }
     extender.set(speed);
     System.out.print(speed);
     // m_pidController.setReference(-speed*driveSpeed, ControlType.kSmartVelocity);

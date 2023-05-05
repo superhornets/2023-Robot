@@ -20,6 +20,7 @@ public class Arm extends SubsystemBase {
   private int driveSpeed = 4800;
   private final double STARTING_ANGLE = 15;
   private double flatAngle = 90 - STARTING_ANGLE;
+  private double armSpeed;
 
   GenericEntry dsajkfdlas;
 
@@ -76,7 +77,7 @@ public class Arm extends SubsystemBase {
     currentPos = m_encoder.getPosition() * 2 + STARTING_ANGLE;
   }
 
-  public void reseZero() {
+  public void resetZero() {
     m_encoder.setPosition(0);
   }
 
@@ -86,21 +87,27 @@ public class Arm extends SubsystemBase {
     this.extender = extender;
   }
 
-  public void moveArm(double speed) {
+  public void moveArm(double speed, boolean isSlowMode) {
+
+    if (speed < .05 && speed > -.05) {
+      speed = 0;
+    } else if (isSlowMode) {
+      speed = speed / 4;
+    }
     speed = speed * 0.2;
     if (speed == 0) {
       /*if(m_armLimitDown.get()) {
           m_arm.set(0);
       } else {*/
       m_pidController.setReference(0, ControlType.kSmartVelocity); // }
-    } else if (speed > 0) {
+    } else if (speed > 0 && !isAtHeightLimit()) {
       /*if(m_armLimitUp.get()) {
           m_arm.set(0);
       } else {*/
       m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
 
       // }
-    } else if (speed < 0) {
+    } else if (speed < 0 && !isAtLowerArmLimit()) {
       /*if(m_armLimitUp.get()) {
           m_arm.set(0);
       } else {*/

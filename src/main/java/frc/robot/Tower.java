@@ -130,13 +130,19 @@ public class Tower extends SubsystemBase {
     this.grabber = grabber;
   }
 
-  public void moveTower(double speed) {
+  public void moveTower(double speed, boolean override, boolean isSlowMode) {
+    if (Math.abs(speed) > .04) {
+      speed = 0;
+    }
     speed = speed * 0.3;
+    if (isSlowMode) {
+      speed = speed / 4;
+    }
 
-    if (speed > 0) {
+    if (speed > 0 && (returnAngle() < 90 || override)) {
       m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
       currentPos = getPosition();
-    } else if (speed < 0) {
+    } else if (speed < 0 && (returnAngle() > -90 || override)) {
       m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
       currentPos = getPosition();
     } else if (speed == 0) {
