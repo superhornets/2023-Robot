@@ -41,19 +41,17 @@ public class Drive extends SubsystemBase {
       maxAcc,
       allowedErr;
   private /*final*/ double ROTATIONS_PER_INCH = .5694;
-  private double distance = 24;
   public boolean isMoving = false;
   private double currentPos = 0;
   private double currentPosR = 0;
   private int driveSpeed = 4800;
-  private boolean isAutoDriving = false;
   private boolean rotateToAngle = false;
   private double currentRotationRate = 0;
   private final double METERS_TO_INCHES = 39.37;
   AHRS ahrs;
   double rotateToAngleRate;
   PIDController turnController;
-  private double flatAngle = 0;
+  //private double flatAngle = 0;
   final double kPT = 0.02;
   final double kIT = 0.00;
   final double kDT = 0.00;
@@ -148,12 +146,12 @@ public class Drive extends SubsystemBase {
     turnController = new PIDController(kPT, kIT, kDT);
     turnController.enableContinuousInput(-180.0f, 180.0f);
     ahrs.calibrate();
-    flatAngle = ahrs.getRoll();
+    //flatAngle = ahrs.getRoll();
   }
 
   public void resetNavX() {
     ahrs.reset();
-    flatAngle = ahrs.getRoll();
+    //flatAngle = ahrs.getRoll();
   }
 
   public double wrapAngle(double angle) {
@@ -431,7 +429,7 @@ public class Drive extends SubsystemBase {
 
   public Transform3d targetValues() {
     var result = camera.getLatestResult();
-    boolean hasTargets = result.hasTargets();
+    //boolean hasTargets = result.hasTargets();
 
     PhotonTrackedTarget target = result.getBestTarget();
     Transform3d targetVal = target.getBestCameraToTarget();

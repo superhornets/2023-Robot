@@ -19,20 +19,15 @@ public class Auto {
 
   private Drive drive;
   private PickerUpper pickerUpper;
-  private final double FRONT_LENGTH = 22.25;
   private final double SIDE_LENGTH = 11.75;
   private final double ARM_LENGTH = 46.5;
   private final double EXTENSON_LENGTH = 15;
-  private final double FRONT_ANGLE_RANGE = 0;
-  private final double SIDE_ANGLE_RANGE = 0;
   private final double ROBOT_ARM_HEIGHT = 50.5;
   private final double TARGET_HEIGHT = 23.5;
-  private final double ARM_HEIGHT = 0;
   private final double EXTRA_ANGLE = 5;
   private final double METERS_TO_INCHES = 39.37;
   private final double CAMERA_X = 4.25; // forward
   private final double CAMERA_Y = 4.25; // side to side
-  private final double CAMERA_Z = 22; // height
   private double x = 0;
   private double y = 0;
   private double z = 0;

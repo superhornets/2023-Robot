@@ -5,7 +5,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DigitalInput;
+// import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,8 +15,8 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class Grabber extends SubsystemBase {
 
   private final CANSparkMax m_grabber = new CANSparkMax(7, MotorType.kBrushless);
-  private final DigitalInput m_grabberLimitOpen = new DigitalInput(4);
-  private final DigitalInput m_grabberLimitClosed = new DigitalInput(5);
+  // private final DigitalInput m_grabberLimitOpen = new DigitalInput(4);
+  // private final DigitalInput m_grabberLimitClosed = new DigitalInput(5);
 
   private SparkMaxPIDController m_pidController;
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;

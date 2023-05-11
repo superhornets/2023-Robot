@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,34 +21,10 @@ public class Robot extends TimedRobot {
   private final Joystick m_leftStick = new Joystick(0);
   private final Joystick m_rightStick = new Joystick(1);
   // private final DifferentialDrive drive = new DifferentialDrive(leftFrontDrive, rightFrontDrive);
-  private SparkMaxPIDController m_pidController;
-  private SparkMaxPIDController m_pidControllerR;
-  private RelativeEncoder m_encoder;
-  private RelativeEncoder m_encoderR;
-  private double kP,
-      kI,
-      kD,
-      kIz,
-      kFF,
-      kMaxOutput,
-      kMinOutput,
-      maxRPM,
-      maxVel,
-      minVel,
-      maxAcc,
-      allowedErr;
-  private /*final*/ double ROTATIONS_PER_INCH = .5694;
-  private double distance = 24;
   private PickerUpper pickerUpper = new PickerUpper();
-  private boolean isAutoDriving = false;
   private Drive drive = new Drive();
   private Auto auto = new Auto(drive, pickerUpper);
-  private double angle = 0;
-  private boolean isTurning = false;
   private boolean holdMode = true;
-  private boolean isAutoLeveling = false;
-  private String quadrant = "a";
-  private boolean isRotatingToQuadrant = false;
   private double extenderSpeed = 1;
   private boolean holdPositionTurret = false;
   private boolean limitFramePerimiter = false;

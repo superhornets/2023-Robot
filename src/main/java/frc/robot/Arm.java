@@ -6,7 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DigitalInput;
+// import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,8 +19,6 @@ public class Arm extends SubsystemBase {
   private RelativeEncoder m_encoder;
   private int driveSpeed = 4800;
   private final double STARTING_ANGLE = 15;
-  private double flatAngle = 90 - STARTING_ANGLE;
-  private double armSpeed;
 
   GenericEntry dsajkfdlas;
 
@@ -35,15 +33,13 @@ public class Arm extends SubsystemBase {
   private final double REAR_LIMIT = 10.5 + EXTENSION_LIMIT;
 
   private final CANSparkMax m_arm = new CANSparkMax(5, MotorType.kBrushless);
-  private final DigitalInput m_armLimitDown = new DigitalInput(0);
-  private final DigitalInput m_armLimitUp = new DigitalInput(1);
+  // private final DigitalInput m_armLimitDown = new DigitalInput(0);
+  // private final DigitalInput m_armLimitUp = new DigitalInput(1);
   private Tower tower;
-  private Grabber grabber;
   private Extender extender;
 
   public double currentAngle = STARTING_ANGLE;
   private final double ARM_LENGTH = 46.25;
-  private final double EXTENDER_GEAR_RATIO = 150;
   private final double TOWER_HEIGHT = 50.5;
   private final double GRABBER_WIDTH = 7.75;
 
@@ -83,7 +79,6 @@ public class Arm extends SubsystemBase {
 
   public void setPickerUpper(Tower tower, Grabber grabber, Extender extender) {
     this.tower = tower;
-    this.grabber = grabber;
     this.extender = extender;
   }
 

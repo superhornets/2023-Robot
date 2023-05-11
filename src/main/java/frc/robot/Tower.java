@@ -16,7 +16,6 @@ public class Tower extends SubsystemBase {
   private final CANSparkMax m_tower = new CANSparkMax(6, MotorType.kBrushless);
   private final DigitalInput m_towerLimitRight = new DigitalInput(2);
   private final DigitalInput m_towerLimitLeft = new DigitalInput(3);
-  private double position = 0;
   private final int GEAR_RATIO = 60;
 
   GenericEntry fjasdkl;
