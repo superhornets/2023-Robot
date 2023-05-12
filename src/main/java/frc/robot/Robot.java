@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
   private int lightMode = 0;
   private AddressableLED m_led = new AddressableLED(9);
   private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(68);
-  private boolean pitOverride = false;
+  private boolean notPitOverride = false;
   private boolean override = false;
 
   /**
@@ -86,18 +86,24 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putNumber("extender speed", extenderSpeed);
     pickerUpper.arm.updatePosition();
     if (DriverStation.isFMSAttached()) {
-      pitOverride = true;
+      notPitOverride = true;
     } else if (m_leftStick.getRawButtonPressed(11)) {
-      pitOverride = !pitOverride;
+      notPitOverride = !notPitOverride;
 
-    } else if (!pitOverride) {
+    } else if (!notPitOverride) {
       if (lightMode != 3) {
         lightMode = 3;
         isLightPattern = true;
       }
+    } else if (m_leftStick.getRawButtonPressed(10)) {
+      lightMode += 1;
+      if (lightMode > 2) {
+        lightMode = 0;
+      }
+      isLightPattern = true;
     }
-    SmartDashboard.putBoolean("pit safety", pitOverride);
-    pickerUpper.tower.pitSafety(pitOverride);
+    SmartDashboard.putBoolean("pit safety", notPitOverride);
+    pickerUpper.tower.pitSafety(notPitOverride);
 
     if (lightMode == 1 && isLightPattern) {
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
