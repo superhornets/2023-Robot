@@ -90,11 +90,9 @@ public class Robot extends TimedRobot {
     } else if (m_leftStick.getRawButtonPressed(11)) {
       notPitOverride = !notPitOverride;
 
-    } else if (!notPitOverride) {
-      if (lightMode != 3) {
-        lightMode = 3;
-        isLightPattern = true;
-      }
+    } else if (!notPitOverride && lightMode != 3) {
+      lightMode = 3;
+      isLightPattern = true;
     } else if (m_leftStick.getRawButtonPressed(10)) {
       lightMode += 1;
       if (lightMode > 2) {
@@ -102,6 +100,7 @@ public class Robot extends TimedRobot {
       }
       isLightPattern = true;
     }
+    System.out.println(lightMode);
     SmartDashboard.putBoolean("pit safety", notPitOverride);
     pickerUpper.tower.pitSafety(notPitOverride);
 
@@ -115,7 +114,7 @@ public class Robot extends TimedRobot {
         }
       }
       isLightPattern = false;
-      System.out.println("Light Change");
+      System.out.println("Light Change 1  ");
       m_led.setData(m_ledBuffer);
       m_led.start();
     } else if (lightMode == 2 && isLightPattern) {
@@ -130,7 +129,7 @@ public class Robot extends TimedRobot {
       isLightPattern = false;
       m_led.setData(m_ledBuffer);
       m_led.start();
-      System.out.println("Light Change");
+      System.out.println("Light Change 2");
 
     } else if (lightMode == 0 && isLightPattern) {
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
@@ -141,7 +140,7 @@ public class Robot extends TimedRobot {
       m_led.setData(m_ledBuffer);
       m_led.start();
       isLightPattern = false;
-      System.out.println("Light Change");
+      System.out.println("Light Change 0");
 
     } else if (lightMode == 3 && isLightPattern) {
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
@@ -154,7 +153,7 @@ public class Robot extends TimedRobot {
       m_led.setData(m_ledBuffer);
       m_led.start();
       isLightPattern = false;
-      System.out.println("Light Change");
+      System.out.println("Light Change 3");
     }
   }
 
@@ -195,13 +194,13 @@ public class Robot extends TimedRobot {
     // double distance = SmartDashboard.getNumber("Distance", 0);
     // double angle = SmartDashboard.getNumber("angle", 0);
     // boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
-    if (m_leftStick.getRawButtonPressed(10)) {
+    /*if (m_leftStick.getRawButtonPressed(10)) {
       lightMode += 1;
       if (lightMode == 3) {
         lightMode = 0;
       }
       isLightPattern = true;
-    }
+    }*/
     if (m_leftStick.getRawButtonPressed(3)) {
       isSlowMode = !isSlowMode;
     }
