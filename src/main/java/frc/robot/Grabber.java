@@ -30,6 +30,7 @@ public class Grabber extends SubsystemBase {
   public Grabber() {
 
     m_grabber.setInverted(false);
+    m_pidController = m_grabber.getPIDController();
 
     m_grabberEncoder = m_grabber.getEncoder();
 
