@@ -223,7 +223,7 @@ public class Robot extends TimedRobot {
       } else if (holdMode) {
         drive.holdPosition();
       } else {
-        drive.holdSpeed(0);
+        drive.arcadeTeleop1(0, 0);
       }
 
       if (m_leftStick.getRawButton(6)) {
