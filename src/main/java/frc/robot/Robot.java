@@ -246,7 +246,7 @@ public class Robot extends TimedRobot {
       }
 
       // Extender code
-      if (m_rightStick.getRawButton(11)) {
+      if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
         override = true;
       } else {
         override = false;
