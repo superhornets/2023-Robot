@@ -5,18 +5,27 @@
 ### Install Development Software and Clone the Code
 
 1. Download and install the WPILib version of VS Code along with other FRC Java tools using [these instructions](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html). While you're there, please bookmark the main page of [docs.wpilib.org](https://docs.wpilib.org/). There's a lot of information about FRC software and electronics here.
-2. Setup a GitHub account if you haven't already.
-3. Press your `F1` key to open VS Code's "Command Palette".
-4. In the command palette, type "clone" and select "Git: Clone".
-5. Select "Clone from GitHub".
-6. Follow the prompts from VS Code and your web browser to sign into GitHub.
-7. In VS Code select the `superhornets/2023-Robot` repository.
-8. Select a location on your computer where you would like to have the robot code folder cloned to.
-9. Click "Open in New Window".
+2. Download and install [Git](https://git-scm.com/).
+3. Setup a GitHub account if you haven't already.
+4. Press your `F1` key to open VS Code's "Command Palette".
+5. In the command palette, type "clone" and select "Git: Clone".
+6. Select "Clone from GitHub".
+7. Follow the prompts from VS Code and your web browser to sign into GitHub.
+8. In VS Code select the `superhornets/2023-Robot` repository.
+9. Select a location on your computer where you would like to have the robot code folder cloned to.
+10. Click "Open in New Window".
 
-# These are some helpful programs to help you work with Git. Each has it's own features and limitations.
+### Install one more thing before you start making changes
 
+Install the VS Code Extension called `Spotless Gradle` by Richard Willis.
 
+# Helpful Git Programs
+
+Git is the underlying program that does version control. Git can be complicated at times. You may find some of these programs helpful.
+
+* VS Code Extension called `Git Graph` by mhutchie.
+* [GitHub Desktop](https://desktop.github.com/)
+* [Git Extensions](https://gitextensions.github.io/)
 
 ### Reopening the Project
 
