@@ -212,8 +212,8 @@ public class Robot extends TimedRobot {
     } else {
       pickerUpper.grabber.hold();
     }
-
-    if (!isPlacing && !isPlacingHigh && !isPickingUp && !isHoming) {
+    System.out.println("isPlacing: " + isPlacing);
+    if (!isPlacing && !isPlacingHigh && !isPickingUp) {
       if (m_leftStick.getX() > .05
           || m_leftStick.getX() < -.05
           || m_leftStick.getY() > .05
@@ -265,7 +265,10 @@ public class Robot extends TimedRobot {
       } else {
         pickerUpper.extender.extend(0, false);
       }
+    } else {
+      drive.arcadeTeleop1(0, 0);
     }
+
     // Tower Code
     if (m_rightStick.getRawButtonPressed(3)) {
       holdPositionTurret = !holdPositionTurret;
