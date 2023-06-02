@@ -270,9 +270,9 @@ public class Robot extends TimedRobot {
     if (m_rightStick.getRawButtonPressed(3)) {
       holdPositionTurret = !holdPositionTurret;
     }
-    if (m_rightStick.getRawButtonPressed(5)) {
+    /*if (m_rightStick.getRawButtonPressed(5)) {
       limitFramePerimiter = !limitFramePerimiter;
-    }
+    }*/
 
     if (m_rightStick.isConnected()) {
       double towerSpeed = m_rightStick.getRawAxis(0);
@@ -313,14 +313,14 @@ public class Robot extends TimedRobot {
         isPlacing = false;
       }
     }
-    if (m_rightStick.getRawButton(9) && !m_rightStick.getRawButton(12) && !isPlacingHigh) {
+    /*if (m_rightStick.getRawButton(9) && !m_rightStick.getRawButton(12) && !isPlacingHigh) {
       auto.placePieceAutoBySetpointInit();
       isPlacingHigh = true;
     } else if (isPlacingHigh) {
       if (auto.placePieceAutoBySetpoint()) {
         isPlacingHigh = false;
       }
-    }
+    }*/
 
     if (m_rightStick.getRawButton(4) && !isHoming) {
       isHoming = true;
