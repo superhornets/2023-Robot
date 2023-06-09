@@ -205,7 +205,32 @@ public class Robot extends TimedRobot {
     if (m_leftStick.getRawButtonPressed(3)) {
       isSlowMode = !isSlowMode;
     }
+    if (m_leftStick.getX() > .05
+        || m_leftStick.getX() < -.05
+        || m_leftStick.getY() > .05
+        || m_leftStick.getY() < -.05) {
+      if (isSlowMode) {
+        drive.arcadeTeleop1(m_leftStick.getY() * .1, m_leftStick.getX() * .2);
+        System.out.println("is driving slowly");
+      } else {
+        drive.arcadeTeleop1(m_leftStick.getY() * .75, m_leftStick.getX() * .75);
+      }
+      drive.setPos();
+    } else if (holdMode) {
+      drive.holdPosition();
+    } else {
+      drive.arcadeTeleop1(0, 0);
+    }
 
+    if (m_leftStick.getRawButton(6)) {
+      holdMode = false;
+    }
+    if (m_leftStick.getRawButton(7)) {
+      holdMode = true;
+    }
+    if (m_leftStick.getRawButton(4)) {
+      drive.resetNavX();
+    }
     if (m_rightStick.getRawButton(1)) {
       pickerUpper.grabber.close();
     } else if (m_rightStick.getRawButton(2)) {
@@ -215,32 +240,6 @@ public class Robot extends TimedRobot {
     }
     System.out.println("isPlacing: " + isPlacing);
     if (!isPlacing && !isPlacingHigh && !isPickingUp) {
-      if (m_leftStick.getX() > .05
-          || m_leftStick.getX() < -.05
-          || m_leftStick.getY() > .05
-          || m_leftStick.getY() < -.05) {
-        if (isSlowMode) {
-          drive.arcadeTeleop1(m_leftStick.getY() * .1, m_leftStick.getX() * .2);
-          System.out.println("is driving slowly");
-        } else {
-          drive.arcadeTeleop1(m_leftStick.getY() * .75, m_leftStick.getX() * .75);
-        }
-        drive.setPos();
-      } else if (holdMode) {
-        drive.holdPosition();
-      } else {
-        drive.arcadeTeleop1(0, 0);
-      }
-
-      if (m_leftStick.getRawButton(6)) {
-        holdMode = false;
-      }
-      if (m_leftStick.getRawButton(7)) {
-        holdMode = true;
-      }
-      if (m_leftStick.getRawButton(4)) {
-        drive.resetNavX();
-      }
 
       // Arm code
       double armSpeed = m_rightStick.getRawAxis(1);
@@ -266,8 +265,6 @@ public class Robot extends TimedRobot {
       } else {
         pickerUpper.extender.extend(0, false);
       }
-    } else {
-      drive.arcadeTeleop1(0, 0);
     }
 
     // Tower Code
