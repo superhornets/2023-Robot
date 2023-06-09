@@ -175,6 +175,7 @@ public class Auto {
         } else if (autoStage == 1) {
           if (drive.driveOverChargingStation()) {
             autoStage = 2;
+            drive.levelInit();
           }
         } else if (autoStage == 2) {
           if (drive.level()) {

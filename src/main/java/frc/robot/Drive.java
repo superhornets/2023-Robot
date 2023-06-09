@@ -48,6 +48,7 @@ public class Drive extends SubsystemBase {
   private boolean rotateToAngle = false;
   private double currentRotationRate = 0;
   private final double METERS_TO_INCHES = 39.37;
+  private double autoTime = 0;
   AHRS ahrs;
   double rotateToAngleRate;
   PIDController turnController;
@@ -300,13 +301,13 @@ public class Drive extends SubsystemBase {
 
     double time = 0;
     if (levelStage == 0) {
-      arcade(.4, 0);
+      arcade(-.5, 0);
       if (ahrs.getRoll() > 5) {
         levelStage = 1;
         System.out.println("stage 0");
       }
     } else if (levelStage == 1) {
-      arcade(.3, 0);
+      arcade(-.3, 0);
       if (ahrs.getRoll() > 0) {
         levelStage = 2;
         time = Timer.getFPGATimestamp();
@@ -328,7 +329,7 @@ public class Drive extends SubsystemBase {
         System.out.println("stage 2");
       }
     } else if (levelStage == 3) {
-      arcade(-.3, 0);
+      arcade(.3, 0);
       if (ahrs.getRoll() > -6) {
         levelStage = 2;
         time = Timer.getFPGATimestamp();
@@ -348,6 +349,7 @@ public class Drive extends SubsystemBase {
 
   public void driveOverInit() {
     driveStage = 0;
+    autoTime = Timer.getFPGATimestamp();
   }
 
   public boolean driveOverChargingStation() {
@@ -361,8 +363,8 @@ public class Drive extends SubsystemBase {
       }
     }
     if (driveStage == 0) {
-      arcade(.5, 0);
-      if (distance >= 4) {
+      arcade(.4, 0);
+      if (distance >= 4.8 || Math.abs(Timer.getFPGATimestamp() - autoTime) > 4) {
         driveStage = 1;
       }
       return false;
