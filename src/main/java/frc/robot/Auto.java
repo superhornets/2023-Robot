@@ -54,7 +54,6 @@ public class Auto {
   public Auto(Drive drive, PickerUpper pickerUpper) {
     this.drive = drive;
     this.pickerUpper = pickerUpper;
-
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     m_chooser.addOption("Broken Arm", kBrokenArmAuto);
@@ -69,7 +68,11 @@ public class Auto {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+  }
+
+  public void autoInit() {
     autoStage = 0;
+    drive.setPos();
   }
 
   public void runSelected() {
@@ -190,59 +193,61 @@ public class Auto {
         break;
 
       case idealauto:
+        SmartDashboard.putNumber("auto stage", autoStage);
         if (autoStage == 0) {
-          if (drive.driveTo(10)) {
+          if (
+          /*drive.driveTo(0)*/ true) {
             autoStage = 1;
           }
-          pickerUpper.grabber.hold();
+          pickerUpper.grabber.holdAuto();
         } else if (autoStage == 1) {
           if (pickerUpper.arm.moveArmTo(80)) {
             autoStage = 2;
             time = Timer.getFPGATimestamp();
           }
-          pickerUpper.grabber.hold();
+          pickerUpper.grabber.holdAuto();
 
         } else if (autoStage == 2) {
-          if (drive.driveTo(-20) || Math.abs(Timer.getFPGATimestamp() - time) > 1.5) {
+          if (drive.driveTo(-14) || Math.abs(Timer.getFPGATimestamp() - time) > 2) {
             autoStage = 3;
           }
-          pickerUpper.grabber.hold();
+          pickerUpper.grabber.holdAuto();
 
         } else if (autoStage == 3) {
           placePieceAutoBySetpointInit();
           autoStage = 4;
-          pickerUpper.grabber.hold();
+          pickerUpper.grabber.holdAuto();
 
         } else if (autoStage == 4) {
           if (placePieceAutoBySetpoint()) {
             autoStage = 5;
             time = Timer.getFPGATimestamp();
           }
-          pickerUpper.grabber.hold();
-
         } else if (autoStage == 5) {
-          if (Math.abs(Timer.getFPGATimestamp() - time) < .2) {
+          if (Math.abs(Timer.getFPGATimestamp() - time) < .4) {
             pickerUpper.grabber.open();
           } else {
             autoStage = 6;
+            drive.setPos();
           }
         } else if (autoStage == 6) {
           if (pickerUpper.arm.moveArmTo(110)) {
             autoStage = 7;
           }
         } else if (autoStage == 7) {
-          if (pickerUpper.tower.moveTowerTo(0)) {
-            autoStage = 8;
-            time = Timer.getFPGATimestamp();
-          } else {
-            pickerUpper.extender.extendToPos(0);
-          }
+          autoStage = 8;
 
         } else if (autoStage == 8) {
-          drive.arcadeTeleop1(.3, 0);
-          if (Math.abs(Timer.getFPGATimestamp() - time) > 3) {
+          if (drive.driveTo(180)) {
+            drive.setPos();
             autoStage = 9;
           } else {
+            if (pickerUpper.tower.moveTowerTo(0)) {
+              autoStage = 8;
+              time = Timer.getFPGATimestamp();
+            } else {
+              pickerUpper.extender.extendToPos(0);
+            }
             pickerUpper.grabber.close();
           }
         } else if (autoStage == 9) {

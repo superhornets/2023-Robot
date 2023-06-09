@@ -95,6 +95,10 @@ public class Grabber extends SubsystemBase {
     m_grabber.set(0);
   }
 
+  public void holdAuto() {
+    m_grabber.set(-.3);
+  }
+
   public void closeCube() {}
 
   public void periodicGrabber() {

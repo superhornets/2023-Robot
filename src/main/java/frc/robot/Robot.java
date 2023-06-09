@@ -170,6 +170,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     auto.updateSelection();
+    auto.autoInit();
   }
 
   /** This function is called periodically during autonomous. */

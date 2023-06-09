@@ -117,6 +117,7 @@ public class Drive extends SubsystemBase {
 
   public void teleopInitDrive() {
     setPos();
+    holdSpeed(0);
     isMoving = false;
     System.out.println("teleop init");
   }
