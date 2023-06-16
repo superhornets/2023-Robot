@@ -169,9 +169,12 @@ public class Auto {
 
         break;
       case kDefaultAuto:
+        SmartDashboard.putNumber("auto stage", autoStage);
+
         if (autoStage == 0) {
           drive.driveOverInit();
           autoStage = 1;
+
         } else if (autoStage == 1) {
           if (drive.driveOverChargingStation()) {
             autoStage = 2;

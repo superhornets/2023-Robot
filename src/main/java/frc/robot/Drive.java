@@ -298,16 +298,17 @@ public class Drive extends SubsystemBase {
   }
 
   public boolean level() {
+    SmartDashboard.putNumber("Level stage", levelStage);
 
     double time = 0;
     if (levelStage == 0) {
-      arcade(-.5, 0);
+      arcadeTeleop1(-.3, 0);
       if (ahrs.getRoll() > 5) {
         levelStage = 1;
         System.out.println("stage 0");
       }
     } else if (levelStage == 1) {
-      arcade(-.3, 0);
+      arcadeTeleop1(-.2, 0);
       if (ahrs.getRoll() > 0) {
         levelStage = 2;
         time = Timer.getFPGATimestamp();
@@ -329,7 +330,7 @@ public class Drive extends SubsystemBase {
         System.out.println("stage 2");
       }
     } else if (levelStage == 3) {
-      arcade(.3, 0);
+      arcadeTeleop1(.2, 0);
       if (ahrs.getRoll() > -6) {
         levelStage = 2;
         time = Timer.getFPGATimestamp();
@@ -363,12 +364,20 @@ public class Drive extends SubsystemBase {
       }
     }
     if (driveStage == 0) {
-      arcade(.4, 0);
-      if (distance >= 4.8 || Math.abs(Timer.getFPGATimestamp() - autoTime) > 4) {
+      arcadeTeleop1(.5, 0);
+      if (distance >= 2.8 || Math.abs(Timer.getFPGATimestamp() - autoTime) > 1) {
         driveStage = 1;
       }
       return false;
     } else if (driveStage == 1) {
+      arcadeTeleop1(.2, 0);
+
+      if (distance >= 5 || Math.abs(Timer.getFPGATimestamp() - autoTime) > 5) {
+        driveStage = 2;
+        arcadeTeleop1(0, 0);
+      }
+      return false;
+    } else if (driveStage == 2) {
       holdPosition();
       return true;
     } else {
