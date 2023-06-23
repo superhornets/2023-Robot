@@ -130,7 +130,7 @@ public class Tower extends SubsystemBase {
   }
 
   public void moveTower(double speed, boolean override, boolean isSlowMode) {
-    if (Math.abs(speed) > .04) {
+    if (Math.abs(speed) < .04) {
       speed = 0;
     }
     speed = speed * 0.3;

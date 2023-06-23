@@ -89,6 +89,14 @@ public class Robot extends TimedRobot {
       notPitOverride = true;
     } else if (m_leftStick.getRawButtonPressed(11)) {
       notPitOverride = !notPitOverride;
+      System.out.println("button 11 pressed");
+      if (notPitOverride) {
+        lightMode = 0;
+        isLightPattern = true;
+      } else {
+        lightMode = 3;
+        isLightPattern = true;
+      }
 
     } else if (!notPitOverride && lightMode != 3) {
       lightMode = 3;
@@ -100,7 +108,7 @@ public class Robot extends TimedRobot {
       }
       isLightPattern = true;
     }
-    System.out.println(lightMode);
+    // System.out.println(lightMode);
     SmartDashboard.putBoolean("pit safety", notPitOverride);
     pickerUpper.tower.pitSafety(notPitOverride);
 

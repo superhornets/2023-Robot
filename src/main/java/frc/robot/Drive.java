@@ -299,6 +299,7 @@ public class Drive extends SubsystemBase {
 
   public boolean level() {
     SmartDashboard.putNumber("Level stage", levelStage);
+    SmartDashboard.putNumber("ahrs.getRoll", ahrs.getRoll());
 
     double time = 0;
     if (levelStage == 0) {
