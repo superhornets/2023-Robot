@@ -12,15 +12,15 @@ public class PickerUpper extends SubsystemBase {
 
   public final Extender extender = new Extender();
 
-  public void SmartDashboardPrintout() {
-    tower.SmartDashboardPrintout();
-    grabber.grabberSmartDashboard();
-    arm.SmartDashboard();
-  }
-
   public PickerUpper() {
     arm.setPickerUpper(tower, grabber, extender);
     tower.setPickerUpper(arm, grabber);
     extender.setPickerUpper(arm);
+  }
+
+  public void periodic() {
+    tower.SmartDashboardPrintout();
+    grabber.grabberSmartDashboard();
+    arm.periodic();
   }
 }

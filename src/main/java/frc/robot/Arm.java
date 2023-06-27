@@ -1,26 +1,20 @@
 package frc.robot;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import edu.wpi.first.networktables.GenericEntry;
 // import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
+  private final CANSparkMax m_arm = new CANSparkMax(5, MotorType.kBrushless);
+  private SparkMaxPIDWrapper m_pid = new SparkMaxPIDWrapper(m_arm, "Arm PID");
+  private RelativeEncoder m_encoder = m_arm.getEncoder();
 
-  private SparkMaxPIDController m_pidController;
-  private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;
   private double currentPos = 0;
-  private RelativeEncoder m_encoder;
   private int driveSpeed = 4800;
   private final double STARTING_ANGLE = 15;
-
-  GenericEntry dsajkfdlas;
 
   private final double EXTENSION_LIMIT = 48;
   private final double LEFT_FRONT_ANGLE = -27.84;
@@ -32,7 +26,6 @@ public class Arm extends SubsystemBase {
   private final double RIGHT_LIMIT = 11.75 + EXTENSION_LIMIT;
   private final double REAR_LIMIT = 10.5 + EXTENSION_LIMIT;
 
-  private final CANSparkMax m_arm = new CANSparkMax(5, MotorType.kBrushless);
   // private final DigitalInput m_armLimitDown = new DigitalInput(0);
   // private final DigitalInput m_armLimitUp = new DigitalInput(1);
   private Tower tower;
@@ -44,29 +37,10 @@ public class Arm extends SubsystemBase {
   private final double GRABBER_WIDTH = 7.75;
 
   public Arm() {
-    m_pidController = m_arm.getPIDController();
-    m_encoder = m_arm.getEncoder();
     m_arm.setInverted(true);
-    kP = 5e-5;
-    kI = 8e-7;
-    kD = 0;
-    kIz = 0;
-    kFF = 0;
-    maxVel = 2000; // rpm
-    maxAcc = 1500;
-    kMaxOutput = .2;
-    kMinOutput = -.2;
-    m_pidController.setP(kP);
-    m_pidController.setI(kI);
-    m_pidController.setD(kD);
-    m_pidController.setIZone(kIz);
-    m_pidController.setFF(kFF);
-    m_pidController.setOutputRange(kMinOutput, kMaxOutput);
-    m_pidController.setSmartMotionMaxAccel(maxAcc, 0);
-    m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
+    m_pid.setPID(5e-5, 8e-7, 0, 0, 0, .2, -.2, 2000, 1500);
     m_encoder.setPosition(0);
     updatePosition();
-    dsajkfdlas = Shuffleboard.getTab("alsoyay").add("dsdjlfasdjarm", 0).getEntry();
   }
 
   public void updatePosition() {
@@ -94,19 +68,19 @@ public class Arm extends SubsystemBase {
       /*if(m_armLimitDown.get()) {
           m_arm.set(0);
       } else {*/
-      m_pidController.setReference(0, ControlType.kSmartVelocity); // }
+      m_pid.setSmartVelocity(0); // }
     } else if (speed > 0 && !isAtHeightLimit()) {
       /*if(m_armLimitUp.get()) {
           m_arm.set(0);
       } else {*/
-      m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
+      m_pid.setSmartVelocity(speed * driveSpeed);
 
       // }
     } else if (speed < 0 && !isAtLowerArmLimit()) {
       /*if(m_armLimitUp.get()) {
           m_arm.set(0);
       } else {*/
-      m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
+      m_pid.setSmartVelocity(speed * driveSpeed);
 
       // }
     }
@@ -204,7 +178,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean moveArmTo(double position) {
-    m_pidController.setReference((position - STARTING_ANGLE) / 2, ControlType.kSmartMotion);
+    m_pid.setSmartPosition((position - STARTING_ANGLE) / 2);
     double error = position - currentPos;
     return Math.abs(error) < 3;
   }
@@ -293,7 +267,7 @@ public class Arm extends SubsystemBase {
     return currentPos;
   }
 
-  public void SmartDashboard() {
+  public void periodic() {
     SmartDashboard.putNumber("arm x distance ", armXDistance());
     SmartDashboard.putNumber("arm y distance", armYDistance());
     SmartDashboard.putNumber("current angle", currentPos);
@@ -301,11 +275,6 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("arm encoder", m_encoder.getPosition());
     SmartDashboard.putString("quadrant ", checkQuadrant());
     SmartDashboard.putNumber("Arm angle", currentPos);
-  }
-
-  @Override
-  public void periodic() {
-
-    dsajkfdlas.setDouble(m_arm.getAppliedOutput());
+    m_pid.periodic();
   }
 }

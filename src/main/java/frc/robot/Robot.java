@@ -82,6 +82,7 @@ public class Robot extends TimedRobot {
     // GenericEntry override = Shuffleboard.getTab("override").add("override",
     // false).withWidget("Toggle Button").getEntry();
     /// pickerUpper.tower.safety(false);
+    pickerUpper.periodic();
     pickerUpper.grabber.periodicGrabber();
     // SmartDashboard.putNumber("extender speed", extenderSpeed);
     pickerUpper.arm.updatePosition();
