@@ -5,7 +5,6 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-// import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -29,8 +28,7 @@ public class Arm extends SubsystemBase {
   private final double REAR_LIMIT = 10.5 + EXTENSION_LIMIT;
 
   private final CANSparkMax m_arm = new CANSparkMax(5, MotorType.kBrushless);
-  // private final DigitalInput m_armLimitDown = new DigitalInput(0);
-  // private final DigitalInput m_armLimitUp = new DigitalInput(1);
+
   private Tower tower;
   private Extender extender;
 
@@ -48,7 +46,7 @@ public class Arm extends SubsystemBase {
     kD = 0;
     kIz = 0;
     kFF = 0;
-    maxVel = 2000; // rpm
+    maxVel = 2000;
     maxAcc = 1500;
     kMaxOutput = .2;
     kMinOutput = -.2;
@@ -86,27 +84,18 @@ public class Arm extends SubsystemBase {
     }
     speed = speed * 0.2;
     if (speed == 0) {
-      /*if(m_armLimitDown.get()) {
-          m_arm.set(0);
-      } else {*/
 
-      m_pidController.setReference(0, ControlType.kSmartVelocity); // }
+      m_pidController.setReference(0, ControlType.kSmartVelocity);
       System.out.println("moveArm set 0");
     } else if (speed > 0 && !isAtHeightLimit()) {
-      /*if(m_armLimitUp.get()) {
-          m_arm.set(0);
-      } else {*/
+
       m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
       System.out.println("move Arm up " + speed * driveSpeed);
-      // }
+
     } else if (speed < 0 && !isAtLowerArmLimit()) {
-      /*if(m_armLimitUp.get()) {
-          m_arm.set(0);
-      } else {*/
+
       m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
       System.out.println("moveArm down " + speed * driveSpeed);
-
-      // }
     }
   }
 

@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   private final Joystick m_leftStick = new Joystick(0);
   private final Joystick m_rightStick = new Joystick(1);
-  // private final DifferentialDrive drive = new DifferentialDrive(leftFrontDrive, rightFrontDrive);
+
   private PickerUpper pickerUpper = new PickerUpper();
   private Drive drive = new Drive();
   private Auto auto = new Auto(drive, pickerUpper);
@@ -57,13 +57,8 @@ public class Robot extends TimedRobot {
 
     m_led.setData(m_ledBuffer);
     m_led.start();
-    // SmartDashboard.putNumber("Distance", distance);
-    // SmartDashboard.putNumber("angle", angle);
-    // SmartDashboard.putBoolean("hold Position", holdMode);
-    // SmartDashboard.putNumber("tower encoder", pickerUpper.tower.getPosition());
-    SmartDashboard.putNumber("Target", 2);
-    // CameraServer.startAutomaticCapture();
 
+    SmartDashboard.putNumber("Target", 2);
   }
 
   /**
@@ -76,14 +71,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     drive.SmartDashboardPrintout();
-    // SmartDashboard.putNumber("leftStick", m_leftStick.getY());
-    // pickerUpper.SmartDashboardPrintout();
-    // extenderSpeed=SmartDashboard.getNumber("extender speed", extenderSpeed);
-    // GenericEntry override = Shuffleboard.getTab("override").add("override",
-    // false).withWidget("Toggle Button").getEntry();
-    /// pickerUpper.tower.safety(false);
     pickerUpper.grabber.periodicGrabber();
-    // SmartDashboard.putNumber("extender speed", extenderSpeed);
     pickerUpper.arm.periodic();
     pickerUpper.arm.updatePosition();
     if (DriverStation.isFMSAttached()) {
@@ -109,7 +97,6 @@ public class Robot extends TimedRobot {
       }
       isLightPattern = true;
     }
-    // System.out.println(lightMode);
     SmartDashboard.putBoolean("pit safety", notPitOverride);
     pickerUpper.tower.pitSafety(notPitOverride);
 
@@ -191,9 +178,6 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    /*currentPos=m_encoder.getPosition();
-    currentPosR = m_encoderR.getPosition();
-    isMoving = false; */
     drive.teleopInitDrive();
   }
 
@@ -201,16 +185,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putBoolean("Slow Mode", isSlowMode);
-    // double distance = SmartDashboard.getNumber("Distance", 0);
-    // double angle = SmartDashboard.getNumber("angle", 0);
-    // boolean holdMode = SmartDashboard.getBoolean("holdPosition", false);
-    /*if (m_leftStick.getRawButtonPressed(10)) {
-      lightMode += 1;
-      if (lightMode == 3) {
-        lightMode = 0;
-      }
-      isLightPattern = true;
-    }*/
     if (m_leftStick.getRawButtonPressed(3)) {
       isSlowMode = !isSlowMode;
     }
@@ -280,9 +254,6 @@ public class Robot extends TimedRobot {
     if (m_rightStick.getRawButtonPressed(3)) {
       holdPositionTurret = !holdPositionTurret;
     }
-    /*if (m_rightStick.getRawButtonPressed(5)) {
-      limitFramePerimiter = !limitFramePerimiter;
-    }*/
 
     if (m_rightStick.isConnected()) {
       double towerSpeed = m_rightStick.getRawAxis(0);
@@ -323,14 +294,6 @@ public class Robot extends TimedRobot {
         isPlacing = false;
       }
     }
-    /*if (m_rightStick.getRawButton(9) && !m_rightStick.getRawButton(12) && !isPlacingHigh) {
-      auto.placePieceAutoBySetpointInit();
-      isPlacingHigh = true;
-    } else if (isPlacingHigh) {
-      if (auto.placePieceAutoBySetpoint()) {
-        isPlacingHigh = false;
-      }
-    }*/
 
     if (m_rightStick.getRawButton(4) && !isHoming) {
       isHoming = true;
@@ -348,7 +311,6 @@ public class Robot extends TimedRobot {
         isPickingUp = false;
       }
     }
-    // SmartDashboard.putBoolean("isAutoDriving", isAutoDriving);
   }
 
   /** This function is called once when the robot is disabled. */

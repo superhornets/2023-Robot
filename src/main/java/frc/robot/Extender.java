@@ -23,7 +23,7 @@ public class Extender {
     kD = 0;
     kIz = 0;
     kFF = 0;
-    maxVel = 3000; // rpm
+    maxVel = 3000;
     maxAcc = 2000;
     kMaxOutput = 1;
     kMinOutput = -1;
@@ -51,8 +51,6 @@ public class Extender {
       speed = 0;
     }
     extender.set(speed);
-
-    // m_pidController.setReference(-speed*driveSpeed, ControlType.kSmartVelocity);
   }
 
   public boolean extendToPos(double Pos) {
