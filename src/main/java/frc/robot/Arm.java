@@ -5,9 +5,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-import edu.wpi.first.networktables.GenericEntry;
 // import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -19,8 +17,6 @@ public class Arm extends SubsystemBase {
   private RelativeEncoder m_encoder;
   private int driveSpeed = 4800;
   private final double STARTING_ANGLE = 15;
-
-  GenericEntry dsajkfdlas;
 
   private final double EXTENSION_LIMIT = 48;
   private final double LEFT_FRONT_ANGLE = -27.84;
@@ -66,7 +62,6 @@ public class Arm extends SubsystemBase {
     m_pidController.setSmartMotionMaxVelocity(maxVel, 0);
     m_encoder.setPosition(0);
     updatePosition();
-    dsajkfdlas = Shuffleboard.getTab("alsoyay").add("dsdjlfasdjarm", 0).getEntry();
   }
 
   public void updatePosition() {
@@ -94,19 +89,22 @@ public class Arm extends SubsystemBase {
       /*if(m_armLimitDown.get()) {
           m_arm.set(0);
       } else {*/
+
       m_pidController.setReference(0, ControlType.kSmartVelocity); // }
+      System.out.println("moveArm set 0");
     } else if (speed > 0 && !isAtHeightLimit()) {
       /*if(m_armLimitUp.get()) {
           m_arm.set(0);
       } else {*/
       m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
-
+      System.out.println("move Arm up " + speed * driveSpeed);
       // }
     } else if (speed < 0 && !isAtLowerArmLimit()) {
       /*if(m_armLimitUp.get()) {
           m_arm.set(0);
       } else {*/
       m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
+      System.out.println("moveArm down " + speed * driveSpeed);
 
       // }
     }
@@ -204,6 +202,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean moveArmTo(double position) {
+    System.out.println("moveArmTo " + (position - STARTING_ANGLE) / 2);
     m_pidController.setReference((position - STARTING_ANGLE) / 2, ControlType.kSmartMotion);
     double error = position - currentPos;
     return Math.abs(error) < 3;
@@ -305,7 +304,6 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-    dsajkfdlas.setDouble(m_arm.getAppliedOutput());
+    SmartDashboard.putNumber("armMotorOutput", m_arm.getAppliedOutput());
   }
 }

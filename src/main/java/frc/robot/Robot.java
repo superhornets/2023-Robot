@@ -84,6 +84,7 @@ public class Robot extends TimedRobot {
     /// pickerUpper.tower.safety(false);
     pickerUpper.grabber.periodicGrabber();
     // SmartDashboard.putNumber("extender speed", extenderSpeed);
+    pickerUpper.arm.periodic();
     pickerUpper.arm.updatePosition();
     if (DriverStation.isFMSAttached()) {
       notPitOverride = true;
@@ -246,7 +247,7 @@ public class Robot extends TimedRobot {
     } else {
       pickerUpper.grabber.hold();
     }
-    System.out.println("isPlacing: " + isPlacing);
+
     if (!isPlacing && !isPlacingHigh && !isPickingUp) {
 
       // Arm code

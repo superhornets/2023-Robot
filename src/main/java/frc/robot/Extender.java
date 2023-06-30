@@ -51,7 +51,7 @@ public class Extender {
       speed = 0;
     }
     extender.set(speed);
-    System.out.print(speed);
+
     // m_pidController.setReference(-speed*driveSpeed, ControlType.kSmartVelocity);
   }
 
