@@ -295,6 +295,15 @@ public class Robot extends TimedRobot {
       }
     }
 
+    /*if (m_rightStick.getRawButton(9) && !m_rightStick.getRawButton(12) && !isPlacingHigh) {
+      auto.placePieceAutoBySetpointInit();
+      isPlacingHigh = true;
+    } else if (isPlacingHigh) {
+      if (auto.placePieceAutoBySetpoint()) {
+        isPlacingHigh = false;
+      }
+    }*/
+
     if (m_rightStick.getRawButton(4) && !isHoming) {
       isHoming = true;
       auto.homePickerUpperInit();
