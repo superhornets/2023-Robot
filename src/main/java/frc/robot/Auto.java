@@ -678,6 +678,9 @@ public class Auto {
         autoPlaceStage = 4;
       }
     }
+    if (autoPickupStage == 4) {
+      return true;
+    }
     return false;
   }
 }
