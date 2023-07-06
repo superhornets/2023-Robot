@@ -284,15 +284,13 @@ public class Robot extends TimedRobot {
       isPickingUp = false;
       isHoming = false;
     }
-    if (m_rightStick.getRawButton(10) && !m_rightStick.getRawButton(12)) {
+    if (m_rightStick.getRawButtonPressed(10) && !m_rightStick.getRawButton(12)) {
       if (!isPlacing) {
         isPlacing = true;
-        int target = (int) SmartDashboard.getNumber("Target", 2);
-        auto.placePieceInit(target);
+        auto.autoPickupInit();
       }
-    } else if (isPlacing) {
-      int target = (int) SmartDashboard.getNumber("Target", 2);
-      if (auto.placePiece(target, true, true)) {
+    } else if (isPlacing && m_rightStick.getRawButton(10)) {
+      if (auto.autoPickup()) {
         isPlacing = false;
       }
     }
