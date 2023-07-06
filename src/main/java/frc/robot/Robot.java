@@ -90,7 +90,9 @@ public class Robot extends TimedRobot {
     } else if (!notPitOverride && lightMode != 3) {
       lightMode = 3;
       isLightPattern = true;
-    } else if (m_leftStick.getRawButtonPressed(10)) {
+    }
+
+    if (m_leftStick.getRawButtonPressed(10) && notPitOverride) {
       lightMode += 1;
       if (lightMode > 2) {
         lightMode = 0;
