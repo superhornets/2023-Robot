@@ -171,9 +171,10 @@ public class Tower extends SubsystemBase {
     moveTowerTo(currentPos);
   }
 
-  public void rotateToCubeInit() {
+  public double rotateToCubeInit() {
     cubeAngle = grabber.targetYaw();
     startingAngle = currentPos;
+    return startingAngle + currentPos;
   }
 
   public boolean rotateToCube() {

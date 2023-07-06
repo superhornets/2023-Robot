@@ -50,6 +50,9 @@ public class Auto {
   private int homePickerUpperStage = 0;
   private int autoPlaceStage = 0;
   private double time = 0;
+  private int autoPickupStage = 0;
+  private double autoPickupAngle = 0;
+  private double pickupExtensionDistance = 0;
 
   public Auto(Drive drive, PickerUpper pickerUpper) {
     this.drive = drive;
@@ -642,5 +645,39 @@ public class Auto {
     } else if (autoStage == 5) {
       drive.holdPosition();
     }
+  }
+
+  public void autoPickupInit() {
+    autoPickupStage = 0;
+  }
+
+  public boolean autoPickup() {
+    if (autoPickupStage == 0) {
+      autoPickupAngle = pickerUpper.tower.rotateToCubeInit();
+      autoStage = 1;
+    } else if (autoPickupStage == 1) {
+      if (pickerUpper.tower.rotateToCube()) {
+        autoPickupStage = 2;
+      }
+    } else if (autoPickupStage == 2) {
+      if (drive.checkForTarget(targetID)) {
+        x = CAMERA_X + drive.targetValues().getX() * METERS_TO_INCHES;
+      } else {
+        System.out.println("No Target");
+        return true;
+      }
+      pickupExtensionDistance = x / Math.cos(autoPickupAngle) - ARM_LENGTH;
+      if (pickupExtensionDistance < 0 || pickupExtensionDistance > 14) {
+        System.out.println("Wrong Distance");
+        return true;
+      }
+
+      autoPickupStage = 3;
+    } else if (autoPickupStage == 3) {
+      if (pickerUpper.extender.extendToPos(pickupExtensionDistance)) {
+        autoPlaceStage = 4;
+      }
+    }
+    return false;
   }
 }
