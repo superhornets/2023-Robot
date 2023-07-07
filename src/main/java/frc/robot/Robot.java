@@ -184,6 +184,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    System.out.println("teleopPeriodic");
     SmartDashboard.putBoolean("Slow Mode", isSlowMode);
     if (m_leftStick.getRawButtonPressed(3)) {
       isSlowMode = !isSlowMode;
@@ -225,12 +226,15 @@ public class Robot extends TimedRobot {
     if (!isPlacing && !isPlacingHigh && !isPickingUp) {
 
       // Arm code
-      double armSpeed = m_rightStick.getRawAxis(1);
-      pickerUpper.arm.moveArm(armSpeed, isSlowMode);
       if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
         pickerUpper.arm.resetZero();
       } else if (m_rightStick.getRawButton(6)) {
+        System.out.print("button 6");
         pickerUpper.arm.moveArmTo(40);
+      } else {
+        double armSpeed = m_rightStick.getRawAxis(1);
+        System.out.print("joystick Y");
+        pickerUpper.arm.moveArm(armSpeed, isSlowMode);
       }
 
       // Extender code
@@ -299,6 +303,7 @@ public class Robot extends TimedRobot {
       isHoming = true;
       auto.homePickerUpperInit();
     } else if (isHoming) {
+      System.out.print("autoHome ");
       if (auto.homePickerUpper()) {
         isHoming = false;
       }
