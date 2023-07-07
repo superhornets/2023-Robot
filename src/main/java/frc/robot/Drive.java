@@ -331,7 +331,7 @@ public class Drive extends SubsystemBase {
         System.out.println("stage 2");
       }
     } else if (levelStage == 3) {
-      arcadeTeleop1(.2, 0);
+      arcadeTeleop1(.3, 0);
       if (ahrs.getRoll() > -6) {
         levelStage = 2;
         time = Timer.getFPGATimestamp();
