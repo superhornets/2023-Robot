@@ -231,6 +231,12 @@ public class Robot extends TimedRobot {
       } else if (m_rightStick.getRawButton(6)) {
         System.out.print("button 6");
         pickerUpper.arm.moveArmTo(40);
+      } else if (m_rightStick.getRawButton(4)) {
+        if (m_rightStick.getRawButtonPressed(4)) {
+          auto.homePickerUpperInit();
+        }
+        auto.homePickerUpper();
+
       } else {
         double armSpeed = m_rightStick.getRawAxis(1);
         System.out.print("joystick Y");
@@ -299,15 +305,6 @@ public class Robot extends TimedRobot {
       }
     }
 
-    if (m_rightStick.getRawButton(4) && !isHoming) {
-      isHoming = true;
-      auto.homePickerUpperInit();
-    } else if (isHoming) {
-      System.out.print("autoHome ");
-      if (auto.homePickerUpper()) {
-        isHoming = false;
-      }
-    }
     if (m_rightStick.getRawButton(10) && m_rightStick.getRawButton(12) && !isPickingUp) {
       isPickingUp = true;
       auto.pickupPieceAutoBySetpointInit();
