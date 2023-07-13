@@ -186,7 +186,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    System.out.println("teleopPeriodic");
     SmartDashboard.putBoolean("Slow Mode", isSlowMode);
     if (m_leftStick.getRawButtonPressed(3)) {
       isSlowMode = !isSlowMode;
@@ -197,7 +196,6 @@ public class Robot extends TimedRobot {
         || m_leftStick.getY() < -.05) {
       if (isSlowMode) {
         drive.arcadeTeleop1(m_leftStick.getY() * .1, m_leftStick.getX() * .2);
-        System.out.println("is driving slowly");
       } else {
         drive.arcadeTeleop1(m_leftStick.getY() * .75, m_leftStick.getX() * .75);
       }
@@ -231,7 +229,6 @@ public class Robot extends TimedRobot {
       if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
         pickerUpper.arm.resetZero();
       } else if (m_rightStick.getRawButton(6)) {
-        System.out.print("button 6");
         pickerUpper.arm.moveArmTo(40);
       } else if (m_rightStick.getRawButton(4)) {
         if (m_rightStick.getRawButtonPressed(4)) {
@@ -241,7 +238,6 @@ public class Robot extends TimedRobot {
 
       } else {
         double armSpeed = m_rightStick.getRawAxis(1);
-        System.out.print("joystick Y");
         pickerUpper.arm.moveArm(armSpeed, isSlowMode);
       }
 
