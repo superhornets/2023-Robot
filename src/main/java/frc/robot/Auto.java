@@ -549,18 +549,22 @@ public class Auto {
       // moveArmTo needs to be set (50) is just a refrence
       if (pickerUpper.arm.moveArmTo(50)) {
         homePickerUpperStage = 1;
+        System.out.print("move arm to position 50");
       }
     } else if (homePickerUpperStage == 1) {
       if (pickerUpper.extender.extendToPos(0)) {
         homePickerUpperStage = 2;
+        System.out.print("extend to pos 0");
       }
     } else if (homePickerUpperStage == 2) {
       if (pickerUpper.tower.moveTowerTo(0)) {
         homePickerUpperStage = 3;
+        System.out.print("move tower to angle 0");
       }
     } else if (homePickerUpperStage == 3) {
       if (pickerUpper.arm.moveArmTo(20)) {
         homePickerUpperStage = 4;
+        System.out.print("move arm to position 20");
       }
     } else if (homePickerUpperStage == 4) {
       return true;
