@@ -264,7 +264,12 @@ public class Robot extends TimedRobot {
     }
 
     if (m_rightStick.isConnected()) {
-      double towerSpeed = m_rightStick.getRawAxis(0);
+      double towerSpeed;
+      if (!notPitOverride) {
+        towerSpeed = 0;
+      } else {
+        towerSpeed = m_rightStick.getRawAxis(0);
+      }
       if (Math.abs(towerSpeed) > .04 && !holdPositionTurret) {
         pickerUpper.tower.moveTower(towerSpeed, override, isSlowMode);
       } else if (holdPositionTurret) {
@@ -281,6 +286,8 @@ public class Robot extends TimedRobot {
       } else {
         pickerUpper.tower.moveTower(0, false, false);
       }
+    } else {
+      pickerUpper.tower.moveTower(0, false, false);
     }
 
     // auto pickup and place
