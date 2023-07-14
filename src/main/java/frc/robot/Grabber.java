@@ -71,7 +71,7 @@ public class Grabber extends SubsystemBase {
     if (m_grabber.getOutputCurrent() > 8 /*|| Math.abs(m_encoder.getPosition()) > grabberMax*/) {
       m_grabber.set(0);
     } else {
-      m_grabber.set(grabberSpeed);
+      m_grabber.set(.4);
     }
     // }
 
