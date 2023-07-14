@@ -86,16 +86,13 @@ public class Arm extends SubsystemBase {
     if (speed == 0) {
 
       m_pidController.setReference(0, ControlType.kSmartVelocity);
-      System.out.println("moveArm set 0");
     } else if (speed > 0 && !isAtHeightLimit()) {
 
       m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
-      System.out.println("move Arm up " + speed * driveSpeed);
 
     } else if (speed < 0 && !isAtLowerArmLimit()) {
 
       m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
-      System.out.println("moveArm down " + speed * driveSpeed);
     }
   }
 
@@ -191,7 +188,6 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean moveArmTo(double position) {
-    System.out.println("moveArmTo " + (position - STARTING_ANGLE) / 2);
     m_pidController.setReference((position - STARTING_ANGLE) / 2, ControlType.kSmartMotion);
     double error = position - currentPos;
     return Math.abs(error) < 3;
