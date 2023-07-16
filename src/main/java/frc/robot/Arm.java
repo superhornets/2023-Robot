@@ -282,6 +282,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void SmartDashboard() {
+    /*
     SmartDashboard.putNumber("arm x distance ", armXDistance());
     SmartDashboard.putNumber("arm y distance", armYDistance());
     SmartDashboard.putNumber("current angle", currentPos);
@@ -289,6 +290,7 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("arm encoder", m_encoder.getPosition());
     SmartDashboard.putString("quadrant ", checkQuadrant());
     SmartDashboard.putNumber("Arm angle", currentPos);
+    */
   }
 
   @Override

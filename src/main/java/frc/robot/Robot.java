@@ -74,6 +74,7 @@ public class Robot extends TimedRobot {
     pickerUpper.grabber.periodicGrabber();
     pickerUpper.arm.periodic();
     pickerUpper.arm.updatePosition();
+    pickerUpper.SmartDashboardPrintout();
     if (DriverStation.isFMSAttached()) {
       notPitOverride = true;
     } else if (m_leftStick.getRawButtonPressed(11)) {

@@ -90,8 +90,9 @@ public class Tower extends SubsystemBase {
     }
     if((maxV != maxVel)) { m_pidController.setSmartMotionMaxVelocity(maxV,0); maxVel = maxV; }
     if((maxA != maxAcc)) { m_pidController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; }*/
+    SmartDashboard.putNumber("tower motor rotations", m_encoder.getPosition());
     SmartDashboard.putNumber("tower angle", returnAngle());
-    SmartDashboard.putNumber("maxVel", maxVel);
+    SmartDashboard.putNumber("tower applied output", m_tower.getAppliedOutput());
   }
 
   public void safety(boolean override) {
