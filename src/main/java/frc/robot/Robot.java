@@ -233,13 +233,7 @@ public class Robot extends TimedRobot {
     if (!isPlacing && !isPlacingHigh && !isPickingUp) {
 
       // Pickerupper code
-      if (m_rightStick.getRawButton(4)) {
-        // AutoHome
-        if (m_rightStick.getRawButtonPressed(4)) {
-          auto.homePickerUpperInit();
-        }
-
-        auto.homePickerUpper();
+      if (false) {
 
       } else {
         // Arm code
