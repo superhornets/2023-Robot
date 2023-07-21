@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
   private boolean holdPositionTurret = false;
   private boolean limitFramePerimiter = false;
   private boolean isPlacing = false;
-  private boolean isSlowMode = false;
+  private boolean isDriveSlowMode = false;
   private boolean isPlacingHigh = false;
   private boolean isPickingUp = false;
   private boolean isRotatingToCube = false;
@@ -74,6 +74,7 @@ public class Robot extends TimedRobot {
     pickerUpper.grabber.periodicGrabber();
     pickerUpper.arm.periodic();
     pickerUpper.arm.updatePosition();
+    pickerUpper.SmartDashboardPrintout();
     if (DriverStation.isFMSAttached()) {
       notPitOverride = true;
     } else if (m_leftStick.getRawButtonPressed(11)) {
@@ -186,15 +187,15 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putBoolean("Slow Mode", isSlowMode);
+    SmartDashboard.putBoolean("Drive Slow Mode", isDriveSlowMode);
     if (m_leftStick.getRawButtonPressed(3)) {
-      isSlowMode = !isSlowMode;
+      isDriveSlowMode = !isDriveSlowMode;
     }
     if (m_leftStick.getX() > .05
         || m_leftStick.getX() < -.05
         || m_leftStick.getY() > .05
         || m_leftStick.getY() < -.05) {
-      if (isSlowMode) {
+      if (isDriveSlowMode) {
         drive.arcadeTeleop1(m_leftStick.getY() * .1, m_leftStick.getX() * .2);
       } else {
         drive.arcadeTeleop1(m_leftStick.getY() * .75, m_leftStick.getX() * .75);
@@ -242,7 +243,7 @@ public class Robot extends TimedRobot {
 
         } else {
           double armSpeed = m_rightStick.getRawAxis(1);
-          pickerUpper.arm.moveArm(armSpeed, isSlowMode);
+          pickerUpper.arm.moveArm(armSpeed, false);
         }
 
         // Extender code
@@ -275,7 +276,7 @@ public class Robot extends TimedRobot {
           if (m_rightStick.getRawButton(4)) {
             pickerUpper.tower.moveTowerTo(0);
           } else if (Math.abs(towerSpeed) > .04 && !holdPositionTurret) {
-            pickerUpper.tower.moveTower(towerSpeed, override, isSlowMode);
+            pickerUpper.tower.moveTower(towerSpeed, override, false);
           } else if (holdPositionTurret) {
             pickerUpper.tower.holdTowerPos();
           } else if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {

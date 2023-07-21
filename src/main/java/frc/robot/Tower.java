@@ -24,7 +24,6 @@ public class Tower extends SubsystemBase {
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, maxAcc;
   private double currentPos = 0;
   private RelativeEncoder m_encoder;
-  private int driveSpeed = 4800;
   private Arm arm;
   private Grabber grabber;
   private double cubeAngle = 0;
@@ -90,8 +89,9 @@ public class Tower extends SubsystemBase {
     }
     if((maxV != maxVel)) { m_pidController.setSmartMotionMaxVelocity(maxV,0); maxVel = maxV; }
     if((maxA != maxAcc)) { m_pidController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; }*/
+    SmartDashboard.putNumber("tower motor rotations", m_encoder.getPosition());
     SmartDashboard.putNumber("tower angle", returnAngle());
-    SmartDashboard.putNumber("maxVel", maxVel);
+    SmartDashboard.putNumber("tower applied output", m_tower.getAppliedOutput());
   }
 
   public void safety(boolean override) {
@@ -133,19 +133,19 @@ public class Tower extends SubsystemBase {
     if (Math.abs(speed) < .04) {
       speed = 0;
     }
-    speed = speed * 0.3;
+    speed = speed * 0.1;
     if (isSlowMode) {
       speed = speed / 4;
     }
 
     if (speed > 0 && (returnAngle() < 90 || override)) {
-      m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
+      m_tower.set(speed);
       currentPos = getPosition();
     } else if (speed < 0 && (returnAngle() > -90 || override)) {
-      m_pidController.setReference(speed * driveSpeed, ControlType.kSmartVelocity);
+      m_tower.set(speed);
       currentPos = getPosition();
     } else if (speed == 0) {
-      m_pidController.setReference(0, ControlType.kSmartVelocity);
+      m_tower.set(0);
       currentPos = getPosition();
     }
   }
