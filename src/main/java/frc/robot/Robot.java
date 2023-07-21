@@ -272,7 +272,9 @@ public class Robot extends TimedRobot {
           } else {
             towerSpeed = m_rightStick.getRawAxis(0);
           }
-          if (Math.abs(towerSpeed) > .04 && !holdPositionTurret) {
+          if (m_rightStick.getRawButton(4)) {
+            pickerUpper.tower.moveTowerTo(0);
+          } else if (Math.abs(towerSpeed) > .04 && !holdPositionTurret) {
             pickerUpper.tower.moveTower(towerSpeed, override, isSlowMode);
           } else if (holdPositionTurret) {
             pickerUpper.tower.holdTowerPos();
