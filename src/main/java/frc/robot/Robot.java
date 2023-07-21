@@ -224,68 +224,80 @@ public class Robot extends TimedRobot {
       pickerUpper.grabber.hold();
     }
 
+    if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
+      pickerUpper.arm.resetZero();
+    }
+
+    if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
+      pickerUpper.extender.resetExtenderEncoder();
+    }
     if (!isPlacing && !isPlacingHigh && !isPickingUp) {
 
-      // Arm code
-      if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
-        pickerUpper.arm.resetZero();
-      } else if (m_rightStick.getRawButton(6)) {
-        pickerUpper.arm.moveArmTo(40);
-      } else if (m_rightStick.getRawButton(4)) {
+      // Pickerupper code
+      if (m_rightStick.getRawButton(4)) {
+        // AutoHome
         if (m_rightStick.getRawButtonPressed(4)) {
           auto.homePickerUpperInit();
         }
+
         auto.homePickerUpper();
 
       } else {
-        double armSpeed = m_rightStick.getRawAxis(1);
-        pickerUpper.arm.moveArm(armSpeed, isSlowMode);
-      }
+        // Arm code
+        if (m_rightStick.getRawButton(6)) {
+          pickerUpper.arm.moveArmTo(40);
 
-      // Extender code
-      if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
-        override = true;
-      } else {
-        override = false;
-      }
-      if ((m_rightStick.getRawButton(7) && !m_rightStick.getRawButton(12))) {
-        pickerUpper.extender.extend(extenderSpeed, override);
-      } else if ((m_rightStick.getRawButton(8) && !m_rightStick.getRawButton(12))) {
-        pickerUpper.extender.extend(-extenderSpeed, override);
-      } else if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
-        pickerUpper.extender.resetExtenderEncoder();
-      } else {
-        pickerUpper.extender.extend(0, false);
-      }
-    }
-
-    // Tower Code
-    if (m_rightStick.getRawButtonPressed(3)) {
-      holdPositionTurret = !holdPositionTurret;
-    }
-
-    if (m_rightStick.isConnected()) {
-      double towerSpeed;
-      if (!notPitOverride) {
-        towerSpeed = 0;
-      } else {
-        towerSpeed = m_rightStick.getRawAxis(0);
-      }
-      if (Math.abs(towerSpeed) > .04 && !holdPositionTurret) {
-        pickerUpper.tower.moveTower(towerSpeed, override, isSlowMode);
-      } else if (holdPositionTurret) {
-        pickerUpper.tower.holdTowerPos();
-      } else if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
-        pickerUpper.tower.setZero();
-      } else if (isRotatingToCube) {
-        if (pickerUpper.tower.rotateToCube()) {
-          isRotatingToCube = false;
+        } else {
+          double armSpeed = m_rightStick.getRawAxis(1);
+          pickerUpper.arm.moveArm(armSpeed, isSlowMode);
         }
-      } else if (m_rightStick.getRawButton(7) && m_rightStick.getRawButton(12)) {
-        pickerUpper.tower.rotateToCubeInit();
-        isRotatingToCube = true;
-      } else {
-        pickerUpper.tower.moveTower(0, false, false);
+
+        // Extender code
+        if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
+          override = true;
+        } else {
+          override = false;
+        }
+
+        if ((m_rightStick.getRawButton(7) && !m_rightStick.getRawButton(12))) {
+          pickerUpper.extender.extend(extenderSpeed, override);
+        } else if ((m_rightStick.getRawButton(8) && !m_rightStick.getRawButton(12))) {
+          pickerUpper.extender.extend(-extenderSpeed, override);
+        } else {
+          pickerUpper.extender.extend(0, false);
+        }
+
+        // Tower Code
+        if (m_rightStick.getRawButtonPressed(3)) {
+          holdPositionTurret = !holdPositionTurret;
+        }
+
+        if (m_rightStick.isConnected()) {
+          double towerSpeed;
+          if (!notPitOverride) {
+            towerSpeed = 0;
+          } else {
+            towerSpeed = m_rightStick.getRawAxis(0);
+          }
+          if (Math.abs(towerSpeed) > .04 && !holdPositionTurret) {
+            pickerUpper.tower.moveTower(towerSpeed, override, isSlowMode);
+          } else if (holdPositionTurret) {
+            pickerUpper.tower.holdTowerPos();
+          } else if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
+            pickerUpper.tower.setZero();
+          } else if (isRotatingToCube) {
+            if (pickerUpper.tower.rotateToCube()) {
+              isRotatingToCube = false;
+            }
+          } else if (m_rightStick.getRawButton(7) && m_rightStick.getRawButton(12)) {
+            pickerUpper.tower.rotateToCubeInit();
+            isRotatingToCube = true;
+          } else {
+            pickerUpper.tower.moveTower(0, false, false);
+          }
+        } else {
+          pickerUpper.tower.moveTower(0, false, false);
+        }
       }
     } else {
       pickerUpper.tower.moveTower(0, false, false);
