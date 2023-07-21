@@ -133,7 +133,7 @@ public class Tower extends SubsystemBase {
     if (Math.abs(speed) < .04) {
       speed = 0;
     }
-    speed = speed * 0.08;
+    speed = speed * 0.1;
     if (isSlowMode) {
       speed = speed / 4;
     }
