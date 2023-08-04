@@ -168,14 +168,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    auto.updateSelection();
-    auto.autoInit();
+    // auto.updateSelection();
+    // auto.autoInit();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    auto.runSelected();
+    // auto.runSelected();
   }
 
   /** This function is called once when teleop is enabled. */
@@ -198,7 +198,7 @@ public class Robot extends TimedRobot {
       if (isDriveSlowMode) {
         drive.arcadeTeleop1(m_leftStick.getY() * .1, m_leftStick.getX() * .2);
       } else {
-        drive.arcadeTeleop1(m_leftStick.getY() * .75, m_leftStick.getX() * .75);
+        drive.arcadeTeleop1(m_leftStick.getY() * .1, m_leftStick.getX() * .2);
       }
       drive.setPos();
     } else if (holdMode) {
