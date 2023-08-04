@@ -24,7 +24,7 @@ public class Robot extends TimedRobot {
   private PickerUpper pickerUpper = new PickerUpper();
   private Drive drive = new Drive();
   private Auto auto = new Auto(drive, pickerUpper);
-  private boolean holdMode = true;
+  private boolean holdMode = false;
   private double extenderSpeed = 1;
   private boolean holdPositionTurret = false;
   private boolean limitFramePerimiter = false;
@@ -198,21 +198,21 @@ public class Robot extends TimedRobot {
       if (isDriveSlowMode) {
         drive.arcadeTeleop1(m_leftStick.getY() * .1, m_leftStick.getX() * .2);
       } else {
-        drive.arcadeTeleop1(m_leftStick.getY() * .1, m_leftStick.getX() * .2);
+        drive.arcadeTeleop1(m_leftStick.getY() * .25, m_leftStick.getX() * .20);
       }
       drive.setPos();
-    } else if (holdMode) {
-      drive.holdPosition();
-    } else {
+    } //else if (holdMode) {
+      //drive.holdPosition();
+    /*}*/ else {
       drive.arcadeTeleop1(0, 0);
     }
 
-    if (m_leftStick.getRawButton(6)) {
+    /*if (m_leftStick.getRawButton(6)) {
       holdMode = false;
     }
     if (m_leftStick.getRawButton(7)) {
       holdMode = true;
-    }
+    }*/
     if (m_leftStick.getRawButton(4)) {
       drive.resetNavX();
     }
