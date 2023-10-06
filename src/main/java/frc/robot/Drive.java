@@ -112,6 +112,8 @@ public class Drive extends SubsystemBase {
   }
 
   public void setPos() {
+    m_encoder.setPosition(0);
+    m_encoderR.setPosition(0);
     currentPos = m_encoder.getPosition();
     currentPosR = m_encoderR.getPosition();
   }
