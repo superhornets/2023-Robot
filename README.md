@@ -15,10 +15,6 @@
 9. Select a location on your computer where you would like to have the robot code folder cloned to.
 10. Click "Open in New Window".
 
-### Install one more thing before you start making changes
-
-Install the VS Code Extension called `Spotless Gradle` by Richard Willis.
-
 # Helpful Git Programs
 
 Git is the underlying program that does version control. Git can be complicated at times. You may find some of these programs helpful.

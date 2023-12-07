@@ -32,7 +32,6 @@ public class Robot extends TimedRobot {
   private boolean isDriveSlowMode = false;
   private boolean isPlacingHigh = false;
   private boolean isPickingUp = false;
-  private boolean isRotatingToCube = false;
   private boolean isLightPattern = false;
   private boolean isHoming = false;
   private int lightMode = 0;
@@ -281,13 +280,6 @@ public class Robot extends TimedRobot {
             pickerUpper.tower.holdTowerPos();
           } else if (m_rightStick.getRawButton(11) && !m_rightStick.getRawButton(12)) {
             pickerUpper.tower.setZero();
-          } else if (isRotatingToCube) {
-            if (pickerUpper.tower.rotateToCube()) {
-              isRotatingToCube = false;
-            }
-          } else if (m_rightStick.getRawButton(7) && m_rightStick.getRawButton(12)) {
-            pickerUpper.tower.rotateToCubeInit();
-            isRotatingToCube = true;
           } else {
             pickerUpper.tower.moveTower(0, false, false);
           }
@@ -306,16 +298,6 @@ public class Robot extends TimedRobot {
       isPickingUp = false;
       isHoming = false;
     }
-    if (m_rightStick.getRawButtonPressed(10) && !m_rightStick.getRawButton(12)) {
-      if (!isPlacing) {
-        isPlacing = true;
-        auto.autoPickupInit();
-      }
-    } else if (isPlacing && m_rightStick.getRawButton(10)) {
-      if (auto.autoPickup()) {
-        isPlacing = false;
-      }
-    }
 
     if (m_rightStick.getRawButton(10) && m_rightStick.getRawButton(12) && !isPickingUp) {
       isPickingUp = true;
@@ -329,27 +311,33 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override
-  public void testInit() {}
+  public void testInit() {
+  }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+  }
 }
 
 // :)

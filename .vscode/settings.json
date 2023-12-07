@@ -27,23 +27,9 @@
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
   "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable",
-  "java.format.enabled": false,
-  "[java]": {
-    "files.trimTrailingWhitespace": false,
-    "spotlessGradle.diagnostics.enable": true,
-    "spotlessGradle.format.enable": true,
-    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.spotlessGradle": true
-    }
-  },
-  "[gradle]": {
-    "files.trimTrailingWhitespace": false,
-    "spotlessGradle.diagnostics.enable": true,
-    "spotlessGradle.format.enable": true,
-    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.spotlessGradle": true
-    }
-  }
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "java.format.comments.enabled": false,
+  "editor.formatOnSaveMode": "modificationsIfAvailable",
+  "editor.defaultFormatter": "redhat.java"
 }

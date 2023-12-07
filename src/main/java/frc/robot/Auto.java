@@ -392,15 +392,13 @@ public class Auto {
     // Stage 1: Check if the robot is close enough
     else if (placeStage == 1) {
       if (isFront) {
-        double xydistance =
-            Math.sqrt(
-                ((x + targetX + CAMERA_X) * (x + targetX + CAMERA_X))
-                    + ((targetY + y + CAMERA_Y) * (targetY + y + CAMERA_Y)));
-        double distance =
-            Math.sqrt(
-                ((xydistance * xydistance)
-                    + ((ROBOT_ARM_HEIGHT - targetZ - TARGET_HEIGHT)
-                        * (ROBOT_ARM_HEIGHT - targetZ - TARGET_HEIGHT))));
+        double xydistance = Math.sqrt(
+            ((x + targetX + CAMERA_X) * (x + targetX + CAMERA_X))
+                + ((targetY + y + CAMERA_Y) * (targetY + y + CAMERA_Y)));
+        double distance = Math.sqrt(
+            ((xydistance * xydistance)
+                + ((ROBOT_ARM_HEIGHT - targetZ - TARGET_HEIGHT)
+                    * (ROBOT_ARM_HEIGHT - targetZ - TARGET_HEIGHT))));
         System.out.println(
             "Stage 1: xydistance: "
                 + xydistance
@@ -413,9 +411,8 @@ public class Auto {
                 + ", "
                 + targetZ);
 
-        if ((distance
-            > (ARM_LENGTH
-                + EXTENSON_LENGTH) /*|| (Math.abs(targetY-y) > SIDE_LENGTH || distance < ARM_LENGTH)*/)) {
+        if ((distance > (ARM_LENGTH
+            + EXTENSON_LENGTH) /*|| (Math.abs(targetY-y) > SIDE_LENGTH || distance < ARM_LENGTH)*/)) {
           System.out.println("Too far away " + distance);
           return true;
         } else if (distance < ARM_LENGTH) {
@@ -423,10 +420,9 @@ public class Auto {
           return true;
         }
       } else {
-        double xzDistance =
-            Math.sqrt(
-                ((x + targetX + CAMERA_X) * (x + targetX + CAMERA_X))
-                    + ((ROBOT_ARM_HEIGHT - targetZ) * (ROBOT_ARM_HEIGHT - targetZ)));
+        double xzDistance = Math.sqrt(
+            ((x + targetX + CAMERA_X) * (x + targetX + CAMERA_X))
+                + ((ROBOT_ARM_HEIGHT - targetZ) * (ROBOT_ARM_HEIGHT - targetZ)));
         if (xzDistance > (ARM_LENGTH + EXTENSON_LENGTH) || xzDistance < ARM_LENGTH) {
           System.out.println("Too far away");
           return true;
@@ -453,8 +449,7 @@ public class Auto {
     }
     // Stage 3: calculate the arm angle
     else if (placeStage == 3) {
-      armAngle =
-          Math.atan((targetX + x + CAMERA_X) / (ROBOT_ARM_HEIGHT - (TARGET_HEIGHT + targetZ)));
+      armAngle = Math.atan((targetX + x + CAMERA_X) / (ROBOT_ARM_HEIGHT - (TARGET_HEIGHT + targetZ)));
       armAngle = Math.toDegrees(armAngle);
       armAngle = armAngle + EXTRA_ANGLE;
       placeStage = 4;
@@ -499,15 +494,13 @@ public class Auto {
     }
     // Stage 8: calculate extenton distance
     else if (placeStage == 8) {
-      double xydistance =
-          Math.sqrt(
-              ((x + targetX + CAMERA_X) * (x + targetX + CAMERA_X))
-                  + ((targetY + y + CAMERA_Y) * (targetY + y + CAMERA_Y)));
-      double distance =
-          Math.sqrt(
-              ((xydistance * xydistance)
-                  + ((ROBOT_ARM_HEIGHT - targetZ - TARGET_HEIGHT)
-                      * (ROBOT_ARM_HEIGHT - targetZ - TARGET_HEIGHT))));
+      double xydistance = Math.sqrt(
+          ((x + targetX + CAMERA_X) * (x + targetX + CAMERA_X))
+              + ((targetY + y + CAMERA_Y) * (targetY + y + CAMERA_Y)));
+      double distance = Math.sqrt(
+          ((xydistance * xydistance)
+              + ((ROBOT_ARM_HEIGHT - targetZ - TARGET_HEIGHT)
+                  * (ROBOT_ARM_HEIGHT - targetZ - TARGET_HEIGHT))));
       /*if(distance>(ARM_LENGTH-2) || distance <(ARM_LENGTH+2)){
           placeStage = 10;
       }
