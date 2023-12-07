@@ -170,20 +170,18 @@ public class Arm extends SubsystemBase {
   }
 
   public double armYDistance() {
-    double armY =
-        Math.copySign(
-                (extender.returnExtension() + ARM_LENGTH)
-                    * Math.sin(Math.toRadians(currentPos - 90)),
-                (currentPos - 90))
-            + TOWER_HEIGHT;
+    double armY = Math.copySign(
+        (extender.returnExtension() + ARM_LENGTH)
+            * Math.sin(Math.toRadians(currentPos - 90)),
+        (currentPos - 90))
+        + TOWER_HEIGHT;
     return armY;
   }
 
   public double armXDistance() {
     double angle = normalizeAngle(tower.returnAngle());
-    double distance =
-        armXZDistance() * Math.cos(Math.toRadians(angle))
-            + GRABBER_WIDTH * Math.sin(Math.toRadians(angle));
+    double distance = armXZDistance() * Math.cos(Math.toRadians(angle))
+        + GRABBER_WIDTH * Math.sin(Math.toRadians(angle));
     return distance;
   }
 
@@ -195,9 +193,8 @@ public class Arm extends SubsystemBase {
 
   public double armZDistance() {
     double angle = normalizeAngle(tower.returnAngle());
-    double distance =
-        armXZDistance() * Math.sin(Math.toRadians(angle))
-            + GRABBER_WIDTH * Math.cos(Math.toRadians(angle));
+    double distance = armXZDistance() * Math.sin(Math.toRadians(angle))
+        + GRABBER_WIDTH * Math.cos(Math.toRadians(angle));
     return distance;
   }
 

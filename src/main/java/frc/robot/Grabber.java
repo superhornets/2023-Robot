@@ -68,7 +68,7 @@ public class Grabber extends SubsystemBase {
      * m_grabber.set(0);
      * } else {
      */
-    if (m_grabber.getOutputCurrent() > 8 /*|| Math.abs(m_encoder.getPosition()) > grabberMax*/) {
+    if (m_grabber.getOutputCurrent() > 8 /* || Math.abs(m_encoder.getPosition()) > grabberMax */) {
       m_grabber.set(0);
     } else {
       m_grabber.set(.4);
@@ -99,7 +99,8 @@ public class Grabber extends SubsystemBase {
     m_grabber.set(-.3);
   }
 
-  public void closeCube() {}
+  public void closeCube() {
+  }
 
   public void periodicGrabber() {
     double grabberCurrent = m_grabber.getOutputCurrent();

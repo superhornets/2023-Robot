@@ -70,11 +70,10 @@ public class Drive extends SubsystemBase {
     kD = 0;
     kIz = 0;
     kFF = 0;
-    yay =
-        Shuffleboard.getTab("alsoyay")
-            .add("dfsafkj", 0)
-            .withWidget(BuiltInWidgets.kGraph)
-            .getEntry();
+    yay = Shuffleboard.getTab("alsoyay")
+        .add("dfsafkj", 0)
+        .withWidget(BuiltInWidgets.kGraph)
+        .getEntry();
     maxRPM = 5700;
     maxVel = 3000; // rpm
     maxAcc = 1000;
@@ -172,7 +171,7 @@ public class Drive extends SubsystemBase {
 
   public boolean isDriving(double distance) {
     if ((m_encoder.getPosition() <= (distance + .5) * ROTATIONS_PER_INCH + currentPos
-            && m_encoder.getPosition() >= (distance - .5) * ROTATIONS_PER_INCH + currentPos)
+        && m_encoder.getPosition() >= (distance - .5) * ROTATIONS_PER_INCH + currentPos)
         && isMoving
         && (m_encoderR.getPosition() <= (distance + .5) * ROTATIONS_PER_INCH + currentPosR
             && m_encoderR.getPosition() >= (distance - .5) * ROTATIONS_PER_INCH + currentPosR)) {
@@ -233,8 +232,7 @@ public class Drive extends SubsystemBase {
       turnController.setSetpoint(angle);
       rotateToAngle = true;
     }
-    currentRotationRate =
-        MathUtil.clamp(turnController.calculate(wrapAngle(ahrs.getAngle())), -.5, .5);
+    currentRotationRate = MathUtil.clamp(turnController.calculate(wrapAngle(ahrs.getAngle())), -.5, .5);
     if (!isTurning(angle) /*&& !(currentRotationRate < .01 && currentRotationRate > -.01)*/) {
       arcade(0, currentRotationRate);
       return false;
@@ -257,12 +255,12 @@ public class Drive extends SubsystemBase {
     /*if(Math.abs(turnSpeed) > .1){
         m_pidController.setSmartMotionMaxAccel(100, 0);
         m_pidControllerR.setSmartMotionMaxAccel(100, 0);
-
+    
     }
     else{
         m_pidController.setSmartMotionMaxAccel(1000, 0);
         m_pidControllerR.setSmartMotionMaxAccel(1000, 0);
-
+    
     }*/
     double turning = 0;
     // if(Math.abs(turnSpeed) < .1){

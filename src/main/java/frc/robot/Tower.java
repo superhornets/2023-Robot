@@ -60,7 +60,7 @@ public class Tower extends SubsystemBase {
     SmartDashboard.putNumber("Feed Forward", kFF);
     SmartDashboard.putNumber("Max Output", kMaxOutput);
     SmartDashboard.putNumber("Min Output", kMinOutput);
-
+    
     // display Smart Motion coefficients
     SmartDashboard.putNumber("Max Velocity", maxVel);
     SmartDashboard.putNumber("Max Acceleration", maxAcc);*/
@@ -222,5 +222,6 @@ public class Tower extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+  }
 }
